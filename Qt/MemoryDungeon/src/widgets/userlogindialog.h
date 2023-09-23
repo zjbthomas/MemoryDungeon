@@ -2,6 +2,7 @@
 #define USERLOGINDIALOG_H
 
 #include <QDialog>
+#include <QKeyEvent>
 
 #include "messagedialog.h"
 
@@ -23,6 +24,9 @@ private:
     Ui::UserLoginDialog *ui;
 
     User* user;
+
+protected:
+    void keyPressEvent(QKeyEvent*);
 };
 
 #endif // USERLOGINDIALOG_H

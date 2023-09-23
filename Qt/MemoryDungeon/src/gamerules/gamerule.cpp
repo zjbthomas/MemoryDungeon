@@ -303,7 +303,7 @@ int GameRule::performClick(int n)
                     this->rowArr[this->currentR - 1].setCardState(c, Row::UNCOVER);
                 }
             }
-            break;
+            break;{}
         case Row::CHAOS:
             this->shuffleCards();
 
@@ -326,6 +326,9 @@ int GameRule::performClick(int n)
             int nPairs2Match;
             int tempPos;
 
+            int tempMatch; // we need this as HUNTER will find two pairs
+            tempMatch = -1;
+
             // decide how many pairs to match
             if (this->hero == HUNTER) {
                 nPairs2Match = 2;
@@ -344,17 +347,18 @@ int GameRule::performClick(int n)
 
                     if ((this->rowArr[tr].getCardState(tc) != Row::NE) &&
                         (this->rowArr[tr].getCardKind(tc) != 0) &&
-                        (this->rowArr[tr].getCardKind(tc) != this->match))
+                        (this->rowArr[tr].getCardKind(tc) != tempMatch))
                     {
                         this->rowArr[tr].setCardState(tc, Row::UNCOVER);
                         this->match = this->rowArr[tr].getCardKind(tc);
                         tempPos = cn;
+                        tempMatch = this->rowArr[tr].getCardKind(tc);
                         break;
                     }
                 }
 
                 // find other cards that match the reference
-                for (int en = this->eraseN; en > 2; en--) {
+                for (int en = this->eraseN; en >= 2; en--) {
                     for (int cn = (tempPos + 1) ; cn < (this->maxR)*(this->maxC); cn++)
                     {
                         n2RC(cn,&tr,&tc);
@@ -978,7 +982,7 @@ void GameRule::setLevel(int l)
 // Input: index and two return pointers.
 void GameRule::n2RC(int n, int* sr, int* sc)
 {
-    *sr = n / (this->maxR);
+    *sr = n / (this->maxC);
     *sc = n % (this->maxC);
 
     // Mirrored the rows which is avaliable in the game.
@@ -1108,7 +1112,7 @@ int GameRule::aiAction()
             // Randomly click a card that it does not remember.
             int clickPos = rand() % ((this->maxR) * (this->maxC));
             n2RC(clickPos,&sr,&sc);
-            while ((this->aiMemoryArr[clickPos]) || (this->rowArr[sr].getCardState(sc) != Row::NE))
+            while ((this->aiMemoryArr[clickPos]) || (this->rowArr[sr].getCardState(sc) == Row::NE))
             {
                 clickPos = rand() % ((this->maxR) * (this->maxC));
                 n2RC(clickPos,&sr,&sc);
@@ -1151,7 +1155,7 @@ int GameRule::aiAction()
             int clickPos = rand() % ((this->maxR) * (this->maxC));
             n2RC(clickPos,&sr,&sc);
             while ((this->aiMemoryArr[clickPos]) ||
-                   (this->rowArr[sr].getCardState(sc) != Row::NE) ||
+                   (this->rowArr[sr].getCardState(sc) == Row::NE) ||
                    (clickPos == this->flip1))
             {
                 clickPos = rand() % ((this->maxR) * (this->maxC));

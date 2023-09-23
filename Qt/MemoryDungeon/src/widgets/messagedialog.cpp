@@ -5,9 +5,11 @@ MessageDialog::MessageDialog(QWidget *parent, string msg, string title, bool use
     QDialog(parent),
     ui(new Ui::MessageDialog)
 {
+    // TODO: if useImg is true
+
     ui->setupUi(this);
 
-    setWindowFlags( Qt::CustomizeWindowHint | Qt::Dialog);
+    setWindowFlags( Qt::FramelessWindowHint | Qt::Dialog);
 
     this->setFixedSize(539, 393);
 
@@ -26,4 +28,15 @@ MessageDialog::MessageDialog(QWidget *parent, string msg, string title, bool use
 MessageDialog::~MessageDialog()
 {
     delete ui;
+}
+
+void MessageDialog::keyPressEvent(QKeyEvent *e)
+{
+    if (e -> key() == Qt::Key_Escape ||
+        e ->key() == Qt::Key_Enter ||
+        e->key() == Qt::Key_Return) {
+        return;
+    }
+
+    QDialog::keyPressEvent(e);
 }

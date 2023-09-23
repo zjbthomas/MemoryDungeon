@@ -142,14 +142,27 @@
       <height>23</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <pointsize>12</pointsize>
+      <bold>true</bold>
+     </font>
+    </property>
     <property name="styleSheet">
      <string notr="true"/>
     </property>
     <property name="value">
      <number>24</number>
     </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
     <property name="textVisible">
-     <bool>false</bool>
+     <bool>true</bool>
+    </property>
+    <property name="format">
+     <string>%v</string>
     </property>
    </widget>
    <widget class="QProgressBar" name="hpPB">
@@ -201,25 +214,6 @@
       <y>9</y>
       <width>290</width>
       <height>23</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true"/>
-    </property>
-    <property name="value">
-     <number>24</number>
-    </property>
-    <property name="textVisible">
-     <bool>false</bool>
-    </property>
-   </widget>
-   <widget class="QProgressBar" name="itemPB">
-    <property name="geometry">
-     <rect>
-      <x>965</x>
-      <y>142</y>
-      <width>140</width>
-      <height>20</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -514,7 +508,7 @@
       <x>738</x>
       <y>519</y>
       <width>401</width>
-      <height>94</height>
+      <height>97</height>
      </rect>
     </property>
     <property name="font">
@@ -644,8 +638,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
    <widget class="QWidget" name="gridLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>11</x>
-      <y>40</y>
+      <x>10</x>
+      <y>42</y>
       <width>676</width>
       <height>577</height>
      </rect>
@@ -659,6 +653,69 @@ li.checked::marker { content: &quot;\2612&quot;; }
      </property>
     </layout>
    </widget>
+   <widget class="QLabel" name="evilLbl">
+    <property name="geometry">
+     <rect>
+      <x>791</x>
+      <y>482</y>
+      <width>298</width>
+      <height>155</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="../resources/images/images.qrc">:/images/screens/unluckfloor.png</pixmap>
+    </property>
+   </widget>
+   <widget class="QLabel" name="gainLbl">
+    <property name="geometry">
+     <rect>
+      <x>969</x>
+      <y>220</y>
+      <width>59</width>
+      <height>46</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="../resources/images/images.qrc">:/images/screens/credit.png</pixmap>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="nextFloorBtn">
+    <property name="geometry">
+     <rect>
+      <x>298</x>
+      <y>231</y>
+      <width>99</width>
+      <height>99</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="../resources/images/images.qrc">
+      <normaloff>:/images/screens/button_next.png</normaloff>:/images/screens/button_next.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>99</width>
+      <height>99</height>
+     </size>
+    </property>
+   </widget>
    <zorder>backgroundLbl</zorder>
    <zorder>exitBtn</zorder>
    <zorder>newGameBtn</zorder>
@@ -668,7 +725,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
    <zorder>hpPB</zorder>
    <zorder>heroBtn</zorder>
    <zorder>levelPB</zorder>
-   <zorder>itemPB</zorder>
    <zorder>statusLbl</zorder>
    <zorder>levelLbl</zorder>
    <zorder>userLbl</zorder>
@@ -684,6 +740,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
    <zorder>homeBtn</zorder>
    <zorder>aiBtn</zorder>
    <zorder>gridLayoutWidget</zorder>
+   <zorder>evilLbl</zorder>
+   <zorder>gainLbl</zorder>
+   <zorder>nextFloorBtn</zorder>
   </widget>
  </widget>
  <resources>

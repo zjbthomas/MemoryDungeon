@@ -12,11 +12,13 @@ public:
     explicit ClickableLabel(QWidget *parent, int);
     ~ClickableLabel();
 
+    int getPos();
+
 private:
     int pos = -1;
 
 signals:
-    void clicked();
+    void released();
 
 protected:
     void mousePressEvent(QMouseEvent* event);

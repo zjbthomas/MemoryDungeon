@@ -7,7 +7,7 @@ UserLoginDialog::UserLoginDialog(QWidget *parent, User* user) :
 {
     ui->setupUi(this);
 
-    setWindowFlags( Qt::CustomizeWindowHint | Qt::Dialog);
+    setWindowFlags( Qt::FramelessWindowHint | Qt::Dialog);
 
     this->setFixedSize(520, 712);
 
@@ -66,4 +66,18 @@ UserLoginDialog::UserLoginDialog(QWidget *parent, User* user) :
 UserLoginDialog::~UserLoginDialog()
 {
     delete ui;
+}
+
+void UserLoginDialog::keyPressEvent(QKeyEvent *e)
+{
+    if (e->key() == Qt::Key_Escape) {
+        qApp->quit();
+    }
+
+    if (e->key() == Qt::Key_Enter ||
+        e->key() == Qt::Key_Return) {
+        return;
+    }
+
+    QDialog::keyPressEvent(e);
 }

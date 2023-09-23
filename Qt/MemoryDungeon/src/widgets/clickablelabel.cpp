@@ -12,5 +12,9 @@ ClickableLabel::~ClickableLabel()
 }
 
 void ClickableLabel::mousePressEvent(QMouseEvent* event) {
-    emit clicked();
+    emit released();
+}
+
+int ClickableLabel::getPos() {
+    return this->pos;
 }

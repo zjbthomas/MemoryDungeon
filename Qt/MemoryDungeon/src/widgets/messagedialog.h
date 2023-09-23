@@ -2,6 +2,7 @@
 #define MESSAGEDIALOG_H
 
 #include <QDialog>
+#include <QKeyEvent>
 
 #include <string>
 
@@ -24,6 +25,9 @@ private:
 
     User* user;
     bool useImg;
+
+protected:
+    void keyPressEvent(QKeyEvent*);
 };
 
 #endif // MESSAGEDIALOG_H

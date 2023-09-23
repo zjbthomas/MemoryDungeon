@@ -73,7 +73,7 @@ private:
     int levelKN = 0; // It should not be bigger than maxk.
     int levelSpN = 0; // It should not be bigger than maxsp.
     int popN = 0;
-    int baseTime = 0; // The unit is ms.
+    int baseTime = 0; // as main timer in game has an interval of 100 ms, the unit for this is 10 seconds
     int objective = 0;
     // Used to record and response in the game progress.
     int currentR = 0;
@@ -86,7 +86,7 @@ private:
     bool isCombo = false;
     // Variables that interact between the class and the GUI.
     int score = 0; // R only. Add score automatically.
-    int timeRemain = 0; // R/W only.
+    int timeRemain = 0;
     int level = 0; // R/W.
     // Variables for AI parts.
     bool isAIMode = false;

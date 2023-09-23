@@ -50,6 +50,12 @@ else()
             src/widgets/userlogindialog.h src/widgets/userlogindialog.cpp src/widgets/userlogindialog.ui
             src/widgets/messagedialog.h src/widgets/messagedialog.cpp src/widgets/messagedialog.ui
             src/widgets/clickablelabel.h src/widgets/clickablelabel.cpp
+            src/widgets/clickableprogressbar.h src/widgets/clickableprogressbar.cpp
+            src/widgets/shopdialog.h src/widgets/shopdialog.cpp src/widgets/shopdialog.ui
+            src/widgets/jumpdialog.h src/widgets/jumpdialog.cpp src/widgets/jumpdialog.ui
+            src/widgets/collectiondialog.h src/widgets/collectiondialog.cpp src/widgets/collectiondialog.ui
+            src/widgets/herodialog.h src/widgets/herodialog.cpp src/widgets/herodialog.ui
+
 
 
 
