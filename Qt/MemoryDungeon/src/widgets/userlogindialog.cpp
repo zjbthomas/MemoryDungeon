@@ -59,7 +59,7 @@ UserLoginDialog::UserLoginDialog(QWidget *parent, User* user) :
             }
         }
 
-        this->close();
+        this->accept();
     });
 }
 

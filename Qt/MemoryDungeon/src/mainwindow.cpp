@@ -5,23 +5,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    // Game system related
-    this->user = new User(this->MAXK, this->MAXSP);
-    this->game = new GameRule(this->MAXR, this->MAXC, this->MAXK, this->MAXSP, this->user->getOwnedK(), this->user->getOwnedSp());
-
-    // show login dialog first
-    UserLoginDialog* userLoginDialog = new UserLoginDialog(this, this->user);
-    userLoginDialog->setModal(true);
-    userLoginDialog->exec();
-    delete userLoginDialog;
-
-    // UI related
     ui->setupUi(this);
-
-    initUI();
-    initGame();
-
-    this->updateSidebar(false);
 }
 
 MainWindow::~MainWindow()
@@ -36,6 +20,20 @@ MainWindow::~MainWindow()
     delete this->aiTimer;
 
     delete ui;
+}
+
+void MainWindow::initWithUser(User* user, int maxK, int maxSp) {
+    this->user = user;
+
+    this->maxK = maxK;
+    this->maxSp = maxSp;
+
+    this->game = new GameRule(this->MAXR, this->MAXC, maxK, maxSp, this->user->getOwnedK(), this->user->getOwnedSp());
+
+    initUI();
+    initGame();
+
+    this->updateSidebar(false);
 }
 
 void MainWindow::initUI() {
@@ -218,7 +216,7 @@ void MainWindow::makeConnections() {
 
     // collection progress bar
     connect(this->itemPB, &ClickableProgressBar::released, this, [=] (){
-        CollectionDialog* collecitonDialog = new CollectionDialog(this, this->user, this->MAXK, this->MAXSP, this->OFFSET);
+        CollectionDialog* collecitonDialog = new CollectionDialog(this, this->user, this->maxK, this->maxSp, this->OFFSET);
         collecitonDialog->setModal(true);
         collecitonDialog->exec();
         delete collecitonDialog;

@@ -8,7 +8,7 @@
 #include <QTimer>
 #include <QPushButton>
 
-#include "qmovie.h"
+#include <QMovie>
 
 #include "gamerules/gamerule.h"
 #include "users/user.h"
@@ -35,12 +35,12 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void initWithUser(User*, int, int);
+
 private:
     // constants
     const static int MAXR = 6;
     const static int MAXC = 7;
-    const static int MAXK = 20;
-    const static int MAXSP = 6;
     const static int OFFSET = -2;
 
     const static int ADDGOLD = 3;
@@ -88,6 +88,10 @@ private:
     // Game system related
     GameRule* game;
     User* user;
+
+    int maxK;
+    int maxSp;
+
     int floorType;
     bool foundTreasure;
     bool enabledHeroBtn;

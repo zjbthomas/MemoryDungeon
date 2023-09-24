@@ -30,7 +30,7 @@ public:
     void setAnOwnedK(int,bool);
     bool* getOwnedSp();
     void setAnOwnedSp(int,bool);
-    bool gachaK(int, int*);
+    bool gachaK(int*);
     int getCollectionRate();
     // For hero system.
     int getHero();
@@ -45,7 +45,7 @@ private:
     int bestLevel = 0; // This is the highest level recorded.
     int savedLevel = 0;
     int gold = 0;
-    int aiForgetRate = 0;
+    int aiForgetRate = 20;
     // For purchase.
     int maxK;
     int maxSp;

@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QKeyEvent>
 #include <QLabel>
+#include <QStyle>
 
 #include "qmovie.h"
 
@@ -38,6 +39,7 @@ private:
 protected:
     void updateShowcase();
 
+    void showEvent(QShowEvent*);
     void keyPressEvent(QKeyEvent*);
 };
 

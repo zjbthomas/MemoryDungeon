@@ -11,11 +11,34 @@ JumpDialog::JumpDialog(QWidget *parent, GameRule* game, User* user) :
 
     this->game = game;
     this->user = user;
+
+    ui->kindSB->setMaximum(this->game->getOwnedKN());
+
+    connect(ui->goBtn, &QPushButton::released, this, [=]() {
+        int ruleN = ui->atkSB->value();
+        int kind = ui->kindSB->value();
+        int startR = ui->rowSB->value();
+        int popN = ui->reinSB->value();
+
+        this->game->setLevel(this->user->getSavedLevel());
+
+        this->game->newLevelByConfig(ruleN, kind, startR, popN);
+
+        this->close();
+    });
 }
 
 JumpDialog::~JumpDialog()
 {
     delete ui;
+}
+
+void JumpDialog::showEvent(QShowEvent *e)
+{
+    QRect parentRect( parentWidget()->mapToGlobal( QPoint( 0, 0 ) ),
+                     parentWidget()->size() );
+    move( QStyle::alignedRect( Qt::LeftToRight, Qt::AlignCenter, size(),
+                             parentRect ).topLeft() );
 }
 
 void JumpDialog::keyPressEvent(QKeyEvent *e)

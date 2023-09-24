@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QKeyEvent>
+#include <QStyle>
 
 #include "messagedialog.h"
 

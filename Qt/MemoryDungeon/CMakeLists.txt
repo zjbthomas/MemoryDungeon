@@ -21,6 +21,8 @@ set(PROJECT_SOURCES
         src/mainwindow.ui
 )
 
+set(app_icon_resource_windows "${CMAKE_CURRENT_SOURCE_DIR}/resources/icon.rc")
+
 # https://stackoverflow.com/questions/37446890/qt-using-cmake-ui-mainwindow-h-no-such-file-or-directory
 set(CMAKE_AUTOUIC ON)
 
@@ -42,7 +44,7 @@ else()
 #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
     else()
         add_executable(MemoryDungeon
-            ${PROJECT_SOURCES}
+            ${PROJECT_SOURCES} ${app_icon_resource_windows}
             resources/images/images.qrc
             src/gamerules/gamerule.h src/gamerules/gamerule.cpp
             src/gamerules/row.h src/gamerules/row.cpp
@@ -55,6 +57,7 @@ else()
             src/widgets/jumpdialog.h src/widgets/jumpdialog.cpp src/widgets/jumpdialog.ui
             src/widgets/collectiondialog.h src/widgets/collectiondialog.cpp src/widgets/collectiondialog.ui
             src/widgets/herodialog.h src/widgets/herodialog.cpp src/widgets/herodialog.ui
+            src/widgets/hoverpushbutton.h src/widgets/hoverpushbutton.cpp
 
 
 

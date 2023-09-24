@@ -14,8 +14,12 @@ public:
 
     int getPos();
 
+    void setIsClickable(bool);
+
 private:
     int pos = -1;
+
+    bool isClickable = true;
 
 signals:
     void released();

@@ -1,12 +1,23 @@
 #ifndef MESSAGEDIALOG_H
 #define MESSAGEDIALOG_H
 
+#include <QDebug>
+
 #include <QDialog>
 #include <QKeyEvent>
+#include <QStyle>
+
+#include <QTimer>
+
+#include <QMovie>
+
+#include <QTransform>
 
 #include <string>
 
 #include "../users/user.h"
+
+#include "clickablelabel.h"
 
 namespace Ui {
 class MessageDialog;
@@ -21,12 +32,24 @@ public:
     ~MessageDialog();
 
 private:
+    void repaintLbl();
+
     Ui::MessageDialog *ui;
 
     User* user;
-    bool useImg;
+    bool useAnimated;
+
+    bool isNewKind;
+    string gachaPath;
+
+    ClickableLabel* animatedLbl;
+    int x = 0;
+    int cycle = 1;
+
+    QTimer* timer;
 
 protected:
+    void showEvent(QShowEvent*);
     void keyPressEvent(QKeyEvent*);
 };
 

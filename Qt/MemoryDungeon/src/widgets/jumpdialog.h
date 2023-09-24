@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QKeyEvent>
+#include <QStyle>
 
 #include "../users/user.h"
 #include "../gamerules/gamerule.h"
@@ -26,6 +27,7 @@ private:
     GameRule* game;
 
 protected:
+    void showEvent(QShowEvent*);
     void keyPressEvent(QKeyEvent*);
 };
 

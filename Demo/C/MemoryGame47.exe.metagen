@@ -1,0 +1,61 @@
+  MemoryGame47.FinderForm.resources - Embedded, ContainedInManifestFile, 
+  MemoryGame47.Form1.resources - Embedded, ContainedInManifestFile, 
+  MemoryGame47.Form2.resources - Embedded, ContainedInManifestFile, 
+  MemoryGame47.HeroForm.resources - Embedded, ContainedInManifestFile, 
+  MemoryGame47.MessageForm.resources - Embedded, ContainedInManifestFile, 
+  MemoryGame47.SetForm.resources - Embedded, ContainedInManifestFile, 
+  MemoryGame47.ShopForm.resources - Embedded, ContainedInManifestFile, 
+ImageRuntimeVersion: v4.0.30319
+Assembly MemoryGame47, Version=1.0.*, Culture=固定语言(固定国家/地区): 
+	hash=SHA1, flags=PublicKey
+Assembly mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a: 
+	hash=None, flags=None
+Assembly System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly Microsoft.VisualC, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a: 
+	hash=None, flags=None
+Class MemoryGame47.MessageForm: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(System.String, System.String, Boolean, userlogin*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+Class MemoryGame47.FinderForm: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(userlogin*, Int32, Int32, Int32): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Methods:
+    NtoP(Int32): PrivateScope, Public, HideBySig
+    NtoL(Int32): PrivateScope, Public, HideBySig
+    DrawCards(): PrivateScope, Public, HideBySig
+Class MemoryGame47.Form2: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(userlogin*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+Class MemoryGame47.HeroForm: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(userlogin*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Methods:
+    PtoN(Object): PrivateScope, Public, HideBySig
+Class MemoryGame47.SetForm: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(gamerules*, userlogin*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+Class MemoryGame47.ShopForm: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(userlogin*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+Class MemoryGame47.Form1: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Methods:
+    NtoP(Int32): PrivateScope, Public, HideBySig
+    PtoN(Object): PrivateScope, Public, HideBySig
+    Response(Int32): PrivateScope, Public, HideBySig
+    RefreshItem(Boolean(HasFieldMarshal)): PrivateScope, Public, HideBySig
+    Print(): PrivateScope, Public, HideBySig
+    GetState(Int32): PrivateScope, Public, HideBySig
+    Start(Boolean(HasFieldMarshal)): PrivateScope, Public, HideBySig

@@ -103,6 +103,15 @@ void CollectionDialog::updateShowcase() {
     }
 }
 
+void CollectionDialog::showEvent(QShowEvent *e)
+{
+    QRect parentRect( parentWidget()->mapToGlobal( QPoint( 0, 0 ) ),
+                     parentWidget()->size() );
+    move( QStyle::alignedRect( Qt::LeftToRight, Qt::AlignCenter, size(),
+                             parentRect ).topLeft() );
+}
+
+
 void CollectionDialog::keyPressEvent(QKeyEvent *e)
 {
     if (e -> key() == Qt::Key_Escape ||

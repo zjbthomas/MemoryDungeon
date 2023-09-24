@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>HeroDialog</class>
  <widget class="QDialog" name="HeroDialog">
@@ -5,14 +6,47 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>1180</width>
+    <height>728</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
+  <widget class="QLabel" name="backgroundLbl">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1180</width>
+     <height>728</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="../../resources/images/images.qrc">:/images/heroes/bg.jpg</pixmap>
+   </property>
+  </widget>
+  <widget class="QWidget" name="horizontalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>-1</y>
+     <width>1181</width>
+     <height>730</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="heroHL">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+   </layout>
+  </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../resources/images/images.qrc"/>
+ </resources>
  <connections/>
 </ui>

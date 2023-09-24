@@ -226,10 +226,11 @@ void User::setAnOwnedSp(int sp, bool p)
 // Use to generate what user purchased and update its information.
 // Input: a pointer used to communicate with GUI.
 // Output: whether the user gets a new kind or an old one.
-bool User::gachaK(int fee, int* retK)
+bool User::gachaK(int* retK)
 {
     // First substract the credit.
-    this->gold -= fee;
+    // retK also act like a fee
+    this->gold -= *retK;
 
     // Then generate a random card.
     *retK = rand() % (this->maxK) + 1;

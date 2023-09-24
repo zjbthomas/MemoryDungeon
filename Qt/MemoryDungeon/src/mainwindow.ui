@@ -329,7 +329,7 @@
      <string>0</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="savedLbl">
@@ -358,7 +358,7 @@
      <string>0</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="goldLbl">
@@ -544,7 +544,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
    <widget class="QPushButton" name="jumpBtn">
     <property name="geometry">
      <rect>
-      <x>771</x>
+      <x>772</x>
       <y>272</y>
       <width>48</width>
       <height>56</height>
@@ -596,7 +596,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
    <widget class="QPushButton" name="aiBtn">
     <property name="geometry">
      <rect>
-      <x>762</x>
+      <x>761</x>
       <y>409</y>
       <width>62</width>
       <height>54</height>

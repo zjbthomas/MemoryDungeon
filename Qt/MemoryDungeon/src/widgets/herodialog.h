@@ -3,8 +3,12 @@
 
 #include <QDialog>
 #include <QKeyEvent>
+#include <QPushButton>
+#include <QStyle>
 
 #include "../users/user.h"
+
+#include "hoverpushbutton.h"
 
 namespace Ui {
 class HeroDialog;
@@ -21,9 +25,8 @@ public:
 private:
     Ui::HeroDialog *ui;
 
-    User* user;
-
 protected:
+    void showEvent(QShowEvent*);
     void keyPressEvent(QKeyEvent*);
 };
 
