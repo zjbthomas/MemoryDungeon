@@ -5,8 +5,6 @@ MessageDialog::MessageDialog(QWidget *parent, string msg, string title, bool use
     QDialog(parent),
     ui(new Ui::MessageDialog)
 {
-    // TODO: if useImg is true
-
     ui->setupUi(this);
 
     setWindowFlags( Qt::FramelessWindowHint | Qt::Dialog);
@@ -53,6 +51,10 @@ MessageDialog::MessageDialog(QWidget *parent, string msg, string title, bool use
     connect(this->timer, &QTimer::timeout, this, [=]() {
         this->repaintLbl();
     });
+
+    connect(ui->okBtn, &QPushButton::released, this, [=]() {
+        this->close();
+    });
 }
 
 MessageDialog::~MessageDialog()
@@ -88,12 +90,12 @@ void MessageDialog::repaintLbl() {
         }
     } else {
         if (this->cycle == 7) {
+            this->timer->stop();
+
             QMovie* movie = new QMovie(QString::fromStdString(gachaPath));
             this->animatedLbl->setMovie(movie);
             movie->setScaledSize(QSize(w, h));
             movie->start();
-
-            this->timer->stop();
 
             if (this->isNewKind) {
                 ui->msgTB->setText("You find part of your memory!");

@@ -143,22 +143,5 @@ li.checked::marker { content: &quot;\2612&quot;; }
  <resources>
   <include location="../../resources/images/images.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>okBtn</sender>
-   <signal>released()</signal>
-   <receiver>MessageDialog</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>268</x>
-     <y>353</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>269</x>
-     <y>196</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

@@ -343,6 +343,8 @@ void MainWindow::makeConnections() {
         string msg = string("Ready to fight your master!\n") + \
                      "The forget percentage of your master is "+ to_string(100 - this->user->getAIForgetRate())+ "%!";
 
+        ui->infoTB->setText(QString::fromStdString(msg));
+
         MessageDialog* messageDialog = new MessageDialog(this, msg, "Get set!", false, this->user);
         messageDialog->setModal(true);
         messageDialog->exec();
@@ -407,6 +409,8 @@ void MainWindow::makeConnections() {
 
     // settle timer
     connect(this->settleTimer, &QTimer::timeout, this, [=]() {
+        this->settleTimer->stop();
+
         // get score, and re-print all.
         bool winGame;
         int status;
@@ -544,6 +548,8 @@ void MainWindow::makeConnections() {
 
     // AI settle timer
     connect(this->aiTimer, &QTimer::timeout, this, [=]() {
+        this->aiTimer->stop();
+
         bool winGame = false;
         int status;
         if (!this->game->getIsAITurn())
@@ -614,6 +620,17 @@ void MainWindow::makeConnections() {
         }
         if (winGame)
         {
+            // Set score and time to zero, re-print all.
+            ui->levelPB->setVisible(false);
+
+            // Clear the condition.
+            ui->statusLbl->setVisible(false);
+            ui->gainLbl->setVisible(false);
+
+            this->updateSidebar(false);
+
+            this->updateAllCards();
+
             string msg = "";
             if (this->game->getScore() == this->game->getAIScore())
             {
@@ -625,9 +642,7 @@ void MainWindow::makeConnections() {
                 messageDialog->setModal(true);
                 messageDialog->exec();
                 delete messageDialog;
-            }
-
-            if (this->game->getScore() > this->game->getAIScore())
+            } else if (this->game->getScore() > this->game->getAIScore())
             {
                 // First give player extra credits.
                 int gainGold = (this->game->getScore() - this->game->getAIScore()) / 4 + 1;
@@ -654,9 +669,7 @@ void MainWindow::makeConnections() {
                 messageDialog->setModal(true);
                 messageDialog->exec();
                 delete messageDialog;
-            }
-
-            if (this->game->getScore() < this->game->getAIScore())
+            } else if (this->game->getScore() < this->game->getAIScore())
             {
                 // Adjust the AI remember percentage.
                 int adjustment = this->game->getScore() - this->game->getAIScore(); // A negative number.
@@ -676,19 +689,7 @@ void MainWindow::makeConnections() {
                 messageDialog->setModal(true);
                 messageDialog->exec();
                 delete messageDialog;
-
             }
-
-            // Set score and time to zero, re-print all.
-            this->updateLevelPB();
-
-            // Clear the condition.
-            ui->statusLbl->setVisible(false);
-            ui->gainLbl->setVisible(false);
-
-            this->updateSidebar(false);
-
-            this->updateAllCards();
 
             // Set the buttons.
             ui->newGameBtn->setVisible(true);
