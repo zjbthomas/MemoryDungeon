@@ -7,7 +7,7 @@ UserLoginDialog::UserLoginDialog(QWidget *parent, User* user) :
 {
     ui->setupUi(this);
 
-    setWindowFlags( Qt::FramelessWindowHint | Qt::Dialog);
+    setWindowFlags( Qt::CustomizeWindowHint | Qt::Dialog);
 
     this->setFixedSize(520, 712);
 

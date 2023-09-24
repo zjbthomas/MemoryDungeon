@@ -49,7 +49,7 @@ void MainWindow::initUI() {
 void MainWindow::initWindow() {
     // Remove title bar
     // source: https://stackoverflow.com/questions/3948441/how-to-remove-the-window-border-containing-minimize-maximize-and-close-buttons
-    setWindowFlags( Qt::FramelessWindowHint );
+    setWindowFlags( Qt::CustomizeWindowHint );
 
     // Fix window size
     //this->setFixedSize(1180, 728);
@@ -806,7 +806,14 @@ void MainWindow::performClick(int n) {
                 this->updateOneCard(n);
                 break;
             case 1:
-                this->settleTimer->start(300);
+                switch (this->game->getEraseN()) {
+                case 2:
+                    this->settleTimer->start(400);
+                    break;
+                case 3:
+                    this->settleTimer->start(300);
+                    break;
+                }
 
                 this->updateOneCard(n);
                 break;
@@ -823,7 +830,7 @@ void MainWindow::performClick(int n) {
                     this->updateSidebar(true);
                 }
 
-                this->settleTimer->start(800);
+                this->settleTimer->start(1200);
 
                 // update all cards as REINFORCE shows all cards
                 this->updateAllCards();
@@ -841,7 +848,7 @@ void MainWindow::performClick(int n) {
                     this->updateSidebar(true);
                 }
 
-                this->settleTimer->start(1200);
+                this->settleTimer->start(2000);
 
                 // update all cards as CHAOS shows all cards
                 this->updateAllCards();
@@ -861,12 +868,12 @@ void MainWindow::performClick(int n) {
                 // update item bar, as credit changed
                 this->updateSidebar(true);
 
-                this->settleTimer->start(400);
+                this->settleTimer->start(600);
 
                 this->updateOneCard(n);
                 break;
             case Row::MAP:
-                this->settleTimer->start(500);
+                this->settleTimer->start(1000);
 
                 this->updateAllCards();
 
@@ -874,11 +881,10 @@ void MainWindow::performClick(int n) {
             case Row::HEAL:
                 this->updateAmPB();
 
-                // TODO: why different times?
                 if (this->game->getHero() != GameRule::MASTER) {
-                    this->settleTimer->start(400);
+                    this->settleTimer->start(600);
                 } else {
-                    this->settleTimer->start(10);
+                    this->settleTimer->start(10); // as HEAL is visible to MASTER, the display time is shorter
                 }
 
                 this->updateOneCard(n);
@@ -899,7 +905,7 @@ void MainWindow::performClick(int n) {
 
                 this->foundTreasure = true;
 
-                this->settleTimer->start(400);
+                this->settleTimer->start(600);
 
                 this->updateOneCard(n);
 

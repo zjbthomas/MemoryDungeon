@@ -482,7 +482,9 @@ int GameRule::settle(bool* winGame,int* status)
                 this->rowArr[this->currentR - 1].setCardState(c, Row::COVER);
             }
 
-            (this->score)--;
+            if (this->score > 0) {
+                (this->score)--;
+            }
 
             *status=BREAK;
 
@@ -521,6 +523,9 @@ int GameRule::settle(bool* winGame,int* status)
                     }
                 }
             }
+
+            (this->score)++;
+
             break;
         case Row::HEAL:
             break;
@@ -530,7 +535,7 @@ int GameRule::settle(bool* winGame,int* status)
 
         this->rowArr[sr1].setCardState(sc1,Row::NE);
 
-        (this->score)++;
+        //(this->score)++;
         (this->cardRemain)--;
     }
     else
