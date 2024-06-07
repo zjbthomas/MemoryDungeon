@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://buxygbltbcmi"]
+
+[ext_resource type="Texture2D" uid="uid://x6jteamcfk4a" path="res://images/screens/form_main.jpg" id="1_cvu8c"]
+[ext_resource type="Texture2D" uid="uid://bqvo588ul5rel" path="res://images/screens/button_ng.png" id="2_wy42v"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_y2d5s"]
+
+[node name="GUI" type="CanvasLayer"]
+
+[node name="TextureRect" type="TextureRect" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("1_cvu8c")
+stretch_mode = 5
+
+[node name="NewGameButton" type="Button" parent="."]
+offset_left = 37.0
+offset_top = 612.0
+offset_right = 136.0
+offset_bottom = 710.0
+theme_override_styles/focus = SubResource("StyleBoxEmpty_y2d5s")
+icon = ExtResource("2_wy42v")
