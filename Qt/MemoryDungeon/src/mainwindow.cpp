@@ -107,6 +107,7 @@ void MainWindow::initTexts() {
     }
 
     ui->goldLbl->setText(QString::number(this->user->getGold()));
+    ui->goldLbl->setVisible(true);
 
     ui->gainLbl->setVisible(false);
     ui->evilLbl->setVisible(false);
@@ -416,7 +417,7 @@ void MainWindow::makeConnections() {
         int status;
         this->game->settle(&winGame, &status);
 
-        this->updateHpPB();
+        this->update();
 
         // update status
         switch (status)
@@ -464,6 +465,27 @@ void MainWindow::makeConnections() {
         {
             this->amTimer->stop();
 
+            // update UI first, as other operations later are blocking operations.
+            // hide progress bars
+            ui->levelPB->setVisible(false);
+
+            ui->amPB->setVisible(false);
+            ui->hpPB->setVisible(false);
+
+            this->updateSidebar(false);
+
+            // hide status
+            ui->statusLbl->setVisible(false);
+            ui->goldLbl->setVisible(false);
+
+            this->updateAllCards();
+
+            // Set the buttons.
+            ui->pauseBtn->setVisible(false);
+            ui->resumeBtn->setVisible(false);
+
+            this->enabledHeroBtn = true;
+
             // Rewards to the game.
             if (foundTreasure)
             {
@@ -505,26 +527,6 @@ void MainWindow::makeConnections() {
             ui->goldLbl->setText(QString::number(this->user->getGold()));
 
             this->updateItemPB();
-
-            // hide progress bars
-            ui->levelPB->setVisible(false);
-
-            ui->amPB->setVisible(false);
-            ui->hpPB->setVisible(false);
-
-            this->updateSidebar(false);
-
-            // hide status
-            ui->statusLbl->setVisible(false);
-            ui->goldLbl->setVisible(false);
-
-            this->updateAllCards();
-
-            // Set the buttons.
-            ui->pauseBtn->setVisible(false);
-            ui->resumeBtn->setVisible(false);
-
-            this->enabledHeroBtn = true;
 
             // update saved level and write to user file
             this->user->setSavedLevel(this->game->getLevel());
@@ -620,6 +622,9 @@ void MainWindow::makeConnections() {
         }
         if (winGame)
         {
+            // stop AI timer in case the previous if statement activate it.
+            this->aiTimer->stop();
+
             // Set score and time to zero, re-print all.
             ui->levelPB->setVisible(false);
 
@@ -774,13 +779,14 @@ void MainWindow::updateHpPB() {
     if (this->game->updateCurrentR() + this->game->getPopN() > this->MAXR) {
         ui->heroBtn->setIcon(QIcon(QString::fromStdString(":images/heroes/" + to_string(this->game->getHero()) + "_d.png")));
     } else {
-        ui->hpPB->setMinimum(0);
-        ui->hpPB->setMaximum(this->MAXR);
-        ui->hpPB->setValue(this->game->updateCurrentR() - 1);
-
         ui->heroBtn->setIcon(QIcon(QString::fromStdString(":images/heroes/" + to_string(this->game->getHero()) + ".png")));
     }
+
+    ui->hpPB->setMinimum(0);
+    ui->hpPB->setMaximum(this->MAXR);
+    ui->hpPB->setValue(this->MAXR - (this->game->updateCurrentR() - 1));
 }
+
 ClickableLabel* MainWindow::searchByN(int n) {
     int r = n / this->MAXC;
     int c = n % this->MAXC;
@@ -911,6 +917,9 @@ void MainWindow::performClick(int n) {
 
                 break;
             }
+
+            // update UI
+            this->updateHpPB();
         }
     } else {
         // AI mode

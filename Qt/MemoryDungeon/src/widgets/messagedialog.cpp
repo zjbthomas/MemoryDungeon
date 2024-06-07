@@ -103,6 +103,8 @@ void MessageDialog::repaintLbl() {
                 ui->msgTB->setText("Sorry, you are not lucky enough this time.");
             }
 
+            this->animatedLbl->setIsClickable(false);
+
             ui->okBtn->setEnabled(true);
 
         } else {
