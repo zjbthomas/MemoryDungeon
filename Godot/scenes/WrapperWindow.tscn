@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://ci28srxvsuiju"]
+
+[ext_resource type="Script" path="res://scripts/scenes/WrapperWindow.gd" id="1_llply"]
+[ext_resource type="PackedScene" uid="uid://b4udisycublkt" path="res://scenes/MessageWindowGUI.tscn" id="2_aeuly"]
+
+[node name="WrapperWindow" type="Window"]
+initial_position = 2
+wrap_controls = true
+exclusive = true
+unresizable = true
+borderless = true
+popup_window = true
+script = ExtResource("1_llply")
+gui = {
+"message": ExtResource("2_aeuly")
+}

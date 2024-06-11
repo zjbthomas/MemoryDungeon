@@ -1,4 +1,4 @@
-extends CanvasLayer
+extends TextureRect
 
 signal ok_button_clicked
 
@@ -11,6 +11,10 @@ func _ready():
 func _process(delta):
 	pass
 
+func setup_ui(title, message, is_image_clickable):
+	$TitleLabel.text = "[center][b]" + title
+	$MessageLabel.text = "[b]" + message
+	# TODO: is_image_clickable
 
 func _on_ok_button_pressed():
 	ok_button_clicked.emit()

@@ -3,8 +3,8 @@
 [ext_resource type="Texture2D" uid="uid://cdr8q7dl0df80" path="res://images/screens/form_login.jpg" id="1_fhjaf"]
 [ext_resource type="Script" path="res://scripts/scenes/Login.gd" id="1_j4tys"]
 [ext_resource type="Texture2D" uid="uid://bwkj88vqd58iu" path="res://images/screens/button_ok.png" id="2_appd1"]
-[ext_resource type="PackedScene" uid="uid://byfcnid0wfesr" path="res://scenes/MessageWindow.tscn" id="2_q8ywt"]
 [ext_resource type="PackedScene" uid="uid://dm643kdvu8ct7" path="res://scenes/Main.tscn" id="3_g5p1k"]
+[ext_resource type="PackedScene" uid="uid://ci28srxvsuiju" path="res://scenes/WrapperWindow.tscn" id="6_jck4a"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_eujh7"]
 
@@ -16,7 +16,6 @@
 
 [node name="Login" type="CanvasLayer"]
 script = ExtResource("1_j4tys")
-message_window_scene = ExtResource("2_q8ywt")
 main_scene = ExtResource("3_g5p1k")
 
 [node name="Background" type="TextureRect" parent="."]
@@ -47,5 +46,7 @@ offset_top = 540.0
 offset_right = 752.0
 offset_bottom = 571.0
 secret = true
+
+[node name="WrapperWindow" parent="." instance=ExtResource("6_jck4a")]
 
 [connection signal="pressed" from="LoginButton" to="." method="_on_login_button_pressed"]

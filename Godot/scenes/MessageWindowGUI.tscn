@@ -15,15 +15,11 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6euyw"]
 
-[node name="MessageWindowGUI" type="CanvasLayer"]
+[node name="MessageWindowGUI" type="TextureRect"]
+texture = ExtResource("1_phdo0")
 script = ExtResource("1_lb5gy")
 
-[node name="Background" type="TextureRect" parent="."]
-offset_right = 40.0
-offset_bottom = 40.0
-texture = ExtResource("1_phdo0")
-
-[node name="TitleLabel" type="RichTextLabel" parent="Background"]
+[node name="TitleLabel" type="RichTextLabel" parent="."]
 layout_mode = 0
 offset_left = 57.0
 offset_top = 31.0
@@ -33,7 +29,7 @@ theme_override_font_sizes/bold_font_size = 32
 bbcode_enabled = true
 text = "[center][b]Title"
 
-[node name="MessageLabel" type="RichTextLabel" parent="Background"]
+[node name="MessageLabel" type="RichTextLabel" parent="."]
 layout_mode = 0
 offset_left = 48.0
 offset_top = 133.0
@@ -50,18 +46,18 @@ Line 5
 Line 6
 Line 7"
 
-[node name="ImageContainer" type="AspectRatioContainer" parent="Background"]
+[node name="ImageContainer" type="AspectRatioContainer" parent="."]
 layout_mode = 0
 offset_left = 437.0
 offset_top = 9.0
 offset_right = 477.0
 offset_bottom = 49.0
 
-[node name="DefaultImage" type="Sprite2D" parent="Background/ImageContainer"]
+[node name="DefaultImage" type="Sprite2D" parent="ImageContainer"]
 position = Vector2(47, 46)
 texture = ExtResource("2_8wq4r")
 
-[node name="OKButton" type="Button" parent="Background"]
+[node name="OKButton" type="Button" parent="."]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -80,4 +76,4 @@ theme_override_styles/disabled = SubResource("StyleBoxEmpty_l5n85")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_6euyw")
 icon = ExtResource("3_m21kl")
 
-[connection signal="pressed" from="Background/OKButton" to="." method="_on_ok_button_pressed"]
+[connection signal="pressed" from="OKButton" to="." method="_on_ok_button_pressed"]
