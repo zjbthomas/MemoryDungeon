@@ -1,0 +1,157 @@
+[gd_scene load_steps=2 format=3 uid="uid://c3aycj0nfyyia"]
+
+[ext_resource type="PackedScene" uid="uid://dm31mepuwa7ev" path="res://scenes/CardInPlay.tscn" id="1_k3fn8"]
+
+[node name="Board" type="GridContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/h_separation = 97
+theme_override_constants/v_separation = 95
+columns = 7
+
+[node name="Space50" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="CardInPlay" parent="Space50" instance=ExtResource("1_k3fn8")]
+layout_mode = 0
+
+[node name="Space51" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space52" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space53" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space54" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="CardInPlay" parent="Space54" instance=ExtResource("1_k3fn8")]
+layout_mode = 0
+
+[node name="Space55" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space56" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="CardInPlay" parent="Space56" instance=ExtResource("1_k3fn8")]
+layout_mode = 0
+
+[node name="Space40" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space41" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space42" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space43" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space44" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space45" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space46" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="CardInPlay" parent="Space46" instance=ExtResource("1_k3fn8")]
+layout_mode = 0
+
+[node name="Space30" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space31" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space32" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space33" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space34" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space35" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space36" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space20" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space21" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space22" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space23" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space24" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space25" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space26" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space10" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space11" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space12" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space13" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space14" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space15" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space16" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space00" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="CardInPlay" parent="Space00" instance=ExtResource("1_k3fn8")]
+layout_mode = 0
+
+[node name="Space01" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space02" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space03" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space04" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space05" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="Space06" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="CardInPlay" parent="Space06" instance=ExtResource("1_k3fn8")]
+layout_mode = 0

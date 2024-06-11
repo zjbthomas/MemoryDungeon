@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://dm643kdvu8ct7"]
+
+[ext_resource type="PackedScene" uid="uid://buxygbltbcmi" path="res://scenes/GUI.tscn" id="1_uuivo"]
+[ext_resource type="Script" path="res://scripts/scenes/Main.gd" id="1_wsuau"]
+[ext_resource type="PackedScene" uid="uid://c3aycj0nfyyia" path="res://scenes/Board.tscn" id="3_5oukd"]
+
+[node name="Main" type="Node"]
+script = ExtResource("1_wsuau")
+
+[node name="GUI" parent="." instance=ExtResource("1_uuivo")]
+
+[node name="Board" parent="GUI" instance=ExtResource("3_5oukd")]
+offset_left = 25.0
+offset_top = 56.0
+offset_right = -492.0
+offset_bottom = -127.0

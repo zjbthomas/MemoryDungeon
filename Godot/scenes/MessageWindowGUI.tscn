@@ -1,0 +1,80 @@
+[gd_scene load_steps=10 format=3 uid="uid://b4udisycublkt"]
+
+[ext_resource type="Script" path="res://scripts/scenes/MessageWindowGUI.gd" id="1_lb5gy"]
+[ext_resource type="Texture2D" uid="uid://3rf275w8q5tq" path="res://images/screens/form_m.jpg" id="1_phdo0"]
+[ext_resource type="Texture2D" uid="uid://cu7shfco5s5l1" path="res://images/screens/icon_m.png" id="2_8wq4r"]
+[ext_resource type="Texture2D" uid="uid://bwkj88vqd58iu" path="res://images/screens/button_ok.png" id="3_m21kl"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_uyumv"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xgy1o"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_43dr4"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l5n85"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6euyw"]
+
+[node name="MessageWindowGUI" type="CanvasLayer"]
+script = ExtResource("1_lb5gy")
+
+[node name="Background" type="TextureRect" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("1_phdo0")
+
+[node name="TitleLabel" type="RichTextLabel" parent="Background"]
+offset_left = 57.0
+offset_top = 31.0
+offset_right = 386.0
+offset_bottom = 80.0
+theme_override_font_sizes/bold_font_size = 32
+bbcode_enabled = true
+text = "[center][b]Title"
+
+[node name="MessageLabel" type="RichTextLabel" parent="Background"]
+offset_left = 48.0
+offset_top = 133.0
+offset_right = 488.0
+offset_bottom = 295.0
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/bold_font_size = 16
+bbcode_enabled = true
+text = "[b]Line 1
+Line 2
+Line 3
+Line 4
+Line 5
+Line 6
+Line 7"
+
+[node name="ImageContainer" type="AspectRatioContainer" parent="Background"]
+offset_left = 437.0
+offset_top = 9.0
+offset_right = 477.0
+offset_bottom = 49.0
+
+[node name="DefaultImage" type="Sprite2D" parent="Background/ImageContainer"]
+position = Vector2(47, 46)
+texture = ExtResource("2_8wq4r")
+
+[node name="OKButton" type="Button" parent="Background"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -71.5
+offset_top = -86.0
+offset_right = 71.5
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_uyumv")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_xgy1o")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_43dr4")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_l5n85")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_6euyw")
+icon = ExtResource("3_m21kl")
+
+[connection signal="pressed" from="Background/OKButton" to="." method="_on_ok_button_pressed"]

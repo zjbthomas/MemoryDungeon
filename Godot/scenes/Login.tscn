@@ -1,0 +1,47 @@
+[gd_scene load_steps=8 format=3 uid="uid://ce1xhvirm1e14"]
+
+[ext_resource type="Texture2D" uid="uid://cdr8q7dl0df80" path="res://images/screens/form_login.jpg" id="1_fhjaf"]
+[ext_resource type="Script" path="res://scripts/scenes/Login.gd" id="1_j4tys"]
+[ext_resource type="Texture2D" uid="uid://bwkj88vqd58iu" path="res://images/screens/button_ok.png" id="2_appd1"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_eujh7"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2aktq"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cmm1p"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_iag10"]
+
+[node name="Login" type="CanvasLayer"]
+script = ExtResource("1_j4tys")
+
+[node name="Background" type="TextureRect" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("1_fhjaf")
+
+[node name="LoginButton" type="Button" parent="."]
+offset_left = 520.0
+offset_top = 594.0
+offset_right = 663.0
+offset_bottom = 680.0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_eujh7")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_2aktq")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_cmm1p")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_iag10")
+icon = ExtResource("2_appd1")
+
+[node name="UsernameLineEdit" type="LineEdit" parent="."]
+offset_left = 572.0
+offset_top = 497.0
+offset_right = 752.0
+offset_bottom = 528.0
+
+[node name="PasswordLineEdit" type="LineEdit" parent="."]
+offset_left = 572.0
+offset_top = 540.0
+offset_right = 752.0
+offset_bottom = 571.0
+secret = true
+
+[connection signal="pressed" from="LoginButton" to="." method="_on_login_button_pressed"]
