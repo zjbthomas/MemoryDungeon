@@ -24,6 +24,7 @@ offset_bottom = 40.0
 texture = ExtResource("1_phdo0")
 
 [node name="TitleLabel" type="RichTextLabel" parent="Background"]
+layout_mode = 0
 offset_left = 57.0
 offset_top = 31.0
 offset_right = 386.0
@@ -33,6 +34,7 @@ bbcode_enabled = true
 text = "[center][b]Title"
 
 [node name="MessageLabel" type="RichTextLabel" parent="Background"]
+layout_mode = 0
 offset_left = 48.0
 offset_top = 133.0
 offset_right = 488.0
@@ -49,6 +51,7 @@ Line 6
 Line 7"
 
 [node name="ImageContainer" type="AspectRatioContainer" parent="Background"]
+layout_mode = 0
 offset_left = 437.0
 offset_top = 9.0
 offset_right = 477.0

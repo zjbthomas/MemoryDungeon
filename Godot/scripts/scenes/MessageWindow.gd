@@ -18,4 +18,4 @@ func setup_ui(title, message, is_image_clickable):
 
 func _on_message_window_gui_ok_button_clicked():
 	ok_button_clicked.emit()
-	hide()
+	queue_free()
