@@ -1,22 +1,146 @@
-[gd_scene load_steps=4 format=3 uid="uid://buxygbltbcmi"]
+[gd_scene load_steps=11 format=3 uid="uid://buxygbltbcmi"]
 
 [ext_resource type="Texture2D" uid="uid://x6jteamcfk4a" path="res://images/screens/form_main.jpg" id="1_cvu8c"]
 [ext_resource type="Texture2D" uid="uid://bqvo588ul5rel" path="res://images/screens/button_ng.png" id="2_wy42v"]
+[ext_resource type="Texture2D" uid="uid://dn28kq267l1ty" path="res://images/screens/bonus.png" id="3_prxra"]
+[ext_resource type="Texture2D" uid="uid://bsha73spa37vs" path="res://images/screens/break.png" id="4_vyfyo"]
+[ext_resource type="Texture2D" uid="uid://p2binvxgqis7" path="res://images/screens/critical.png" id="5_xveyb"]
+[ext_resource type="Texture2D" uid="uid://c1rsq60exp63d" path="res://images/screens/score.png" id="6_114bo"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_y2d5s"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fu1qq"]
+bg_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5sqpo"]
+bg_color = Color(0.235294, 0.784314, 0, 1)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_oh4u8"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_prxra")
+}],
+"loop": true,
+"name": &"bonus",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_vyfyo")
+}],
+"loop": true,
+"name": &"break",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_xveyb")
+}],
+"loop": true,
+"name": &"critical",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("6_114bo")
+}],
+"loop": true,
+"name": &"score",
+"speed": 5.0
+}]
+
 [node name="GUI" type="CanvasLayer"]
 
-[node name="TextureRect" type="TextureRect" parent="."]
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="Background" type="TextureRect" parent="."]
+offset_left = 9.0
+offset_top = 10.0
+offset_right = 1189.0
+offset_bottom = 738.0
 texture = ExtResource("1_cvu8c")
 stretch_mode = 5
 
-[node name="NewGameButton" type="Button" parent="."]
+[node name="NewGameButton" type="Button" parent="Background"]
 offset_left = 37.0
 offset_top = 612.0
 offset_right = 136.0
 offset_bottom = 710.0
 theme_override_styles/focus = SubResource("StyleBoxEmpty_y2d5s")
 icon = ExtResource("2_wy42v")
+
+[node name="LevelBar" type="ProgressBar" parent="Background"]
+layout_mode = 0
+offset_left = 55.0
+offset_top = 9.0
+offset_right = 340.0
+offset_bottom = 30.0
+theme_override_styles/background = SubResource("StyleBoxFlat_fu1qq")
+theme_override_styles/fill = SubResource("StyleBoxFlat_5sqpo")
+value = 50.0
+show_percentage = false
+
+[node name="Status" type="AnimatedSprite2D" parent="Background"]
+position = Vector2(383, 20)
+sprite_frames = SubResource("SpriteFrames_oh4u8")
+animation = &"bonus"
+
+[node name="LevelLabel" type="RichTextLabel" parent="Background"]
+layout_mode = 0
+offset_left = 466.0
+offset_top = 16.0
+offset_right = 506.0
+offset_bottom = 41.0
+theme_override_font_sizes/bold_font_size = 16
+bbcode_enabled = true
+text = "[center][b]999"
+
+[node name="UsernameLabel" type="RichTextLabel" parent="Background"]
+offset_left = 704.0
+offset_top = 6.0
+offset_right = 1008.0
+offset_bottom = 42.0
+theme_override_colors/default_color = Color(1, 1, 0, 1)
+theme_override_font_sizes/bold_font_size = 24
+bbcode_enabled = true
+text = "[center][b]username"
+
+[node name="CollectionBar" type="ProgressBar" parent="Background"]
+offset_left = 963.0
+offset_top = 144.0
+offset_right = 1105.0
+offset_bottom = 161.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/background = SubResource("StyleBoxFlat_fu1qq")
+theme_override_styles/fill = SubResource("StyleBoxFlat_5sqpo")
+value = 50.0
+
+[node name="BestLabel" type="RichTextLabel" parent="Background"]
+offset_left = 962.0
+offset_top = 168.0
+offset_right = 1105.0
+offset_bottom = 185.0
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+text = "[center]0"
+
+[node name="SavedLabel" type="RichTextLabel" parent="Background"]
+offset_left = 962.0
+offset_top = 192.0
+offset_right = 1105.0
+offset_bottom = 209.0
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+text = "[center]0"
+
+[node name="GoldLabel" type="RichTextLabel" parent="Background"]
+offset_left = 813.0
+offset_top = 232.0
+offset_right = 955.0
+offset_bottom = 255.0
+theme_override_colors/default_color = Color(1, 1, 0, 1)
+theme_override_font_sizes/normal_font_size = 16
+bbcode_enabled = true
+text = "0"
