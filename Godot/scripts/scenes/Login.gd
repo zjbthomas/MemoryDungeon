@@ -1,21 +1,24 @@
 extends CanvasLayer
 
-var message_window
+@export var message_window_scene: PackedScene
+@export var main_scene: PackedScene
 
-var is_successful_login = false
+var _is_successful_login = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	message_window = preload("res://scenes/MessageWindow.tscn").instantiate()
-	message_window.hide()
-	message_window.connect("ok_button_clicked", _on_ok_button_clicked)
-	add_child(message_window)
+	pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	pass
 
 func _on_login_button_pressed():
+	var message_window = message_window_scene.instantiate()
+	message_window.hide()
+	message_window.connect("ok_button_clicked", _on_ok_button_clicked)
+	add_child(message_window)
+	
 	var username = $UsernameLineEdit.text
 	var password = $PasswordLineEdit.text
 	
@@ -29,7 +32,7 @@ func _on_login_button_pressed():
 	
 	match result:
 		Global.user.LOGIN_STATUS.NEW_LOGIN:
-			is_successful_login = true
+			_is_successful_login = true
 			
 			message_window.setup_ui("A New Comer!", "Welcome " + username + "![p]This is your first time to the dungeon.[p]We have marked down your name on our list.[p]Hope you find your memory back!", false)
 			message_window.show()
@@ -37,11 +40,11 @@ func _on_login_button_pressed():
 			message_window.setup_ui("Error", "Password wrong![p]You are not allowed to get into the dungeon!", false)
 			message_window.show()
 		Global.user.LOGIN_STATUS.SUCCESSFUL_LOGIN:
-			is_successful_login = true
+			_is_successful_login = true
 			
 			message_window.setup_ui("Welcome back!", "Welcome back to the dungeon, " + username + "!", false)
 			message_window.show()
 	
 func _on_ok_button_clicked():
-	if is_successful_login:
-		get_tree().change_scene_to_file("res://scenes/Main.tscn")
+	if _is_successful_login:
+		get_tree().change_scene_to_packed(main_scene)
