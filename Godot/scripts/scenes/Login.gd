@@ -14,15 +14,14 @@ func _process(delta):
 
 func _on_login_button_pressed():
 	$WrapperWindow.load_window("message")
-	$WrapperWindow.hide()
 	$WrapperWindow.get_loaded_window().connect("ok_button_clicked", _on_ok_button_clicked)
 	
-	var username = $UsernameLineEdit.text
-	var password = $PasswordLineEdit.text
+	var username = $Background/UsernameLineEdit.text
+	var password = $Background/PasswordLineEdit.text
 	
 	if username == "" or password == "":
 		$WrapperWindow.get_loaded_window().setup_ui("Error", "Please input valid username and password!", false)
-		$WrapperWindow.show()
+		$WrapperWindow.popup_centered()
 	
 		return
 		
@@ -33,15 +32,15 @@ func _on_login_button_pressed():
 			_is_successful_login = true
 			
 			$WrapperWindow.get_loaded_window().setup_ui("A New Comer!", "Welcome " + username + "![p]This is your first time to the dungeon.[p]We have marked down your name on our list.[p]Hope you find your memory back!", false)
-			$WrapperWindow.show()
+			$WrapperWindow.popup_centered()
 		Global.user.LOGIN_STATUS.WRONG_PASSWORD:
 			$WrapperWindow.get_loaded_window().setup_ui("Error", "Password wrong![p]You are not allowed to get into the dungeon!", false)
-			$WrapperWindow.show()
+			$WrapperWindow.popup_centered()
 		Global.user.LOGIN_STATUS.SUCCESSFUL_LOGIN:
 			_is_successful_login = true
 			
 			$WrapperWindow.get_loaded_window().setup_ui("Welcome back!", "Welcome back to the dungeon, " + username + "!", false)
-			$WrapperWindow.show()
+			$WrapperWindow.popup_centered()
 	
 func _on_ok_button_clicked():
 	$WrapperWindow.completed()
