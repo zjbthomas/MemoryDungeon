@@ -1,10 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://ce1xhvirm1e14"]
+[gd_scene load_steps=10 format=3 uid="uid://ctxh2gs26j3gu"]
 
 [ext_resource type="Texture2D" uid="uid://cdr8q7dl0df80" path="res://images/screens/form_login.jpg" id="1_fhjaf"]
 [ext_resource type="Script" path="res://scripts/scenes/Login.gd" id="1_j4tys"]
 [ext_resource type="Texture2D" uid="uid://bwkj88vqd58iu" path="res://images/screens/button_ok.png" id="2_appd1"]
 [ext_resource type="PackedScene" uid="uid://dm643kdvu8ct7" path="res://scenes/Main.tscn" id="3_g5p1k"]
-[ext_resource type="PackedScene" uid="uid://ci28srxvsuiju" path="res://scenes/WrapperWindow.tscn" id="6_jck4a"]
+[ext_resource type="PackedScene" uid="uid://8vw6uk1ffr4l" path="res://scenes/BlurContainer.tscn" id="5_fne2j"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_eujh7"]
 
@@ -14,16 +14,14 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_iag10"]
 
-[node name="Login" type="CanvasLayer"]
-script = ExtResource("1_j4tys")
-main_scene = ExtResource("3_g5p1k")
-
-[node name="Background" type="TextureRect" parent="."]
+[node name="Login" type="TextureRect"]
 offset_right = 40.0
 offset_bottom = 40.0
 texture = ExtResource("1_fhjaf")
+script = ExtResource("1_j4tys")
+main_scene = ExtResource("3_g5p1k")
 
-[node name="UsernameLineEdit" type="LineEdit" parent="Background"]
+[node name="UsernameLineEdit" type="LineEdit" parent="."]
 layout_mode = 0
 offset_left = 572.0
 offset_top = 497.0
@@ -31,7 +29,7 @@ offset_right = 752.0
 offset_bottom = 528.0
 max_length = 16
 
-[node name="PasswordLineEdit" type="LineEdit" parent="Background"]
+[node name="PasswordLineEdit" type="LineEdit" parent="."]
 layout_mode = 0
 offset_left = 572.0
 offset_top = 540.0
@@ -40,7 +38,7 @@ offset_bottom = 571.0
 max_length = 16
 secret = true
 
-[node name="LoginButton" type="Button" parent="Background"]
+[node name="LoginButton" type="Button" parent="."]
 layout_mode = 0
 offset_left = 520.0
 offset_top = 594.0
@@ -52,6 +50,8 @@ theme_override_styles/pressed = SubResource("StyleBoxEmpty_cmm1p")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_iag10")
 icon = ExtResource("2_appd1")
 
-[node name="WrapperWindow" parent="." instance=ExtResource("6_jck4a")]
+[node name="BlurContainer" parent="." instance=ExtResource("5_fne2j")]
+visible = false
+layout_mode = 1
 
-[connection signal="pressed" from="Background/LoginButton" to="." method="_on_login_button_pressed"]
+[connection signal="pressed" from="LoginButton" to="." method="_on_login_button_pressed"]

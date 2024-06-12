@@ -1,17 +1,17 @@
 [gd_scene load_steps=9 format=3 uid="uid://ybgujwhjj6cc"]
 
-[ext_resource type="Texture2D" uid="uid://bhmfsvnyw781c" path="res://images/heroes/bg0.jpg" id="1_7po0a"]
-[ext_resource type="Texture2D" uid="uid://ch2sfxpnhaq1w" path="res://images/heroes/bg.jpg" id="1_kr6xg"]
-[ext_resource type="Script" path="res://scripts/scenes/HeroWindowGUI.gd" id="1_nc7sr"]
-[ext_resource type="Texture2D" uid="uid://csbkud42eenxo" path="res://images/heroes/bg1.jpg" id="2_l7hmh"]
-[ext_resource type="Texture2D" uid="uid://deaa57xstmvag" path="res://images/heroes/bg2.jpg" id="3_415in"]
-[ext_resource type="Texture2D" uid="uid://s4vmd5px3if3" path="res://images/heroes/bg3.jpg" id="4_5hr1l"]
+[ext_resource type="Texture2D" uid="uid://ch2sfxpnhaq1w" path="res://images/heroes/bg.jpg" id="1_2cx81"]
+[ext_resource type="Script" path="res://scripts/scenes/HeroWindowGUI.gd" id="2_k6met"]
+[ext_resource type="Texture2D" uid="uid://bhmfsvnyw781c" path="res://images/heroes/bg0.jpg" id="3_7536p"]
+[ext_resource type="Texture2D" uid="uid://csbkud42eenxo" path="res://images/heroes/bg1.jpg" id="4_6dkkw"]
+[ext_resource type="Texture2D" uid="uid://deaa57xstmvag" path="res://images/heroes/bg2.jpg" id="5_qri0e"]
+[ext_resource type="Texture2D" uid="uid://s4vmd5px3if3" path="res://images/heroes/bg3.jpg" id="6_krkim"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_akg4w"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("1_7po0a")
+"texture": ExtResource("3_7536p")
 }],
 "loop": true,
 "name": &"0",
@@ -19,7 +19,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("2_l7hmh")
+"texture": ExtResource("4_6dkkw")
 }],
 "loop": true,
 "name": &"1",
@@ -27,7 +27,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("3_415in")
+"texture": ExtResource("5_qri0e")
 }],
 "loop": true,
 "name": &"2",
@@ -35,7 +35,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("4_5hr1l")
+"texture": ExtResource("6_krkim")
 }],
 "loop": true,
 "name": &"3",
@@ -43,7 +43,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("1_kr6xg")
+"texture": ExtResource("1_2cx81")
 }],
 "loop": true,
 "name": &"default",
@@ -55,8 +55,8 @@ animations = [{
 [node name="HeroWindowGUI" type="TextureRect"]
 offset_right = 1180.0
 offset_bottom = 728.0
-texture = ExtResource("1_kr6xg")
-script = ExtResource("1_nc7sr")
+texture = ExtResource("1_2cx81")
+script = ExtResource("2_k6met")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_akg4w")

@@ -1,28 +1,28 @@
 [gd_scene load_steps=36 format=3 uid="uid://buxygbltbcmi"]
 
-[ext_resource type="Script" path="res://scripts/scenes/GUI.gd" id="1_3q6i4"]
-[ext_resource type="Texture2D" uid="uid://x6jteamcfk4a" path="res://images/screens/form_main.jpg" id="1_cvu8c"]
-[ext_resource type="Texture2D" uid="uid://bqvo588ul5rel" path="res://images/screens/button_ng.png" id="2_wy42v"]
-[ext_resource type="Texture2D" uid="uid://dn28kq267l1ty" path="res://images/screens/bonus.png" id="3_prxra"]
-[ext_resource type="Texture2D" uid="uid://clet0puvwhhkd" path="res://images/screens/button_pause.png" id="3_tmalc"]
-[ext_resource type="Texture2D" uid="uid://bqflf0dpmsx0y" path="res://images/screens/button_resume.png" id="4_b48mj"]
-[ext_resource type="Texture2D" uid="uid://bsha73spa37vs" path="res://images/screens/break.png" id="4_vyfyo"]
-[ext_resource type="Texture2D" uid="uid://bnm8r400fgtjb" path="res://images/screens/button_next.png" id="5_bt4wq"]
-[ext_resource type="Texture2D" uid="uid://p2binvxgqis7" path="res://images/screens/critical.png" id="5_xveyb"]
-[ext_resource type="Texture2D" uid="uid://c1rsq60exp63d" path="res://images/screens/score.png" id="6_114bo"]
-[ext_resource type="Texture2D" uid="uid://b3vudxagiyatf" path="res://images/screens/button_shop.png" id="7_bo2gu"]
-[ext_resource type="Texture2D" uid="uid://tt64i5aoqmhm" path="res://images/screens/credit.png" id="8_qx01f"]
-[ext_resource type="Texture2D" uid="uid://cgqtjg5fskj8d" path="res://images/screens/set.png" id="9_ljeos"]
-[ext_resource type="Texture2D" uid="uid://b4pjfejj7hha" path="res://images/screens/reset.png" id="10_60alq"]
-[ext_resource type="Texture2D" uid="uid://cma6nwav005xd" path="res://images/heroes/0.png" id="10_akitt"]
-[ext_resource type="Texture2D" uid="uid://cs8qxcrw7tntu" path="res://images/screens/AI.png" id="11_27g1r"]
-[ext_resource type="Texture2D" uid="uid://btu8nx3wbftyq" path="res://images/heroes/0_d.png" id="12_uu84w"]
-[ext_resource type="Texture2D" uid="uid://cn2u21th14hco" path="res://images/heroes/1.png" id="13_1ptpc"]
-[ext_resource type="Texture2D" uid="uid://37skvdw5n0ry" path="res://images/heroes/1_d.png" id="14_rg08l"]
-[ext_resource type="Texture2D" uid="uid://05q18l5p2ujc" path="res://images/heroes/3.png" id="15_mf8ai"]
-[ext_resource type="Texture2D" uid="uid://cbq4pr2scjc7v" path="res://images/heroes/3_d.png" id="16_1stk0"]
-[ext_resource type="Texture2D" uid="uid://cgc1vy7krnr2w" path="res://images/screens/unluckfloor.png" id="22_52v1t"]
-[ext_resource type="Texture2D" uid="uid://n0y2qd1qxdcj" path="res://images/screens/button_exit.png" id="23_1j5md"]
+[ext_resource type="Texture2D" uid="uid://x6jteamcfk4a" path="res://images/screens/form_main.jpg" id="1_efv5e"]
+[ext_resource type="Texture2D" uid="uid://bqvo588ul5rel" path="res://images/screens/button_ng.png" id="2_8pq6p"]
+[ext_resource type="Script" path="res://scripts/scenes/MainGUI.gd" id="2_inymm"]
+[ext_resource type="Texture2D" uid="uid://clet0puvwhhkd" path="res://images/screens/button_pause.png" id="3_06dd2"]
+[ext_resource type="Texture2D" uid="uid://bqflf0dpmsx0y" path="res://images/screens/button_resume.png" id="4_uc5e6"]
+[ext_resource type="Texture2D" uid="uid://bnm8r400fgtjb" path="res://images/screens/button_next.png" id="5_0sk15"]
+[ext_resource type="Texture2D" uid="uid://dn28kq267l1ty" path="res://images/screens/bonus.png" id="6_2tosm"]
+[ext_resource type="Texture2D" uid="uid://bsha73spa37vs" path="res://images/screens/break.png" id="7_0ero2"]
+[ext_resource type="Texture2D" uid="uid://p2binvxgqis7" path="res://images/screens/critical.png" id="8_3so1x"]
+[ext_resource type="Texture2D" uid="uid://c1rsq60exp63d" path="res://images/screens/score.png" id="9_tmq3c"]
+[ext_resource type="Texture2D" uid="uid://cma6nwav005xd" path="res://images/heroes/0.png" id="10_bf16y"]
+[ext_resource type="Texture2D" uid="uid://btu8nx3wbftyq" path="res://images/heroes/0_d.png" id="11_onaxc"]
+[ext_resource type="Texture2D" uid="uid://cn2u21th14hco" path="res://images/heroes/1.png" id="12_x1orn"]
+[ext_resource type="Texture2D" uid="uid://37skvdw5n0ry" path="res://images/heroes/1_d.png" id="13_ribmb"]
+[ext_resource type="Texture2D" uid="uid://05q18l5p2ujc" path="res://images/heroes/3.png" id="14_lhult"]
+[ext_resource type="Texture2D" uid="uid://cbq4pr2scjc7v" path="res://images/heroes/3_d.png" id="15_14tfo"]
+[ext_resource type="Texture2D" uid="uid://b3vudxagiyatf" path="res://images/screens/button_shop.png" id="16_0ye2n"]
+[ext_resource type="Texture2D" uid="uid://tt64i5aoqmhm" path="res://images/screens/credit.png" id="17_ie4hj"]
+[ext_resource type="Texture2D" uid="uid://cgqtjg5fskj8d" path="res://images/screens/set.png" id="18_1sq7a"]
+[ext_resource type="Texture2D" uid="uid://b4pjfejj7hha" path="res://images/screens/reset.png" id="19_joqho"]
+[ext_resource type="Texture2D" uid="uid://cs8qxcrw7tntu" path="res://images/screens/AI.png" id="20_d3qto"]
+[ext_resource type="Texture2D" uid="uid://cgc1vy7krnr2w" path="res://images/screens/unluckfloor.png" id="21_xoqri"]
+[ext_resource type="Texture2D" uid="uid://n0y2qd1qxdcj" path="res://images/screens/button_exit.png" id="22_ws0lc"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_y2d5s"]
 
@@ -36,7 +36,7 @@ bg_color = Color(1, 1, 0, 1)
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("3_prxra")
+"texture": ExtResource("6_2tosm")
 }],
 "loop": true,
 "name": &"bonus",
@@ -44,7 +44,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("4_vyfyo")
+"texture": ExtResource("7_0ero2")
 }],
 "loop": true,
 "name": &"break",
@@ -52,7 +52,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("5_xveyb")
+"texture": ExtResource("8_3so1x")
 }],
 "loop": true,
 "name": &"critical",
@@ -60,7 +60,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("6_114bo")
+"texture": ExtResource("9_tmq3c")
 }],
 "loop": true,
 "name": &"score",
@@ -77,7 +77,7 @@ bg_color = Color(1, 0, 0, 1)
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("10_akitt")
+"texture": ExtResource("10_bf16y")
 }],
 "loop": true,
 "name": &"0",
@@ -85,7 +85,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("12_uu84w")
+"texture": ExtResource("11_onaxc")
 }],
 "loop": true,
 "name": &"0_d",
@@ -93,7 +93,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("13_1ptpc")
+"texture": ExtResource("12_x1orn")
 }],
 "loop": true,
 "name": &"1",
@@ -101,7 +101,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("14_rg08l")
+"texture": ExtResource("13_ribmb")
 }],
 "loop": true,
 "name": &"1_d",
@@ -119,7 +119,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("15_mf8ai")
+"texture": ExtResource("14_lhult")
 }],
 "loop": true,
 "name": &"3",
@@ -127,7 +127,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("16_1stk0")
+"texture": ExtResource("15_14tfo")
 }],
 "loop": true,
 "name": &"3_d",
@@ -145,57 +145,55 @@ bg_color = Color(0, 1, 0, 1)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_acmv3"]
 
-[node name="GUI" type="CanvasLayer"]
-script = ExtResource("1_3q6i4")
-
-[node name="Background" type="TextureRect" parent="."]
+[node name="MainGUI" type="TextureRect"]
 offset_right = 1180.0
 offset_bottom = 728.0
-texture = ExtResource("1_cvu8c")
+texture = ExtResource("1_efv5e")
 stretch_mode = 5
+script = ExtResource("2_inymm")
 
-[node name="LeftPanel" type="Node" parent="Background"]
+[node name="LeftPanel" type="Node" parent="."]
 
-[node name="GameControls" type="Node" parent="Background/LeftPanel"]
+[node name="GameControls" type="Node" parent="LeftPanel"]
 
-[node name="NewGameButton" type="Button" parent="Background/LeftPanel/GameControls"]
+[node name="NewGameButton" type="Button" parent="LeftPanel/GameControls"]
 offset_left = 37.0
 offset_top = 612.0
 offset_right = 136.0
 offset_bottom = 710.0
 theme_override_styles/focus = SubResource("StyleBoxEmpty_y2d5s")
-icon = ExtResource("2_wy42v")
+icon = ExtResource("2_8pq6p")
 
-[node name="PauseButton" type="Button" parent="Background/LeftPanel/GameControls"]
+[node name="PauseButton" type="Button" parent="LeftPanel/GameControls"]
 offset_left = 149.0
 offset_top = 612.0
 offset_right = 248.0
 offset_bottom = 710.0
 theme_override_styles/focus = SubResource("StyleBoxEmpty_y2d5s")
-icon = ExtResource("3_tmalc")
+icon = ExtResource("3_06dd2")
 
-[node name="ResumeButton" type="Button" parent="Background/LeftPanel/GameControls"]
+[node name="ResumeButton" type="Button" parent="LeftPanel/GameControls"]
 offset_left = 262.0
 offset_top = 612.0
 offset_right = 361.0
 offset_bottom = 710.0
 theme_override_styles/focus = SubResource("StyleBoxEmpty_y2d5s")
-icon = ExtResource("4_b48mj")
+icon = ExtResource("4_uc5e6")
 
-[node name="NextFloorButton" type="Button" parent="Background/LeftPanel/GameControls"]
+[node name="NextFloorButton" type="Button" parent="LeftPanel/GameControls"]
 offset_left = 293.0
 offset_top = 229.0
 offset_right = 400.0
 offset_bottom = 336.0
 theme_override_styles/focus = SubResource("StyleBoxEmpty_y2d5s")
-icon = ExtResource("5_bt4wq")
+icon = ExtResource("5_0sk15")
 flat = true
 
-[node name="GameStatus" type="Node" parent="Background/LeftPanel"]
+[node name="GameStatus" type="Node" parent="LeftPanel"]
 
-[node name="TopPanel" type="Node" parent="Background/LeftPanel/GameStatus"]
+[node name="TopPanel" type="Node" parent="LeftPanel/GameStatus"]
 
-[node name="LevelBar" type="ProgressBar" parent="Background/LeftPanel/GameStatus/TopPanel"]
+[node name="LevelBar" type="ProgressBar" parent="LeftPanel/GameStatus/TopPanel"]
 offset_left = 55.0
 offset_top = 9.0
 offset_right = 340.0
@@ -205,12 +203,12 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_qk6px")
 value = 50.0
 show_percentage = false
 
-[node name="StatusSprite" type="AnimatedSprite2D" parent="Background/LeftPanel/GameStatus/TopPanel"]
+[node name="StatusSprite" type="AnimatedSprite2D" parent="LeftPanel/GameStatus/TopPanel"]
 position = Vector2(383, 20)
 sprite_frames = SubResource("SpriteFrames_oh4u8")
 animation = &"bonus"
 
-[node name="LevelLabel" type="RichTextLabel" parent="Background/LeftPanel/GameStatus/TopPanel"]
+[node name="LevelLabel" type="RichTextLabel" parent="LeftPanel/GameStatus/TopPanel"]
 offset_left = 466.0
 offset_top = 16.0
 offset_right = 506.0
@@ -219,9 +217,9 @@ theme_override_font_sizes/bold_font_size = 16
 bbcode_enabled = true
 text = "[center][b]999"
 
-[node name="BottomPanel" type="Node" parent="Background/LeftPanel/GameStatus"]
+[node name="BottomPanel" type="Node" parent="LeftPanel/GameStatus"]
 
-[node name="AMBar" type="ProgressBar" parent="Background/LeftPanel/GameStatus/BottomPanel"]
+[node name="AMBar" type="ProgressBar" parent="LeftPanel/GameStatus/BottomPanel"]
 offset_left = 377.0
 offset_top = 626.0
 offset_right = 496.0
@@ -231,7 +229,7 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_phlis")
 value = 50.0
 show_percentage = false
 
-[node name="HPBar" type="ProgressBar" parent="Background/LeftPanel/GameStatus/BottomPanel"]
+[node name="HPBar" type="ProgressBar" parent="LeftPanel/GameStatus/BottomPanel"]
 offset_left = 377.0
 offset_top = 676.0
 offset_right = 496.0
@@ -241,13 +239,13 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_5sqpo")
 value = 50.0
 show_percentage = false
 
-[node name="HeroSprite" type="AnimatedSprite2D" parent="Background/LeftPanel/GameStatus/BottomPanel"]
+[node name="HeroSprite" type="AnimatedSprite2D" parent="LeftPanel/GameStatus/BottomPanel"]
 position = Vector2(611, 666)
 sprite_frames = SubResource("SpriteFrames_ibgoe")
 animation = &"0"
 metadata/_edit_group_ = true
 
-[node name="HeroButton" type="Button" parent="Background/LeftPanel/GameStatus/BottomPanel/HeroSprite"]
+[node name="HeroButton" type="Button" parent="LeftPanel/GameStatus/BottomPanel/HeroSprite"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -262,11 +260,11 @@ theme_override_styles/hover = SubResource("StyleBoxEmpty_dlbxt")
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_pgne8")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_y2d5s")
 
-[node name="RightPanel" type="Node" parent="Background"]
+[node name="RightPanel" type="Node" parent="."]
 
-[node name="UserStatus" type="Node" parent="Background/RightPanel"]
+[node name="UserStatus" type="Node" parent="RightPanel"]
 
-[node name="UsernameLabel" type="RichTextLabel" parent="Background/RightPanel/UserStatus"]
+[node name="UsernameLabel" type="RichTextLabel" parent="RightPanel/UserStatus"]
 offset_left = 704.0
 offset_top = 6.0
 offset_right = 1008.0
@@ -276,7 +274,7 @@ theme_override_font_sizes/bold_font_size = 24
 bbcode_enabled = true
 text = "[center][b]username"
 
-[node name="CollectionBar" type="ProgressBar" parent="Background/RightPanel/UserStatus"]
+[node name="CollectionBar" type="ProgressBar" parent="RightPanel/UserStatus"]
 offset_left = 963.0
 offset_top = 144.0
 offset_right = 1105.0
@@ -287,7 +285,7 @@ theme_override_styles/background = SubResource("StyleBoxFlat_fu1qq")
 theme_override_styles/fill = SubResource("StyleBoxFlat_kt6it")
 value = 50.0
 
-[node name="CollectionButton" type="Button" parent="Background/RightPanel/UserStatus/CollectionBar"]
+[node name="CollectionButton" type="Button" parent="RightPanel/UserStatus/CollectionBar"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -296,7 +294,7 @@ grow_horizontal = 2
 grow_vertical = 2
 flat = true
 
-[node name="BestLabel" type="RichTextLabel" parent="Background/RightPanel/UserStatus"]
+[node name="BestLabel" type="RichTextLabel" parent="RightPanel/UserStatus"]
 offset_left = 962.0
 offset_top = 168.0
 offset_right = 1105.0
@@ -306,7 +304,7 @@ theme_override_font_sizes/normal_font_size = 12
 bbcode_enabled = true
 text = "[center]0"
 
-[node name="SavedLabel" type="RichTextLabel" parent="Background/RightPanel/UserStatus"]
+[node name="SavedLabel" type="RichTextLabel" parent="RightPanel/UserStatus"]
 offset_left = 962.0
 offset_top = 192.0
 offset_right = 1105.0
@@ -316,11 +314,11 @@ theme_override_font_sizes/normal_font_size = 12
 bbcode_enabled = true
 text = "[center]0"
 
-[node name="GameFunctions" type="Node" parent="Background/RightPanel"]
+[node name="GameFunctions" type="Node" parent="RightPanel"]
 
-[node name="ShopFunction" type="Node" parent="Background/RightPanel/GameFunctions"]
+[node name="ShopFunction" type="Node" parent="RightPanel/GameFunctions"]
 
-[node name="GoldLabel" type="RichTextLabel" parent="Background/RightPanel/GameFunctions/ShopFunction"]
+[node name="GoldLabel" type="RichTextLabel" parent="RightPanel/GameFunctions/ShopFunction"]
 offset_left = 813.0
 offset_top = 232.0
 offset_right = 955.0
@@ -330,34 +328,34 @@ theme_override_font_sizes/normal_font_size = 16
 bbcode_enabled = true
 text = "0"
 
-[node name="ShopButton" type="Button" parent="Background/RightPanel/GameFunctions/ShopFunction"]
+[node name="ShopButton" type="Button" parent="RightPanel/GameFunctions/ShopFunction"]
 offset_left = 1030.0
 offset_top = 205.0
 offset_right = 1121.0
 offset_bottom = 276.0
 theme_override_styles/focus = SubResource("StyleBoxEmpty_acmv3")
-icon = ExtResource("7_bo2gu")
+icon = ExtResource("16_0ye2n")
 flat = true
 
-[node name="GainRect" type="TextureRect" parent="Background/RightPanel/GameFunctions/ShopFunction"]
+[node name="GainRect" type="TextureRect" parent="RightPanel/GameFunctions/ShopFunction"]
 offset_left = 968.0
 offset_top = 222.0
 offset_right = 1027.0
 offset_bottom = 268.0
-texture = ExtResource("8_qx01f")
+texture = ExtResource("17_ie4hj")
 
-[node name="JumpFunction" type="Node" parent="Background/RightPanel/GameFunctions"]
+[node name="JumpFunction" type="Node" parent="RightPanel/GameFunctions"]
 
-[node name="JumpButton" type="Button" parent="Background/RightPanel/GameFunctions/JumpFunction"]
+[node name="JumpButton" type="Button" parent="RightPanel/GameFunctions/JumpFunction"]
 offset_left = 768.0
 offset_top = 268.0
 offset_right = 824.0
 offset_bottom = 332.0
 theme_override_styles/focus = SubResource("StyleBoxEmpty_y2d5s")
-icon = ExtResource("9_ljeos")
+icon = ExtResource("18_1sq7a")
 flat = true
 
-[node name="JumpPriceLabel" type="RichTextLabel" parent="Background/RightPanel/GameFunctions/JumpFunction"]
+[node name="JumpPriceLabel" type="RichTextLabel" parent="RightPanel/GameFunctions/JumpFunction"]
 offset_left = 1023.0
 offset_top = 293.0
 offset_right = 1105.0
@@ -368,18 +366,18 @@ theme_override_font_sizes/bold_font_size = 12
 bbcode_enabled = true
 text = "[center][b]5G"
 
-[node name="ResetFunction" type="Node" parent="Background/RightPanel/GameFunctions"]
+[node name="ResetFunction" type="Node" parent="RightPanel/GameFunctions"]
 
-[node name="ResetButton" type="Button" parent="Background/RightPanel/GameFunctions/ResetFunction"]
+[node name="ResetButton" type="Button" parent="RightPanel/GameFunctions/ResetFunction"]
 offset_left = 768.0
 offset_top = 338.0
 offset_right = 825.0
 offset_bottom = 398.0
 theme_override_styles/focus = SubResource("StyleBoxEmpty_y2d5s")
-icon = ExtResource("10_60alq")
+icon = ExtResource("19_joqho")
 flat = true
 
-[node name="ResetPriceLabel" type="RichTextLabel" parent="Background/RightPanel/GameFunctions/ResetFunction"]
+[node name="ResetPriceLabel" type="RichTextLabel" parent="RightPanel/GameFunctions/ResetFunction"]
 offset_left = 1023.0
 offset_top = 360.0
 offset_right = 1105.0
@@ -390,18 +388,18 @@ theme_override_font_sizes/bold_font_size = 12
 bbcode_enabled = true
 text = "[center][b]FREE!"
 
-[node name="AIFunction" type="Node" parent="Background/RightPanel/GameFunctions"]
+[node name="AIFunction" type="Node" parent="RightPanel/GameFunctions"]
 
-[node name="AIButton" type="Button" parent="Background/RightPanel/GameFunctions/AIFunction"]
+[node name="AIButton" type="Button" parent="RightPanel/GameFunctions/AIFunction"]
 offset_left = 757.0
 offset_top = 406.0
 offset_right = 827.0
 offset_bottom = 468.0
 theme_override_styles/focus = SubResource("StyleBoxEmpty_y2d5s")
-icon = ExtResource("11_27g1r")
+icon = ExtResource("20_d3qto")
 flat = true
 
-[node name="AIPriceLabel" type="RichTextLabel" parent="Background/RightPanel/GameFunctions/AIFunction"]
+[node name="AIPriceLabel" type="RichTextLabel" parent="RightPanel/GameFunctions/AIFunction"]
 offset_left = 1023.0
 offset_top = 429.0
 offset_right = 1105.0
@@ -412,9 +410,9 @@ theme_override_font_sizes/bold_font_size = 12
 bbcode_enabled = true
 text = "[center][b]FREE!"
 
-[node name="FloorInfo" type="Node" parent="Background/RightPanel"]
+[node name="FloorInfo" type="Node" parent="RightPanel"]
 
-[node name="MessageLabel" type="RichTextLabel" parent="Background/RightPanel/FloorInfo"]
+[node name="MessageLabel" type="RichTextLabel" parent="RightPanel/FloorInfo"]
 offset_left = 739.0
 offset_top = 521.0
 offset_right = 1138.0
@@ -427,20 +425,21 @@ Line 2
 Line 3
 Line 4"
 
-[node name="EvilRect" type="TextureRect" parent="Background/RightPanel/FloorInfo"]
+[node name="EvilRect" type="TextureRect" parent="RightPanel/FloorInfo"]
 offset_left = 794.0
 offset_top = 480.0
 offset_right = 1092.0
 offset_bottom = 635.0
-texture = ExtResource("22_52v1t")
+texture = ExtResource("21_xoqri")
 
-[node name="ExitButton" type="Button" parent="Background/RightPanel"]
+[node name="ExitButton" type="Button" parent="RightPanel"]
 offset_left = 844.0
 offset_top = 641.0
 offset_right = 1036.0
 offset_bottom = 739.0
 theme_override_styles/focus = SubResource("StyleBoxEmpty_y2d5s")
-icon = ExtResource("23_1j5md")
+icon = ExtResource("22_ws0lc")
 
-[connection signal="pressed" from="Background/LeftPanel/GameStatus/BottomPanel/HeroSprite/HeroButton" to="." method="_on_hero_button_pressed"]
-[connection signal="pressed" from="Background/RightPanel/ExitButton" to="." method="_on_exit_button_pressed"]
+[connection signal="pressed" from="LeftPanel/GameControls/NewGameButton" to="." method="_on_new_game_button_pressed"]
+[connection signal="pressed" from="LeftPanel/GameStatus/BottomPanel/HeroSprite/HeroButton" to="." method="_on_hero_button_pressed"]
+[connection signal="pressed" from="RightPanel/ExitButton" to="." method="_on_exit_button_pressed"]
