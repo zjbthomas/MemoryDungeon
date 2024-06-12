@@ -29,6 +29,7 @@ offset_left = 572.0
 offset_top = 497.0
 offset_right = 752.0
 offset_bottom = 528.0
+max_length = 16
 
 [node name="PasswordLineEdit" type="LineEdit" parent="Background"]
 layout_mode = 0
@@ -36,6 +37,7 @@ offset_left = 572.0
 offset_top = 540.0
 offset_right = 752.0
 offset_bottom = 571.0
+max_length = 16
 secret = true
 
 [node name="LoginButton" type="Button" parent="Background"]

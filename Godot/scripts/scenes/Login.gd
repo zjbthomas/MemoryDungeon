@@ -14,7 +14,7 @@ func _process(delta):
 
 func _on_login_button_pressed():
 	$WrapperWindow.load_window("message")
-	$WrapperWindow.get_loaded_window().connect("ok_button_clicked", _on_ok_button_clicked)
+	$WrapperWindow.get_loaded_window().connect("ok_button_pressed", _on_ok_button_pressed)
 	
 	var username = $Background/UsernameLineEdit.text
 	var password = $Background/PasswordLineEdit.text
@@ -42,7 +42,7 @@ func _on_login_button_pressed():
 			$WrapperWindow.get_loaded_window().setup_ui("Welcome back!", "Welcome back to the dungeon, " + username + "!", false)
 			$WrapperWindow.popup_centered()
 	
-func _on_ok_button_clicked():
+func _on_ok_button_pressed():
 	$WrapperWindow.completed()
 	
 	if _is_successful_login:

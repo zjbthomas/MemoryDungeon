@@ -1,0 +1,103 @@
+[gd_scene load_steps=9 format=3 uid="uid://ybgujwhjj6cc"]
+
+[ext_resource type="Texture2D" uid="uid://bhmfsvnyw781c" path="res://images/heroes/bg0.jpg" id="1_7po0a"]
+[ext_resource type="Texture2D" uid="uid://ch2sfxpnhaq1w" path="res://images/heroes/bg.jpg" id="1_kr6xg"]
+[ext_resource type="Script" path="res://scripts/scenes/HeroWindowGUI.gd" id="1_nc7sr"]
+[ext_resource type="Texture2D" uid="uid://csbkud42eenxo" path="res://images/heroes/bg1.jpg" id="2_l7hmh"]
+[ext_resource type="Texture2D" uid="uid://deaa57xstmvag" path="res://images/heroes/bg2.jpg" id="3_415in"]
+[ext_resource type="Texture2D" uid="uid://s4vmd5px3if3" path="res://images/heroes/bg3.jpg" id="4_5hr1l"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_akg4w"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_7po0a")
+}],
+"loop": true,
+"name": &"0",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_l7hmh")
+}],
+"loop": true,
+"name": &"1",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_415in")
+}],
+"loop": true,
+"name": &"2",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_5hr1l")
+}],
+"loop": true,
+"name": &"3",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_kr6xg")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_71t5n"]
+
+[node name="HeroWindowGUI" type="TextureRect"]
+offset_right = 1180.0
+offset_bottom = 728.0
+texture = ExtResource("1_kr6xg")
+script = ExtResource("1_nc7sr")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_akg4w")
+centered = false
+
+[node name="AreaContainer" type="HBoxContainer" parent="AnimatedSprite2D"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Area0" type="Button" parent="AnimatedSprite2D/AreaContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/focus = SubResource("StyleBoxEmpty_71t5n")
+flat = true
+
+[node name="Area1" type="Button" parent="AnimatedSprite2D/AreaContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/focus = SubResource("StyleBoxEmpty_71t5n")
+flat = true
+
+[node name="Area2" type="Button" parent="AnimatedSprite2D/AreaContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/focus = SubResource("StyleBoxEmpty_71t5n")
+flat = true
+
+[node name="Area3" type="Button" parent="AnimatedSprite2D/AreaContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/focus = SubResource("StyleBoxEmpty_71t5n")
+flat = true
+
+[connection signal="mouse_entered" from="AnimatedSprite2D/AreaContainer/Area0" to="." method="_on_area_mouse_entered" binds= ["0"]]
+[connection signal="pressed" from="AnimatedSprite2D/AreaContainer/Area0" to="." method="_on_area_pressed" binds= [0]]
+[connection signal="mouse_entered" from="AnimatedSprite2D/AreaContainer/Area1" to="." method="_on_area_mouse_entered" binds= ["1"]]
+[connection signal="pressed" from="AnimatedSprite2D/AreaContainer/Area1" to="." method="_on_area_pressed" binds= [1]]
+[connection signal="mouse_entered" from="AnimatedSprite2D/AreaContainer/Area2" to="." method="_on_area_mouse_entered" binds= ["2"]]
+[connection signal="pressed" from="AnimatedSprite2D/AreaContainer/Area2" to="." method="_on_area_pressed" binds= [2]]
+[connection signal="mouse_entered" from="AnimatedSprite2D/AreaContainer/Area3" to="." method="_on_area_mouse_entered" binds= ["3"]]
+[connection signal="pressed" from="AnimatedSprite2D/AreaContainer/Area3" to="." method="_on_area_pressed" binds= [3]]

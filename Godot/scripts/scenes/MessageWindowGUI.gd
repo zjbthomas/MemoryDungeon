@@ -1,6 +1,6 @@
 extends TextureRect
 
-signal ok_button_clicked
+signal ok_button_pressed
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -17,4 +17,4 @@ func setup_ui(title, message, is_image_clickable):
 	# TODO: is_image_clickable
 
 func _on_ok_button_pressed():
-	ok_button_clicked.emit()
+	ok_button_pressed.emit()
