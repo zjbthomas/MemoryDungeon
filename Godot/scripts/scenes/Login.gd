@@ -41,7 +41,7 @@ func _on_login_button_pressed():
 			
 			$WrapperWindow.get_loaded_window().setup_ui("Welcome back!", "Welcome back to the dungeon, " + username + "!", false)
 			$WrapperWindow.popup_centered()
-	
+
 func _on_ok_button_pressed():
 	$WrapperWindow.completed()
 	

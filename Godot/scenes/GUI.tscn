@@ -443,3 +443,4 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_y2d5s")
 icon = ExtResource("23_1j5md")
 
 [connection signal="pressed" from="Background/LeftPanel/GameStatus/BottomPanel/HeroSprite/HeroButton" to="." method="_on_hero_button_pressed"]
+[connection signal="pressed" from="Background/RightPanel/ExitButton" to="." method="_on_exit_button_pressed"]

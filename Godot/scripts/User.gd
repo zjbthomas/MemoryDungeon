@@ -4,6 +4,9 @@ class_name User
 
 enum LOGIN_STATUS {NEW_LOGIN, WRONG_PASSWORD, SUCCESSFUL_LOGIN}
 
+const NEW_USER_K = 5 # initial number of normal kinds
+const NEW_USER_SP = 6 # initial number of special kinds
+
 var username = ""
 var password = ""
 
@@ -28,6 +31,17 @@ func _init():
 
 func _new_login(password_attempt):
 	self.password = password_attempt
+	
+	# setup new user
+	for pos in range(NEW_USER_K): 
+		set_owned_k(pos, true)
+		
+	for pos in range(NEW_USER_SP):
+		set_owned_sp(pos, true)
+	
+	# save new user profile
+	save_game()
+	
 	return LOGIN_STATUS.NEW_LOGIN
 
 func load_game(username, password_attempt):
@@ -71,15 +85,9 @@ func load_game(username, password_attempt):
 	gold = data.get("gold")
 	ai_forget_rate = data.get("ai_forget_rate")
 	hero = data.get("hero")
-	
-	var owned_k_arr:Array = data.get("owned_k")
-	for ix in range(owned_k_arr.size()):
-		owned_k[ix] = owned_k_arr[ix]
-		
-	var owned_sp_arr:Array = data.get("owned_sp")
-	for ix in range(owned_sp_arr.size()):
-		owned_sp[ix] = owned_sp_arr[ix]
-		
+	owned_k = data.get("owned_k")
+	owned_sp = data.get("owned_sp")
+
 	return LOGIN_STATUS.SUCCESSFUL_LOGIN
 
 func save_game():
@@ -107,3 +115,9 @@ func save_game():
 
 func set_hero(ix):
 	hero = ix
+
+func set_owned_k(pos, p):
+	owned_k[pos] = p
+	
+func set_owned_sp(pos, p):
+	owned_sp[pos] = p
