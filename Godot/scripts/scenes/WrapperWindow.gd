@@ -19,3 +19,7 @@ func load_window(name):
 
 func get_loaded_window():
 	return _loaded_gui
+
+func completed():
+	hide()
+	_loaded_gui.queue_free()

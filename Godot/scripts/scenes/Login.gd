@@ -44,7 +44,7 @@ func _on_login_button_pressed():
 			$WrapperWindow.show()
 	
 func _on_ok_button_clicked():
-	$WrapperWindow.hide()
+	$WrapperWindow.completed()
 	
 	if _is_successful_login:
 		get_tree().change_scene_to_packed(main_scene)
