@@ -4,7 +4,7 @@ extends ColorRect
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	# always hide as default when loaded
-	visible = false
+	hide()
 	$WrapperWindow.hide()
 
 
@@ -13,10 +13,10 @@ func _process(delta):
 	pass
 
 func activate():
-	visible = true
+	show()
 	$WrapperWindow.popup_centered()
 	
 func complete():
-	visible = false
+	hide()
 	$WrapperWindow.hide()
 	$WrapperWindow.get_loaded_window().queue_free()
