@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=3 uid="uid://buxygbltbcmi"]
+[gd_scene load_steps=38 format=3 uid="uid://buxygbltbcmi"]
 
 [ext_resource type="Texture2D" uid="uid://x6jteamcfk4a" path="res://images/screens/form_main.jpg" id="1_efv5e"]
 [ext_resource type="Texture2D" uid="uid://bqvo588ul5rel" path="res://images/screens/button_ng.png" id="2_8pq6p"]
@@ -16,7 +16,9 @@
 [ext_resource type="Texture2D" uid="uid://37skvdw5n0ry" path="res://images/heroes/1_d.png" id="13_ribmb"]
 [ext_resource type="Texture2D" uid="uid://05q18l5p2ujc" path="res://images/heroes/3.png" id="14_lhult"]
 [ext_resource type="Texture2D" uid="uid://cbq4pr2scjc7v" path="res://images/heroes/3_d.png" id="15_14tfo"]
+[ext_resource type="Texture2D" uid="uid://mm1ikj2c6qik" path="res://images/heroes/2.png" id="15_lyksv"]
 [ext_resource type="Texture2D" uid="uid://b3vudxagiyatf" path="res://images/screens/button_shop.png" id="16_0ye2n"]
+[ext_resource type="Texture2D" uid="uid://c37ruhe4ov5al" path="res://images/heroes/2_d.png" id="16_vtdtg"]
 [ext_resource type="Texture2D" uid="uid://tt64i5aoqmhm" path="res://images/screens/credit.png" id="17_ie4hj"]
 [ext_resource type="Texture2D" uid="uid://cgqtjg5fskj8d" path="res://images/screens/set.png" id="18_1sq7a"]
 [ext_resource type="Texture2D" uid="uid://b4pjfejj7hha" path="res://images/screens/reset.png" id="19_joqho"]
@@ -107,12 +109,18 @@ animations = [{
 "name": &"1_d",
 "speed": 5.0
 }, {
-"frames": [],
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("15_lyksv")
+}],
 "loop": true,
 "name": &"2",
 "speed": 5.0
 }, {
-"frames": [],
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("16_vtdtg")
+}],
 "loop": true,
 "name": &"2_d",
 "speed": 5.0
@@ -242,7 +250,7 @@ show_percentage = false
 [node name="HeroSprite" type="AnimatedSprite2D" parent="LeftPanel/GameStatus/BottomPanel"]
 position = Vector2(611, 666)
 sprite_frames = SubResource("SpriteFrames_ibgoe")
-animation = &"0"
+animation = &"2_d"
 metadata/_edit_group_ = true
 
 [node name="HeroButton" type="Button" parent="LeftPanel/GameStatus/BottomPanel/HeroSprite"]
@@ -441,5 +449,6 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_y2d5s")
 icon = ExtResource("22_ws0lc")
 
 [connection signal="pressed" from="LeftPanel/GameControls/NewGameButton" to="." method="_on_new_game_button_pressed"]
+[connection signal="pressed" from="LeftPanel/GameControls/NextFloorButton" to="." method="_on_next_floor_button_pressed"]
 [connection signal="pressed" from="LeftPanel/GameStatus/BottomPanel/HeroSprite/HeroButton" to="." method="_on_hero_button_pressed"]
 [connection signal="pressed" from="RightPanel/ExitButton" to="." method="_on_exit_button_pressed"]

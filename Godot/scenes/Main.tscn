@@ -22,3 +22,4 @@ visible = false
 
 [connection signal="hero_button_pressed" from="MainGUI" to="." method="_on_main_gui_hero_button_pressed"]
 [connection signal="new_game_button_pressed" from="MainGUI" to="." method="_on_main_gui_new_game_button_pressed"]
+[connection signal="next_floor_button_pressed" from="MainGUI" to="." method="_on_main_gui_next_floor_button_pressed"]

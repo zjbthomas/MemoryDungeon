@@ -1,5 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://c3aycj0nfyyia"]
+[gd_scene load_steps=3 format=3 uid="uid://c3aycj0nfyyia"]
 
+[ext_resource type="Script" path="res://scripts/scenes/Board.gd" id="1_122d1"]
 [ext_resource type="PackedScene" uid="uid://dm31mepuwa7ev" path="res://scenes/CardInPlay.tscn" id="1_k3fn8"]
 
 [node name="Board" type="GridContainer"]
@@ -11,12 +12,11 @@ grow_vertical = 2
 theme_override_constants/h_separation = 97
 theme_override_constants/v_separation = 95
 columns = 7
+script = ExtResource("1_122d1")
+card_scene = ExtResource("1_k3fn8")
 
 [node name="Space50" type="ColorRect" parent="."]
 layout_mode = 2
-
-[node name="CardInPlay" parent="Space50" instance=ExtResource("1_k3fn8")]
-layout_mode = 0
 
 [node name="Space51" type="ColorRect" parent="."]
 layout_mode = 2
@@ -30,17 +30,11 @@ layout_mode = 2
 [node name="Space54" type="ColorRect" parent="."]
 layout_mode = 2
 
-[node name="CardInPlay" parent="Space54" instance=ExtResource("1_k3fn8")]
-layout_mode = 0
-
 [node name="Space55" type="ColorRect" parent="."]
 layout_mode = 2
 
 [node name="Space56" type="ColorRect" parent="."]
 layout_mode = 2
-
-[node name="CardInPlay" parent="Space56" instance=ExtResource("1_k3fn8")]
-layout_mode = 0
 
 [node name="Space40" type="ColorRect" parent="."]
 layout_mode = 2
@@ -62,9 +56,6 @@ layout_mode = 2
 
 [node name="Space46" type="ColorRect" parent="."]
 layout_mode = 2
-
-[node name="CardInPlay" parent="Space46" instance=ExtResource("1_k3fn8")]
-layout_mode = 0
 
 [node name="Space30" type="ColorRect" parent="."]
 layout_mode = 2
@@ -132,9 +123,6 @@ layout_mode = 2
 [node name="Space00" type="ColorRect" parent="."]
 layout_mode = 2
 
-[node name="CardInPlay" parent="Space00" instance=ExtResource("1_k3fn8")]
-layout_mode = 0
-
 [node name="Space01" type="ColorRect" parent="."]
 layout_mode = 2
 
@@ -152,6 +140,3 @@ layout_mode = 2
 
 [node name="Space06" type="ColorRect" parent="."]
 layout_mode = 2
-
-[node name="CardInPlay" parent="Space06" instance=ExtResource("1_k3fn8")]
-layout_mode = 0

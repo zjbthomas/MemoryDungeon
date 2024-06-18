@@ -18,7 +18,12 @@ var gold = 0
 var ai_forget_rate = 20
 
 var owned_k = []
+func set_owned_k(pos, p):
+	owned_k[pos] = p
+	
 var owned_sp = []
+func set_owned_sp(pos, p):
+	owned_sp[pos] = p
 
 var hero = 0
 
@@ -78,7 +83,9 @@ func load_game(username, password_attempt):
 	var password = data.get("password")
 	if (password != password_attempt):
 		return LOGIN_STATUS.WRONG_PASSWORD
-		
+	else:
+		self.password = password
+	
 	# read other data
 	best_level = data.get("best_level")
 	saved_level = data.get("saved_level")
@@ -113,11 +120,3 @@ func save_game():
 	file_access.store_line(json_string)
 	file_access.close()
 
-func set_hero(ix):
-	hero = ix
-
-func set_owned_k(pos, p):
-	owned_k[pos] = p
-	
-func set_owned_sp(pos, p):
-	owned_sp[pos] = p

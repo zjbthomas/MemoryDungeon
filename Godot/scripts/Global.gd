@@ -2,6 +2,9 @@ extends Node
 
 const VERSION = 1
 
+const MAXR = 6
+const MAXC = 7
+
 const MAXK = 20
 const MAXSP = 6
 

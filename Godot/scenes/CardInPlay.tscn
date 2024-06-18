@@ -1,4 +1,4 @@
-[gd_scene load_steps=446 format=3 uid="uid://dm31mepuwa7ev"]
+[gd_scene load_steps=447 format=3 uid="uid://dm31mepuwa7ev"]
 
 [ext_resource type="Texture2D" uid="uid://da7kxmy3qkwx4" path="res://images/cards/0.png" id="1_1mjn8"]
 [ext_resource type="Script" path="res://scripts/scenes/CardInPlay.gd" id="1_yvlfc"]
@@ -1745,7 +1745,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_uuly5")
 }],
 "loop": true,
-"name": &"-2",
+"name": &"-1",
 "speed": 20.0
 }, {
 "frames": [{
@@ -1798,7 +1798,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_pfkfp")
 }],
 "loop": true,
-"name": &"-3",
+"name": &"-2",
 "speed": 5.0
 }, {
 "frames": [{
@@ -1851,7 +1851,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_l7sv6")
 }],
 "loop": true,
-"name": &"-4",
+"name": &"-3",
 "speed": 20.0
 }, {
 "frames": [{
@@ -1904,7 +1904,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_avp4s")
 }],
 "loop": true,
-"name": &"-5",
+"name": &"-4",
 "speed": 20.0
 }, {
 "frames": [{
@@ -1957,7 +1957,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_y713y")
 }],
 "loop": true,
-"name": &"-6",
+"name": &"-5",
 "speed": 20.0
 }, {
 "frames": [{
@@ -2010,7 +2010,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_l6ojs")
 }],
 "loop": true,
-"name": &"-7",
+"name": &"-6",
 "speed": 20.0
 }, {
 "frames": [{
@@ -3082,12 +3082,24 @@ animations = [{
 "speed": 20.0
 }]
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ajseg"]
+
 [node name="CardInPlay" type="AspectRatioContainer"]
 size_flags_horizontal = 0
 script = ExtResource("1_yvlfc")
 
 [node name="Cards" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_2f18g")
-animation = &"12"
-frame_progress = 0.775647
+animation = &"-1"
 centered = false
+
+[node name="CardButton" type="Button" parent="Cards"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_ajseg")
+flat = true
+
+[connection signal="pressed" from="Cards/CardButton" to="." method="_on_card_button_pressed"]
