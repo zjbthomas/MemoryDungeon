@@ -187,7 +187,7 @@ func update_one_card(ir, ic):
 
 func _on_board_card_button_clicked(ir, ic):
 	if (game.is_ai_turn == false):
-		if (!$AMTimer.is_stopped() and $SettleTimer.is_stopped() and game.is_card_clickable(ir, ic)):
+		if (!$AMTimer.is_stopped() and $SettleTimer.is_stopped()):
 			# game is running and not in settle phase
 			# hide status
 			$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.visible = false
@@ -284,3 +284,7 @@ func _on_board_card_button_clicked(ir, ic):
 			if (click_performed == GameRule.CLICK_PERFORMED.SETTLEMENT):
 				$AITimer.wait_time = AI_SETTLE_TIME
 				$AITimer.start()
+
+
+func _on_settle_timer_timeout():
+	print("stop")

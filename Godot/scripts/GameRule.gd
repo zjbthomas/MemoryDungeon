@@ -10,8 +10,8 @@ enum CLICK_PERFORMED {
 	SETTLEMENT = CardRule.SP_TYPE.TREASURE + 2,
 }
 
-const MIN_TIME_HARD = 100
-const MIN_TIME_EASY = 120
+const MIN_TIME_HARD = 10
+const MIN_TIME_EASY = 12
 
 const ADD_GOLD = 3
 
@@ -48,7 +48,7 @@ var is_in_ai_mode = false
 var is_ai_turn = false # at the beginning is player's turn
 var ai_forget_rate = 100 # The maximum value is 100%
 var ai_memory = []
-var ai_flip_state = 1
+var ai_flip_state = 0
 var ai_score = 0
 
 func _init():
@@ -81,7 +81,7 @@ func new_level():
 		n_pop = 2
 
 		# calculate time
-		base_time = MIN_TIME_HARD + 50 * (n_erase - 2) + 10 * (n_level_k - 2) + 50 * (n_pop - 1) - 2 * (level - 1)
+		base_time = MIN_TIME_HARD + 5 * (n_erase - 2) + 1 * (n_level_k - 2) + 5 * (n_pop - 1) - 0.2 * (level - 1)
 
 		if (base_time < MIN_TIME_HARD):
 			base_time = MIN_TIME_HARD
@@ -102,7 +102,7 @@ func new_level():
 		n_pop = 1
 
 		# calculate time
-		base_time = MIN_TIME_HARD + 50 * (n_erase - 2) + 15 * (n_level_k - 2) + 50 * (n_pop - 1) - 2 * (level - 1)
+		base_time = MIN_TIME_HARD + 5 * (n_erase - 2) + 1.5 * (n_level_k - 2) + 5 * (n_pop - 1) - 0.2 * (level - 1)
 
 		if (base_time < MIN_TIME_HARD):
 			base_time = MIN_TIME_HARD
@@ -130,7 +130,7 @@ func new_level():
 
 	# for MASTER
 	if (Global.user.hero == Global.HERO_TYPE.MASTER):
-		time_remain += 30
+		time_remain += 3
 
 	score = 0
 	is_combo = false
@@ -166,7 +166,7 @@ func normal_level_default_settings():
 	n_level_sp = Global.MAXSP
 
 	# calculate time
-	base_time = MIN_TIME_EASY + 50 * (n_erase- 2) + 20 * (n_level_k - 2) + 50 * (n_pop - 1) - 2 * (level - 1)
+	base_time = MIN_TIME_EASY + 5 * (n_erase- 2) + 2 * (n_level_k - 2) + 5 * (n_pop - 1) - 0.2 * (level - 1)
 
 	if (base_time < MIN_TIME_EASY):
 		base_time = MIN_TIME_EASY
@@ -192,8 +192,8 @@ func start():
 	
 	shuffle_cards()
 	
-	flip_state = 1
-	ai_flip_state = 1
+	flip_state = 0
+	ai_flip_state = 0
 
 # make a new row available in the game, and decide whether game over
 func pop_row(n_pop_rows):
@@ -325,16 +325,6 @@ func update_cur_n_rows():
 	cur_n_rows -= empty_r_ix
 	
 	return cur_n_rows
-
-# TODO: why we need this?
-# whether a card is clickable or not.
-func is_card_clickable(ir, ic):
-	if (rows[ir].is_sp(ic) or rows[ir].get_card_state(ic) == CardRule.CARD_STATE.COVER):
-		return true
-	elif (flip_state == 2) and (rc_to_n(ir, ic) == flip1): # TODO: what is flip_state == 2?
-		return true
-	else:
-		return false
 
 func rc_to_n(ir, ic):
 	return ir * Global.MAXC + ic
@@ -491,6 +481,7 @@ func perform_click(ir, ic):
 		0:
 			flip1 = rc_to_n(ir, ic)
 			flip_state = 1
+			return CLICK_PERFORMED.NO_SETTLEMENT
 		1:
 			flip2 = rc_to_n(ir, ic)
 			
