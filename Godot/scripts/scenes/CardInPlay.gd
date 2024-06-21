@@ -1,6 +1,6 @@
 extends AspectRatioContainer
 
-signal card_button_clicked(card)
+signal card_button_clicked()
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -11,7 +11,7 @@ func _process(delta):
 	pass
 	
 func _on_card_button_pressed():
-	card_button_clicked.emit(self)
+	card_button_clicked.emit()
 	
 func uncover(card):
 	$Cards.play(str(card.type))

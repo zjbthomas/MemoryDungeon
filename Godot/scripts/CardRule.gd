@@ -24,9 +24,6 @@ const OFFSET = CARD_STATE.COVER - Global.MAXK # [- Global.MAXK - CardRule.CARD_S
 var state: CARD_STATE
 var type
 
-var r
-var c
-
 static func gen_random_k(last_k, n_per_k):
 	var selected_k = randi() % (last_k + 1) + OFFSET
 	while (n_per_k[selected_k - OFFSET - 1] <= 0):

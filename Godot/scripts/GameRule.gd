@@ -4,8 +4,16 @@ class_name GameRule
 
 enum FLOOR_TYPE {NORMAL, CLOWN, EVIL}
 
+# should not overlapped with SP_TYPE
+enum CLICK_PERFORMED {
+	NO_SETTLEMENT = CardRule.SP_TYPE.TREASURE + 1,
+	SETTLEMENT = CardRule.SP_TYPE.TREASURE + 2,
+}
+
 const MIN_TIME_HARD = 100
 const MIN_TIME_EASY = 120
+
+const ADD_GOLD = 3
 
 var rows = []
 
@@ -20,7 +28,7 @@ var objective = 0
 
 # used to record and response in the game progress
 var cur_n_rows = 0
-var flip_state = 1 # MUST be 1, 2 or 3 and represents the state that how many cards is show - 1 to trigger the GUI
+var flip_state = 0 # represents the state that how many cards is uncovered - MUST be 0, 1 or 2
 var flip1 = -1
 var flip2 = -1
 var flip3 = -1
@@ -318,261 +326,215 @@ func update_cur_n_rows():
 	
 	return cur_n_rows
 
-## whether a card is clickable or not.
-#// Input: the index of a card (need to be decoded).
-#// Output: Whether it is clickable or not.
-#bool GameRule::isCardClickable(int n)
-#{
-	#int sr,sc;
-	#this->n2RC(n,&sr,&sc);
+# TODO: why we need this?
+# whether a card is clickable or not.
+func is_card_clickable(ir, ic):
+	if (rows[ir].is_sp(ic) or rows[ir].get_card_state(ic) == CardRule.CARD_STATE.COVER):
+		return true
+	elif (flip_state == 2) and (rc_to_n(ir, ic) == flip1): # TODO: what is flip_state == 2?
+		return true
+	else:
+		return false
+
+func rc_to_n(ir, ic):
+	return ir * Global.MAXC + ic
+
+func n_to_rc(n):
+	var r:int = n / Global.MAXC
+	var c:int = n % Global.MAXC
+	
+	# TODO: do we need to mirror the row?
+	
+	return [r, c]
+
+# response to a click.
+# if a special card is clicked, return the kind of that card; Otherwise, return whether a single card or a pair of cards is clicked
+func perform_click(ir, ic):
+	# if it is a special card
+	if (rows[ir].is_sp(ic)):
+		# cover previously clicked cards
+		# TODO: may be we can use function to group each of the following operations
+		match (flip_state):
+			1:
+				var tr = n_to_rc(flip1)[0]
+				var tc = n_to_rc(flip1)[1]
+				rows[tr].set_card_state(tc, CardRule.CARD_STATE.COVER)
+			2:
+				var tr = n_to_rc(flip1)[0]
+				var tc = n_to_rc(flip1)[1]
+				rows[tr].set_card_state(tc, CardRule.CARD_STATE.COVER)
+				
+				tr = n_to_rc(flip2)[0]
+				tc = n_to_rc(flip2)[1]
+				rows[tr].set_card_state(tc, CardRule.CARD_STATE.COVER)
+	
+		# special card effect
+		# TODO: move this to a single function
+		match (rows[ir].get_card_type(ic)):
+			CardRule.SP_TYPE.REINFORCE:
+				# effect 1: minus the score by the number of rows left
+				if (score >= (Global.MAXR - cur_n_rows)):
+					score -= (Global.MAXR - cur_n_rows)
+				
+				# effect 2: pop a new row and show it
+				if (cur_n_rows < Global.MAXR):
+					pop_row(1)
+					
+					# update the row number as new row is added
+					ir += 1 # TODO: is this correct and why we need this?
+					
+					# uncover newly added row
+					for ic_new in range(Global.MAXC):
+						rows[cur_n_rows - 1].set_card_state(ic_new, CardRule.CARD_STATE.UNCOVER)
+				
+				# effect 3: for HUNTER, decrease gold
+				if (Global.user.hero == Global.HERO_TYPE.HUNTER and Global.user.gold >= 1):
+					Global.user.gold -= 1
+					Global.user.save_game() # TODO: is it too frequent?
+			CardRule.SP_TYPE.CHAOS:
+				# effect 1: shuffle all cards
+				shuffle_cards()
+				
+				# effect 2: show all cards
+				for ir_all in range(cur_n_rows):
+					for ic_all in range(Global.MAXC):
+						if (rows[ir_all].get_card_state(ic_all) != CardRule.CARD_STATE.NE):
+							rows[ir_all].set_card_stete(ic_all, CardRule.CARD_STATE.UNCOVER)
+							
+				# effect 3: for HUNTER, decrease gold
+				if (Global.user.hero == Global.HERO_TYPE.HUNTER and Global.user.gold >= 1):
+					Global.user.gold -= 1
+					Global.user.save_game() # TODO: is it too frequent?
+			CardRule.SP_TYPE.GOLD:
+				# effect 1: add golds
+				Global.user.gold += ADD_GOLD
+				
+				# effect 2: for HUNTER, add more gold
+				if (Global.user.hero == Global.HERO_TYPE.HUNTER):
+					Global.user.gold += ADD_GOLD
+					
+				Global.user.save_game() # TODO: is it too frequent?
+			CardRule.SP_TYPE.MAP:
+				matched = -1 # TODO: why class member here? Where it is used?
+				
+				var n_pairs
+				var temp_pos
+				
+				var temp_matched = -1 # for HUNTER who finds two pairs
+			
+				# how many pairs to match
+				if (Global.user.hero == Global.HERO_TYPE.HUNTER):
+					n_pairs = 2
+				else:
+					n_pairs = 1	
+
+				# find pairs
+				for ip in range(n_pairs):
+					# find one card first
+					for fn in range(Global.MAXR * Global.MAXC): # we use multiplication here so we only need to break one loop
+						var ir_find = n_to_rc(fn)[0]
+						var ic_find = n_to_rc(fn)[1]
+
+						if (rows[ir_find].get_card_state(ic_find) != CardRule.CARD_STATE.NE and 
+							!rows[ir_find].is_sp(ic_find) and
+							rows[ir_find].get_card_type(ic_find) != temp_matched):
+								rows[ir_find].set_card_state(ic, CardRule.CARD_STATE.UNCOVER)
+								matched = rows[ir_find].get_card_type(ic_find)
+								temp_pos = fn
+								temp_matched = rows[ir_find].get_card_type(ic_find)
+								break
+
+					# find other cards that match the reference
+					for en in range(n_erase, 2 - 1, -1): # [3, 2]
+						for fn in range(temp_pos + 1, Global.MAXR * Global.MAXC): # we use multiplication here so we only need to break one loop
+							var ir_find = n_to_rc(fn)[0]
+							var ic_find = n_to_rc(fn)[1]
+							
+							if (rows[ir_find].get_card_state(ic_find) != CardRule.CARD_STATE.NE and 
+								rows[ir_find].get_card_type(ic_find) == matched):
+									rows[ir_find].set_card_state(ic_find, CardRule.CARD_STATE.UNCOVER)
+									temp_pos = fn
+									
+									break
+					
+			CardRule.SP_TYPE.HEAL:
+				if (Global.user.hero == Global.HERO_TYPE.MASTER):
+					# less effective for MASTER
+					time_remain += base_time / 2
+					
+					if (time_remain > base_time):
+						time_remain = base_time
+				else:
+					time_remain = base_time
+			CardRule.SP_TYPE.TREASURE:
+				# effect 1: found treasure
+				found_treasure = true
+				
+				# effect 2: for HUNTER, add gold
+				if (Global.user.hero == Global.HERO_TYPE.HUNTER):
+					Global.user.gold += 1
+					Global.user.save_game() # TODO: is it too frequent?
+
+		# uncover the special card
+		rows[ir].set_card_state(ic, CardRule.CARD_STATE.UNCOVER)
+		
+		flip1 = rc_to_n(ir, ic)
+		flip_state = 1 # TODO: check if this one is correct
+		
+		return rows[ir].get_card_type(ic) # return the kind of special card
 #
-	#if ((this->rowArr[sr].getCardKind(sc)==0)||(this->rowArr[sr].getCardState(sc) == Row::COVER)) {
-		#return true;
-	#}
-	#else if ((this->flipState == 2) && (n == this->flip1)) {
-		#return true;
-	#}
-	#else {
-		#return false;
-	#}
-#}
-#
-#// Get the state of kind of one card.
-#// Input: the index of a card (need to be decoded).
-#// Output: If it's a EXISTED special card, return the kind of special card, if it's not uncovered, return state, Otherwise, return kind.
-#// Call: n2RC(), row::getkind(), row::getstate().
-#int GameRule::getCardDisplay(int n)
-#{
-	#int sr,sc;
-	#n2RC(n,&sr,&sc);
-#
-	#if (this->rowArr[sr].getCardKind(sc) == 0) // 0 means special kind
-	#{
-		#// Make TIME of MASTER become visible.
-		#if ((this->hero == MASTER)&&(this->rowArr[sr].getSp(sc) == Row::HEAL) && (this->rowArr[sr].getCardState(sc) != Row::NE))
-		#{
-			#this->rowArr[sr].setCardState(sc, Row::UNCOVER);
-			#return this->rowArr[sr].getSp(sc);
-		#}
-		#if (this->rowArr[sr].getCardState(sc) == Row::UNCOVER)
-			#return this->rowArr[sr].getSp(sc);
-		#else
-			#return this->rowArr[sr].getCardState(sc);
-	#}
-#
-	#if (this->rowArr[sr].getCardState(sc) != Row::UNCOVER)
-		#return this->rowArr[sr].getCardState(sc);
-	#else
-		#return this->rowArr[sr].getCardKind(sc);
-#}
-#
-#// Response to a click.
-#// Input: the index of a card (need to be decoded).
-#// Output: If a special card is clicked, return the kind of that card; Otherwise, return whether a single card or a pair of cards is clicked.
-#// Call: n2RC(), row::getkind(), row::getstate(), row::setstate().
-#int GameRule::performClick(int n)
-#{
-	#int sr,sc;
-	#n2RC(n,&sr,&sc);
-#
-	#// If it is a special card.
-	#if (this->rowArr[sr].getCardKind(sc) == 0)
-	#{
-		#// If a single/double card had been clicked, cover it/them.
-		#int tr,tc;
-		#switch (this->flipState)
-		#{
-		#case 2:
-			#n2RC(this->flip1, &tr, &tc);
-			#this->rowArr[tr].setCardState(tc, Row::COVER);
-			#break;
-		#case 3:
-			#n2RC(this->flip1,&tr,&tc);
-			#this->rowArr[tr].setCardState(tc,Row::COVER);
-			#n2RC(this->flip2,&tr,&tc);
-			#this->rowArr[tr].setCardState(tc,Row::COVER);
-			#break;
-		#}
-#
-		#// special card effect
-		#// TODO: move this to a single function
-		#switch (this->rowArr[sr].getSp(sc))
-		#{
-		#case Row::REINFORCE:
-			#// Minus the score by the number of rows left.
-			#if (this->score >= (this->maxR - this->currentR)) {
-				#this->score -= (this->maxR - this->currentR);
-			#}
-			#// Pop a new row and show it.
-			#if (this->currentR < this->maxR)
-			#{
-				#this->popRow(1);
-#
-				#// Update the value of n as rows are added.
-				#n += (this->maxC);
-				#n2RC(n,&sr,&sc); // used later which uncover the card
-#
-				#// uncover newly added row (for user to remember them)
-				#for (int c = 0; c < this->maxC; c++) {
-					#this->rowArr[this->currentR - 1].setCardState(c, Row::UNCOVER);
-				#}
-			#}
-			#break;{}
-		#case Row::CHAOS:
-			#this->shuffleCards();
-#
-			#// show all the cards
-			#for (int r = 0; r < this->currentR; r++)
-			#{
-				#for (int c = 0; c < this->maxC; c++) {
-					#if (this->rowArr[r].getCardState(c) != Row::NE) {
-						#this->rowArr[r].setCardState(c, Row::UNCOVER);
-					#}
-				#}
-			#}
-			#break;
-		#case Row::GOLD:
-			#// The operations are done in the GUI.
-			#break;
-		#case Row::MAP:
-			#this->match = -1; // we need a class member as it is used in other function
-#
-			#int nPairs2Match;
-			#int tempPos;
-#
-			#int tempMatch; // we need this as HUNTER will find two pairs
-			#tempMatch = -1;
-#
-			#// decide how many pairs to match
-			#if (this->hero == HUNTER) {
-				#nPairs2Match = 2;
-			#}
-			#else {
-				#nPairs2Match = 1;
-			#}
-#
-			#// handle each pair
-			#for (int p = 0; p < nPairs2Match; p++)
-			#{
-				#// find one as reference
-				#for (int cn = 0; cn < (this->maxR)*(this->maxC); cn++)
-				#{
-					#n2RC(cn,&tr,&tc);
-#
-					#if ((this->rowArr[tr].getCardState(tc) != Row::NE) &&
-						#(this->rowArr[tr].getCardKind(tc) != 0) &&
-						#(this->rowArr[tr].getCardKind(tc) != tempMatch))
-					#{
-						#this->rowArr[tr].setCardState(tc, Row::UNCOVER);
-						#this->match = this->rowArr[tr].getCardKind(tc);
-						#tempPos = cn;
-						#tempMatch = this->rowArr[tr].getCardKind(tc);
-						#break;
-					#}
-				#}
-#
-				#// find other cards that match the reference
-				#for (int en = this->eraseN; en >= 2; en--) {
-					#for (int cn = (tempPos + 1) ; cn < (this->maxR)*(this->maxC); cn++)
-					#{
-						#n2RC(cn,&tr,&tc);
-#
-						#if ((this->rowArr[tr].getCardState(tc) != Row::NE) && (this->rowArr[tr].getCardKind(tc) == this->match))
-						#{
-							#this->rowArr[tr].setCardState(tc, Row::UNCOVER);
-							#tempPos = cn;
-							#break;
-						#}
-					#}
-				#}
-			#}
-			#break;
-		#case Row::HEAL:
-			#if (this->hero == MASTER)
-			#{
-				#this->timeRemain += (this->baseTime / 2.0);
-#
-				#if (this->timeRemain > this->baseTime) {
-					#this->timeRemain = this->baseTime;
-				#}
-			#}
-			#else {
-				#this->timeRemain = this->baseTime;
-			#}
-			#break;
-		#case Row::TREASURE:
-			#// The operations are done in the GUI.
-			#break;
-		#}
-#
-		#// uncover the special card
-		#this->rowArr[sr].setCardState(sc, Row::UNCOVER);
-#
-		#this->flip1 = n;
-		#this->flipState = 1;
-#
-		#return this->rowArr[sr].getSp(sc); // return the kind of special card.
-	#}
-#
-	#// If it is a normal card.
-	#switch (this->flipState)
-	#{
-	#case 1:
-		#this->flip1 = n;
-		#(this->flipState)++;
-		#break;
-	#case 2:
-		#this->flip2 = n;
-		#if (this->eraseN == 2)
-		#{
-			#this->flipState = 1;
-#
-			#// if user click the same card, cover it
-			#if (this->flip1 == this->flip2)
-			#{
-				#this->rowArr[sr].setCardState(sc,Row::COVER);
-#
-				#return 0;
-			#}
-		#}
-		#else
-		#{
-			#int sr1,sc1,sr2,sc2;
-			#n2RC(this->flip1,&sr1,&sc1);
-			#n2RC(this->flip2,&sr2,&sc2);
-#
-			#if (this->flip1 == this->flip2)
-			#{
-				#this->rowArr[sr].setCardState(sc,Row::COVER);
-#
-				#this->flipState = 1;
-#
-				#return 0;
-			#}
-#
-			#if (this->rowArr[sr1].getCardKind(sc1) != this->rowArr[sr2].getCardKind(sc2))
-			#{
-				#this->flip3 = n;
-#
-				#this->flipState = 1;
-			#}
-			#else
-				#(this->flipState)++;
-		#}
-		#break;
-	#case 3:
-		#this->flip3 = n;
-#
-		#(this->flipState)=1;
-#
-		#break;
-	#}
-#
-	#this->rowArr[sr].setCardState(sc, Row::UNCOVER);
-#
-	#return ((this->flipState) == 1);
-#}
-#
+	# if it is a normal card
+	# no matter how, uncover it
+	rows[ir].set_card_state(ic, CardRule.CARD_STATE.UNCOVER)
+	
+	match (flip_state):
+		0:
+			flip1 = rc_to_n(ir, ic)
+			flip_state = 1
+		1:
+			flip2 = rc_to_n(ir, ic)
+			
+			if (n_erase == 2):
+				
+				# user click the same card, cover it
+				if (flip1 == flip2):
+					rows[ir].set_card_state(ic, CardRule.CARD_STATE.COVER)
+					
+					flip_state = 0
+					
+					return CLICK_PERFORMED.NO_SETTLEMENT
+				else:
+					return CLICK_PERFORMED.SETTLEMENT
+					
+			else: # n_erase == 3
+				var tr1 = n_to_rc(flip1)[0]
+				var tc1 = n_to_rc(flip1)[1]
+				var tr2 = n_to_rc(flip2)[0]
+				var tc2 = n_to_rc(flip2)[1]
+				
+				# user click the same card, cover it
+				if (flip1 == flip2):
+					rows[ir].set_card_state(ic, CardRule.CARD_STATE.COVER)
+					
+					flip_state = 0
+					
+					return CLICK_PERFORMED.NO_SETTLEMENT
+				
+				if (rows[tr1].get_card_type(tc1) != rows[tr2].get_card_type(tc2)):
+					# user click different cards, but they are different types
+					flip3 = rc_to_n(ir, ic) # TODO: why?
+					
+					flip_state = 2 # TODO: is this correct? Or should be 0? I believe for settlement, this should be reset later...
+					
+					return CLICK_PERFORMED.SETTLEMENT # settle to show the two wrongly clicked cards for user to remember
+				else:
+					flip_state = 2
+					
+		3:
+			flip3 = rc_to_n(ir, ic)
+			
+			return CLICK_PERFORMED.SETTLEMENT
+
 #// When a hint or a pair of cards are shown for a given time, decide what to do next. Used in the closing timer.
 #// Input: A pointer pointed to a boolean whether game wins or not.
 #// Output: The number of row is available in the game and a boolean pointer.

@@ -14,7 +14,7 @@ func _process(delta):
 
 func _on_login_button_pressed():
 	$BlurContainer/WrapperWindow.load_window("message")
-	$BlurContainer/WrapperWindow.get_loaded_window().connect("ok_button_pressed", _on_ok_button_pressed)
+	$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(_on_ok_button_pressed)
 	
 	var username = $UsernameLineEdit.text
 	var password = $PasswordLineEdit.text

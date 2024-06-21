@@ -2,6 +2,17 @@ extends Node
 
 var game = GameRule.new()
 
+const LONG_SETTLE_TIME = 0.4
+const SHORT_SETTLE_TIME = 0.3
+const REINFORCE_TIME = 1.2 
+const CHAOS_TIME = 2
+const GOLD_TIME = 0.6
+const MAP_TIME = 1
+const HEAL_TIME = 0.6
+const TREASURE_TIME = 0.6
+
+const AI_SETTLE_TIME = 0.3
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	randomize() # call only once
@@ -18,12 +29,13 @@ func _on_main_gui_next_floor_button_pressed():
 	start(false)
 
 func _on_main_gui_new_game_button_pressed():
-	pass
+	game.level = Global.user.saved_level
+	start(false)
 
 # for hero system
 func _on_main_gui_hero_button_pressed():
 	$BlurContainer/WrapperWindow.load_window("hero")
-	$BlurContainer/WrapperWindow.get_loaded_window().connect("hero_selected", _on_hero_selected)
+	$BlurContainer/WrapperWindow.get_loaded_window().hero_selected.connect(_on_hero_selected)
 	$BlurContainer.activate()
 	
 func _on_hero_selected(ix):
@@ -106,12 +118,12 @@ func start(is_by_config):
 
 	$BlurContainer/WrapperWindow.load_window("message")
 	$BlurContainer/WrapperWindow.get_loaded_window().setup_ui(title, msg, false)
-	$BlurContainer/WrapperWindow.get_loaded_window().connect("ok_button_pressed", func(): $BlurContainer.complete())
+	$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(func(): $BlurContainer.complete())
 	$BlurContainer.activate()
 #
 	$MainGUI/LeftPanel/GameStatus/TopPanel/LevelLabel.visible = true
 	
-	#TODO: this->amTimer->start(100);
+	$AMTimer.start()
 	
 func update_level_bar():
 	# TODO: we mix changing colors of the progress bar and setting its value together; should be separated
@@ -172,3 +184,103 @@ func update_all_cards():
 			
 func update_one_card(ir, ic):
 	$MainGUI/Board.update_one_card(ir, ic, game.rows[ir].cards[ic])
+
+func _on_board_card_button_clicked(ir, ic):
+	if (game.is_ai_turn == false):
+		if (!$AMTimer.is_stopped() and $SettleTimer.is_stopped() and game.is_card_clickable(ir, ic)):
+			# game is running and not in settle phase
+			# hide status
+			$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.visible = false
+			
+			$MainGUI/RightPanel/GameFunctions/ShopFunction/GainRect.visible = false
+			
+			match (game.perform_click(ir, ic)):
+				GameRule.CLICK_PERFORMED.NO_SETTLEMENT:
+					update_one_card(ir, ic)
+				GameRule.CLICK_PERFORMED.SETTLEMENT:
+					match (game.n_erase):
+						2:
+							$SettleTimer.wait_time = LONG_SETTLE_TIME
+						3:
+							$SettleTimer.wait_time = SHORT_SETTLE_TIME
+					
+					update_one_card(ir, ic)
+					
+					$SettleTimer.start()
+				CardRule.SP_TYPE.REINFORCE:
+					# for HUNTER
+					if (Global.user.hero == Global.HERO_TYPE.HUNTER):
+						$MainGUI/RightPanel/GameFunctions/ShopFunction/GoldLabel.text = str(Global.user.gold)
+						update_function_controls(true) # update as gold changed
+						
+					# update all cards as REINFORCE shows all cards
+					update_all_cards()
+					
+					$SettleTimer.wait_time = REINFORCE_TIME
+					$SettleTimer.start()
+				CardRule.SP_TYPE.CHAOS:
+					# for HUNTER
+					if (Global.user.hero == Global.HERO_TYPE.HUNTER):
+						$MainGUI/RightPanel/GameFunctions/ShopFunction/GoldLabel.text = str(Global.user.gold)
+						update_function_controls(true) # update as gold changed
+					
+					# update all cards as CHAOS shows all cards
+					update_all_cards()
+					
+					$SettleTimer.wait_time = CHAOS_TIME
+					$SettleTimer.start()
+				CardRule.SP_TYPE.GOLD:
+					$MainGUI/RightPanel/GameFunctions/ShopFunction/GoldLabel.text = str(Global.user.gold)
+					update_function_controls(true) # update as gold changed
+					
+					$SettleTimer.wait_time = GOLD_TIME
+					$SettleTimer.start()
+					
+					update_one_card(ir, ic)
+				CardRule.SP_TYPE.MAP:
+					$SettleTimer.wait_time = MAP_TIME
+					$SettleTimer.start()
+					
+					# TODO: the cards to recover are dynamically found; update_all_cards() is safe, but not efficient
+					update_all_cards()
+				CardRule.SP_TYPE.HEAL:
+					update_am_bar()
+					
+					if (Global.user.hero == Global.HERO_TYPE.MASTER):
+						$SettleTimer.wait_time = HEAL_TIME
+					else:
+						$SettleTimer.wait_time = 0.05 # TODO: as HEAL is visible to MASTER, the display time is shorter; can we directly call settle()?
+					
+					update_one_card(ir, ic)
+					
+					$SettleTimer.start()
+				CardRule.SP_TYPE.TREASURE:
+					# for HUNTER
+					if (Global.user.hero == Global.HERO_TYPE.HUNTER):
+						$MainGUI/RightPanel/GameFunctions/ShopFunction/GoldLabel.text = str(Global.user.gold)
+						update_function_controls(true) # update as gold changed
+
+					$SettleTimer.wait_time = TREASURE_TIME
+					
+					update_one_card(ir, ic)
+					
+					$SettleTimer.start()
+			
+			update_hp_bar() # TODO: it is better to make it run before SettleTimer.start()
+	else:
+		# AI mode
+		# TODO: is this logic correct?
+		update_one_card(ir, ic)
+		if ($AITimer.is_stopped() and game.rows[ir].get_card_state(ic) == CardRule.CARD_STATE.COVER):
+			# hide status
+			$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.visible = false
+			
+			$MainGUI/RightPanel/GameFunctions/ShopFunction/GainRect.visible = false
+			
+			var click_performed = game.perform_click(ir, ic)
+			
+			update_one_card(ir, ic)	
+			
+			if (click_performed == GameRule.CLICK_PERFORMED.SETTLEMENT):
+				$AITimer.wait_time = AI_SETTLE_TIME
+				$AITimer.start()
