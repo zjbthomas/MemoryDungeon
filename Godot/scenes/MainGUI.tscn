@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://buxygbltbcmi"]
+[gd_scene load_steps=39 format=3 uid="uid://buxygbltbcmi"]
 
 [ext_resource type="Texture2D" uid="uid://x6jteamcfk4a" path="res://images/screens/form_main.jpg" id="1_efv5e"]
 [ext_resource type="Texture2D" uid="uid://bqvo588ul5rel" path="res://images/screens/button_ng.png" id="2_8pq6p"]
@@ -28,8 +28,8 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_y2d5s"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fu1qq"]
-bg_color = Color(1, 1, 1, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q771r"]
+bg_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qk6px"]
 bg_color = Color(1, 1, 0, 1)
@@ -68,6 +68,9 @@ animations = [{
 "name": &"score",
 "speed": 5.0
 }]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fu1qq"]
+bg_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_phlis"]
 bg_color = Color(0, 0, 1, 1)
@@ -206,7 +209,7 @@ offset_left = 55.0
 offset_top = 9.0
 offset_right = 340.0
 offset_bottom = 30.0
-theme_override_styles/background = SubResource("StyleBoxFlat_fu1qq")
+theme_override_styles/background = SubResource("StyleBoxFlat_q771r")
 theme_override_styles/fill = SubResource("StyleBoxFlat_qk6px")
 value = 50.0
 show_percentage = false
@@ -287,7 +290,7 @@ offset_left = 963.0
 offset_top = 144.0
 offset_right = 1105.0
 offset_bottom = 161.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 12
 theme_override_styles/background = SubResource("StyleBoxFlat_fu1qq")
 theme_override_styles/fill = SubResource("StyleBoxFlat_kt6it")

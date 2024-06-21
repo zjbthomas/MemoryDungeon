@@ -3,7 +3,6 @@ extends Node
 class_name GameRule
 
 enum FLOOR_TYPE {NORMAL, CLOWN, EVIL}
-enum HERO_TYPE {WIZARD=0,BERSERKER=1,HUNTER=2,MASTER=3}
 
 const MIN_TIME_HARD = 100
 const MIN_TIME_EASY = 120
@@ -12,10 +11,10 @@ var rows = []
 
 # for a single game - used in new_level()
 var floor_type
-var n_erase = 2 # ow many identical cards to erase them - MUST be 2 or 3
+var n_erase:int = 2 # ow many identical cards to erase them - MUST be 2 or 3
 var n_level_k = 0 # should not be bigger than maxk
 var n_level_sp = 0 # should not be bigger than maxsp
-var n_pop = 0
+var n_pop:int = 0
 var base_time = 0 # TODO: as main timer in game has an interval of 100 ms, the unit for this is 10 seconds
 var objective = 0
 
@@ -26,13 +25,13 @@ var flip1 = -1
 var flip2 = -1
 var flip3 = -1
 var card_remain = 0 # the number of available cards left in the game
-var match = -1
+var matched = -1
 var is_combo = false
 
 # variables that interact between the class and the GUI
 var score = 0 # R only, add score automatically
 var time_remain = 0
-var level = 0 # R/W
+var level:int = 0 # R/W
 
 var found_treasure:bool = false
 
@@ -43,9 +42,6 @@ var ai_forget_rate = 100 # The maximum value is 100%
 var ai_memory = []
 var ai_flip_state = 1
 var ai_score = 0
-
-# for hero system.
-var hero = HERO_TYPE.WIZARD # TODO: WIZARD is the default hero.
 
 func _init():
 	# initial rows
@@ -63,7 +59,7 @@ func new_level():
 
 	level += 1
 	
-	var n_owned_k = Global.user.get_owned_k().count(true)
+	var n_owned_k = Global.user.owned_k.count(true)
 
 	if level % 10 == 0: # an Evil Level
 		floor_type = FLOOR_TYPE.EVIL;
@@ -120,12 +116,12 @@ func new_level():
 		cur_n_rows = 2 + randi() % (Global.MAXR - 3)
 
 		# generate how many rows will be popped in one time
-		n_pop = 1 + randi() % 7 * 0.2 # about 83% is 1
+		n_pop = 1 + int(randi() % 7 * 0.2) # about 83% is 1
 
 		normal_level_default_settings()
 
 	# for MASTER
-	if (hero == HERO_TYPE.MASTER):
+	if (Global.user.hero == Global.HERO_TYPE.MASTER):
 		time_remain += 30
 
 	score = 0
@@ -149,7 +145,7 @@ func new_level_by_config(n_erase, n_level_k, cur_n_rows, n_pop):
 	normal_level_default_settings()
 
 	# for MASTER
-	if (hero == HERO_TYPE.MASTER):
+	if (Global.user.hero == Global.HERO_TYPE.MASTER):
 		time_remain += 30
 
 	score = 0
@@ -180,15 +176,147 @@ func start():
 
 	card_remain = 0
 	
+	# when starting a floor, we need to create cur_n_rows rows, so we set it to 0 and pop_row()
 	var temp_r = cur_n_rows
 	cur_n_rows = 0 # pop_row() will use and modify this value, so we reset it to 0 here
-	# TODO; pop_row(temp_r)
+	pop_row(temp_r)
 	cur_n_rows = temp_r
 	
-	# TODO: shuffle_cards()
+	shuffle_cards()
 	
 	flip_state = 1
 	ai_flip_state = 1
+
+# make a new row available in the game, and decide whether game over
+func pop_row(n_pop_rows):
+	if ((cur_n_rows + n_pop_rows) > Global.MAXR):
+		# game over, reset the board
+		for ir in range(Global.MAXR):
+			for ic in range(Global.MAXC):
+				rows[ir].set_card_state(ic, CardRule.CARD_STATE.NE)
+		return false
+	else:
+		var last_r = cur_n_rows
+		var n_gen = n_pop_rows * Global.MAXC
+
+		# if the number of cards is not devidable by the rule number, add a special card
+		var n_sp_rows = n_gen % n_erase
+
+		# add a special card to a RANDOM row
+		var random_r1 = null
+		var random_r2 = null
+		
+		for i in range(n_sp_rows):
+			var rand = last_r + randi() % n_pop_rows # a random row number
+			while (random_r1 != null and rand != random_r1):
+				rand = last_r + randi() % n_pop_rows
+			
+			rows[rand].new_row(n_level_k, n_erase, n_level_sp)
+			for ic in range(Global.MAXC):
+				rows[rand].set_card_state(ic, CardRule.CARD_STATE.COVER)
+				
+			cur_n_rows += 1
+			
+			# add a new row of cards to temporary pointers
+			flip1 += Global.MAXC
+			flip2 += Global.MAXC
+			flip3 += Global.MAXC
+			
+			card_remain += Global.MAXC
+			
+			# saved to be used later
+			if (random_r1 == null):
+				random_r1 = rand
+			else:
+				random_r2 = rand
+		
+		# generate other rows that without a special card
+		var n_gen_rows = n_pop_rows - n_sp_rows
+		n_gen = Global.MAXC * n_gen_rows
+		
+		# TODO: the following logic is similar to new_row() in RowRule; can we move there?
+		# calculate purchased card kinds
+		var last_k = Global.user.cal_last_k(n_level_k)
+		
+		var n_per_k = []
+		n_per_k.resize(last_k + 1)
+		for ix in range(last_k): # last_k will be handled later
+			if (Global.user.owned_k[ix] and (n_gen >= Global.MAXC * n_gen_rows / n_level_k)):
+				var n_pairs = Global.MAXC * n_gen_rows / n_erase / n_level_k + randi() % 2 # this gives the number of pairs of one kind of cards
+				while ((n_erase * n_pairs) > n_gen):
+					n_pairs = Global.MAXC * n_gen_rows / n_erase / n_level_k + randi() % 2
+					
+				n_per_k[ix] = n_erase * n_pairs
+				n_gen -= n_per_k[ix]
+			else:
+				n_per_k[ix] = 0 # if no owned, set to 0
+
+		# assign card kinds to each position
+		n_per_k[last_k] = n_gen # the remaining n_gen
+		if (n_gen_rows != 0):
+			for ir in range(n_pop_rows):
+				if (((last_r + ir) != random_r1) and ((last_r + ir) != random_r2)):
+					rows[(last_r + ir)].one_random_row(last_k, n_per_k)
+					for ic in range(Global.MAXC):
+						rows[(last_r + ir)].set_card_state(ic, CardRule.CARD_STATE.COVER)
+				
+					cur_n_rows += 1
+		
+					# add a new row of cards to temporary pointers
+					flip1 += Global.MAXC
+					flip2 += Global.MAXC
+					flip3 += Global.MAXC
+					
+					card_remain += Global.MAXC
+					
+		# reset timer
+		time_remain = base_time
+		
+		return true
+
+# shuffle all existing and avaliable (NOT SPECIAL) cards in the game
+func shuffle_cards():
+	var n_per_k = []
+	n_per_k.resize(Global.MAXK)
+	
+	for ik in range(Global.MAXK):
+		n_per_k[ik] = 0
+#
+	# check and store how many cards per kind
+	for ir in range(cur_n_rows):
+		for ic in range(Global.MAXC):
+			if (rows[ir].get_card_state(ic) != CardRule.CARD_STATE.NE and !rows[ir].is_sp(ic)):
+				n_per_k[rows[ir].get_card_type(ic) - CardRule.OFFSET - 1] += 1
+
+	# shuffle
+	for ir in range(cur_n_rows):
+		rows[ir].shuffle(n_per_k)
+
+# get the number of rows avaliable in the game; also update cur_n_rows
+func update_cur_n_rows():
+	# find the empty row position
+	# notice that the row indeces in game are mirrored, which means we find the minimum r with enabled cards
+	var empty_r_ix = 0
+	for ir in range(cur_n_rows):
+		for ic in range(Global.MAXC):
+			if (rows[ir].get_card_state(ic) != CardRule.CARD_STATE.NE):
+				empty_r_ix = ir
+				ir = cur_n_rows # TODO: this is for breaking the ir loop as well
+				break
+
+	# move the rows to fill the empty row
+	if (empty_r_ix != 0):
+		for ir in range(empty_r_ix, cur_n_rows):
+			for ic in range(Global.MAXC):
+				rows[ir - empty_r_ix].set_card_state(ic, rows[ir].get_card_state(ic))
+				rows[ir - empty_r_ix].set_card_type(ic, rows[ir].get_card_type(ic))
+				
+				rows[ir].set_card_state(ic, CardRule.CARD_STATE.NE)
+#
+	# update cur_n_rows
+	cur_n_rows -= empty_r_ix
+	
+	return cur_n_rows
 
 ## whether a card is clickable or not.
 #// Input: the index of a card (need to be decoded).
@@ -701,203 +829,9 @@ func start():
 	#return this->updateCurrentR(); // This is a MUST!!
 #}
 #
-#// Get the number of rows avaliable in the game. It will also update nowr.
-#// Output: the number of rows avaliable in the game.
-#int GameRule::updateCurrentR()
-#{
-	#// find the empty row position
-	#// Notice that the row indeces in game are mirrored, which means we find the minimum r with enabled cards
-	#int emptyRIndex = 0;
-	#for (int r = 0; r < this->currentR; r++)
-	#{
-		#for (int c = 0; c < this->maxC; c++)
-		#{
-			#if (this->rowArr[r].getCardState(c) != Row::NE)
-			#{
-				#emptyRIndex = r;
-				#r = this->currentR; // break loop for r as well
-				#break;
-			#}
-		#}
-	#}
-#
-	#// Move the rows to fill the empty row.
-	#if (emptyRIndex != 0)
-	#{
-		#for (int r = emptyRIndex; r < this->currentR; r++)
-		#{
-			#for (int c = 0; c < this->maxC; c++)
-			#{
-				#this->rowArr[r - emptyRIndex].setCardState(c,this->rowArr[r].getCardState(c));
-				#this->rowArr[r - emptyRIndex].setCardKind(c,this->rowArr[r].getCardKind(c));
-				#this->rowArr[r - emptyRIndex].setSp(c,this->rowArr[r].getSp(c));
-				#this->rowArr[r].setCardState(c,Row::NE);
-			#}
-		#}
-	#}
-#
-	#// update currentR
-	#(this->currentR) -= emptyRIndex;
-#
-	#return this->currentR;
-#}
-#
-#// To make a new row available in the game, and decide whether game over.
-#// Input: how many rows will be popped in one time.
-#// Output: whether game IS NOT over (or rather say, whether a new line is poped).
-#// Call: row::setstate().
-#bool GameRule::popRow(int n)
-#{
-	#if ((this->currentR + n) > this->maxR) // Game over.
-	#{
-		#for (int r = 0; r < this->maxR; r++)
-		#{
-			#for (int c = 0; c < this->maxC; c++)
-				#this->rowArr[r].setCardState(c, Row::NE);
-		#}
-		#return false;
-	#}
-	#else
-	#{
-		#int lastR = this->currentR;
-		#int genN = n * this->maxC;
-		#// If the number of cards is not devidable by the rule number, add special card.
-		#int nRow2AddSp = genN % this->eraseN;
-#
-		#// add random special card
-		#int randomR1 = -1, randomR2 = -1;
-		#switch (nRow2AddSp)
-		#{
-		#case 2:
-			#randomR2 = lastR + rand() % n;
-#
-			#this->rowArr[randomR2].newRow(this->maxK, this->levelKN, this->eraseN, this->levelSpN);
-			#for (int c = 0; c < this->maxC; c++) {
-				#this->rowArr[randomR2].setCardState(c, Row::COVER);
-			#}
-#
-			#(this->currentR)++;
-			#(this->flip1) += this->maxC;
-			#(this->flip2) += this->maxC;
-			#(this->flip3) += this->maxC;
-			#(this->cardRemain) += this->maxC;
-#
-			#// no break - do case 1 as well
-		#case 1:
-			#randomR1 = lastR + rand() % n;
-			#while (randomR1 == randomR2) {
-				#randomR1 = lastR + rand() % n;
-			#}
-#
-			#this->rowArr[randomR1].newRow(this->maxK, this->levelKN, this->eraseN, this->levelSpN);
-			#for (int c = 0; c < this->maxC; c++) {
-				#this->rowArr[randomR1].setCardState(c, Row::COVER);
-			#}
-#
-			#(this->currentR)++;
-			#(this->flip1) += this->maxC;
-			#(this->flip2) += this->maxC;
-			#(this->flip3) += this->maxC;
-			#(this->cardRemain) += this->maxC;
-#
-			#break;
-		#}
-#
-		#// Generate other rows that without special card.
-		#int rowN = n - nRow2AddSp;
-		#genN = this->maxC * rowN;
-#
-		#// Calculate purchased card kinds.
-		#// TODO: better to move these into row.cpp
-		#int ownedKN = 0;
-		#int kLast = 0; // this is used in generating random kind
-		#for (int k=0; k < maxK; k++)
-		#{
-			#if (this->ownedKArr[k])
-			#{
-				#ownedKN++;
-			#}
-#
-			#// TODO: a trick: first few kinds appear more than later kinds, as we stop when ownedKN == levelK
-			#if (ownedKN == this->levelKN)
-			#{
-				#kLast = k;
-				#break;
-			#}
-		#}
-#
-		#int* perKNArr = new int[kLast + 1];
-		#for (int k = 0; k < kLast; k++)
-		#{
-			#if ((this->ownedKArr[k]) && (genN >= (this->maxC) * (rowN) / (this->levelKN)))
-			#{
-				#int nPairs = (this->maxC) * (rowN) / (this->eraseN) / (this->levelKN) + rand() % 2;  // This gives the number of pairs of one kind of cards.
-				#while ((nPairs * (this->eraseN)) > genN) {
-					#nPairs = (this->maxC) * (rowN) / (this->eraseN) / (this->levelKN) + rand() % 2;
-				#}
-				#perKNArr[k] = nPairs * this->eraseN;
-				#genN -= perKNArr[k];
-			#}
-			#else
-			#{
-				#perKNArr[k] = 0;
-			#}
-		#}
-#
-		#perKNArr[kLast] = genN;
-		#if (rowN != 0)
-		#{
-			#for (int r = 0; r < n; r++)
-			#{
-				#if (((lastR + r) != randomR1) && ((lastR + r) != randomR2))
-				#{
-					#this->rowArr[(lastR + r)].oneRandomRow(kLast, perKNArr);
-					#for (int c = 0; c < this->maxC; c++) {
-						#this->rowArr[(lastR + r)].setCardState(c, Row::COVER);
-					#}
-#
-					#(this->currentR)++;
-					#(this->flip1) += this->maxC;
-					#(this->flip2) += this->maxC;
-					#(this->flip3) += this->maxC;
-					#(this->cardRemain) += this->maxC;
-				#}
-			#}
-		#}
-#
-		#// reset timer
-		#this->timeRemain = this->baseTime;
-#
-		#return true;
-	#}
-#}
-#
-#// Disorganise all existing and avaliable (NOT SPECIAL) cards in the game.
-#void GameRule::shuffleCards()
-#{
-	#int* perKNArr=new int[this->maxK];
-	#for (int k = 0; k < this->maxK; k++) {
-		#perKNArr[k] = 0;
-	#}
-#
-	#// check and store how many cards per kind
-	#for (int r = 0; r < this->currentR; r++)
-	#{
-		#for (int c = 0; c < this->maxC; c++)
-		#{
-			#if ((this->rowArr[r].getCardState(c) != Row::NE) && (this->rowArr[r].getCardKind(c) != 0)) {
-				#perKNArr[this->rowArr[r].getCardKind(c) - 1]++;
-			#}
-		#}
-	#}
-#
-	#// shuffle
-	#for (int r = 0; r < this->currentR; r++)
-	#{
-		#this->rowArr[r].shuffle(this->maxK, perKNArr);
-	#}
-	#delete [] perKNArr;
-#}
+
+
+
 #
 #// Get the rule.
 #// Output: the number represent the rule.
@@ -912,14 +846,7 @@ func start():
 #{
 	#return this->levelKN;
 #}
-#
-#// Get how many rows will pop when time out.
-#// Output: the current popn.
-#int GameRule::getPopN()
-#{
-	#return this->popN;
-#}
-#
+
 #// Get the base time.
 #// Output: the current basetime.
 #int GameRule::getBaseTime()
@@ -1244,29 +1171,4 @@ func start():
 	#return this->aiScore;
 #}
 #
-#// Get how many kinds are purchased.
-#// Output: the number of cards purchased by user.
-#int GameRule::getOwnedKN()
-#{
-	#int ownedKN=0;
-	#for (int k = 0; k < this->maxK; k++)
-	#{
-		#if (this->ownedKArr[k])
-			#ownedKN++;
-	#}
-	#return ownedKN;
-#}
-#
-#// Get the current hero.
-#// Output: the current hero,
-#int GameRule::getHero()
-#{
-	#return this->hero;
-#}
-#
-#// Set the current hero.
-#// Input: the expected hero.
-#void GameRule::setHero(int h)
-#{
-	#this->hero = h;
-#}
+

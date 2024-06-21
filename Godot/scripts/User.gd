@@ -25,7 +25,7 @@ var owned_sp = []
 func set_owned_sp(pos, p):
 	owned_sp[pos] = p
 
-var hero = 0
+var hero = Global.HERO_TYPE.MASTER
 
 func _init():
 	owned_k.resize(Global.MAXK)
@@ -120,3 +120,15 @@ func save_game():
 	file_access.store_line(json_string)
 	file_access.close()
 
+func cal_last_k(n_level_k):
+	var n_owned_k = 0
+	var last_k = 0
+	for ix in range(Global.MAXK):
+		if (owned_k[ix]):
+			n_owned_k += 1
+		
+		if (n_owned_k == n_level_k):
+			last_k = ix
+			break
+			
+	return last_k
