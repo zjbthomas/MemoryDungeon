@@ -6,9 +6,10 @@ enum FLOOR_TYPE {NORMAL, CLOWN, EVIL}
 enum STATUS {EMPTY,SCORE,BONUS,COMBO,BREAK,CRITICAL,CREDIT,AISCORE}
 
 # should not overlapped with SP_TYPE
+# TODO: TYPE_UNCOVER_HEAL is not a fixed value
 enum CLICK_PERFORMED {
-	NO_SETTLEMENT = CardRule.SP_TYPE.TREASURE + 1,
-	SETTLEMENT = CardRule.SP_TYPE.TREASURE + 2,
+	NO_SETTLEMENT = CardRule.TYPE_UNCOVER_HEAL + 1,
+	SETTLEMENT = CardRule.TYPE_UNCOVER_HEAL + 2,
 }
 
 const MIN_TIME_HARD = 10
@@ -36,7 +37,7 @@ var flip1 = -1
 var flip2 = -1
 var flip3 = -1
 var card_remain = 0 # the number of available cards left in the game
-var matched = -1
+var matched_type = CardRule.TYPE_UNDEFINED
 var is_combo = false
 
 # variables that interact between the class and the GUI
@@ -384,15 +385,9 @@ func perform_click_for_ui(ui_r, ui_c):
 				tc = n_to_rc(flip2)[1]
 				rows[tr].set_card_state(tc, CardRule.CARD_STATE.COVER)
 	
-		# uncover the special card first and record its type
-		# this is because the position of the special card will changed when having effects
-		flip1 = rc_to_n(ir, ic)
-		rows[ir].set_card_state(ic, CardRule.CARD_STATE.UNCOVER)
-		var sp_type = rows[ir].get_card_type(ic)
-		
 		# special card effect
 		# TODO: move this to a single function
-		match (sp_type):
+		match (rows[ir].get_card_type(ic)):
 			CardRule.SP_TYPE.REINFORCE:
 				# effect 1: minus the score by the number of rows left
 				if (score >= (Global.MAXR - cur_n_rows)):
@@ -418,7 +413,7 @@ func perform_click_for_ui(ui_r, ui_c):
 				for ir_all in range(cur_n_rows):
 					for ic_all in range(Global.MAXC):
 						if (rows[ir_all].get_card_state(ic_all) != CardRule.CARD_STATE.NE):
-							rows[ir_all].set_card_stete(ic_all, CardRule.CARD_STATE.UNCOVER)
+							rows[ir_all].set_card_state(ic_all, CardRule.CARD_STATE.UNCOVER)
 							
 				# effect 3: for HUNTER, decrease gold
 				if (Global.user.hero == Global.HERO_TYPE.HUNTER and Global.user.gold >= 1):
@@ -434,12 +429,12 @@ func perform_click_for_ui(ui_r, ui_c):
 					
 				Global.user.save_game() # TODO: is it too frequent?
 			CardRule.SP_TYPE.MAP:
-				matched = -1 # used in settle() so a class member variable is needed
+				matched_type = CardRule.TYPE_UNDEFINED # used in settle() so a class member variable is needed
 				
 				var n_pairs
 				var temp_pos
 				
-				var temp_matched = -1 # for HUNTER who finds two pairs
+				var temp_matched_type = CardRule.TYPE_UNDEFINED # for HUNTER who finds two pairs
 			
 				# how many pairs to match
 				if (Global.user.hero == Global.HERO_TYPE.HUNTER):
@@ -454,29 +449,31 @@ func perform_click_for_ui(ui_r, ui_c):
 						var ir_find = n_to_rc(fn)[0]
 						var ic_find = n_to_rc(fn)[1]
 
-						if (rows[ir_find].get_card_state(ic_find) != CardRule.CARD_STATE.NE and 
+						if (rows[ir_find].get_card_state(ic_find) == CardRule.CARD_STATE.COVER and 
 							!rows[ir_find].is_sp(ic_find) and
-							rows[ir_find].get_card_type(ic_find) != temp_matched):
-								rows[ir_find].set_card_state(ic, CardRule.CARD_STATE.UNCOVER)
-								matched = rows[ir_find].get_card_type(ic_find)
+							rows[ir_find].get_card_type(ic_find) != temp_matched_type):
+								rows[ir_find].set_card_state(ic_find, CardRule.CARD_STATE.UNCOVER)
+								matched_type = rows[ir_find].get_card_type(ic_find)
 								temp_pos = fn
-								temp_matched = rows[ir_find].get_card_type(ic_find)
-								break
+								temp_matched_type = rows[ir_find].get_card_type(ic_find)
 
+								break
+						
 					# find other cards that match the reference
 					for en in range(n_erase, 2 - 1, -1): # [3, 2]
 						for fn in range(temp_pos + 1, Global.MAXR * Global.MAXC): # we use multiplication here so we only need to break one loop
 							var ir_find = n_to_rc(fn)[0]
 							var ic_find = n_to_rc(fn)[1]
 							
-							if (rows[ir_find].get_card_state(ic_find) != CardRule.CARD_STATE.NE and 
-								rows[ir_find].get_card_type(ic_find) == matched):
+							if (rows[ir_find].get_card_state(ic_find) == CardRule.CARD_STATE.COVER and 
+								!rows[ir_find].is_sp(ic_find) and
+								rows[ir_find].get_card_type(ic_find) == matched_type):
 									rows[ir_find].set_card_state(ic_find, CardRule.CARD_STATE.UNCOVER)
 									temp_pos = fn
 									
 									break
 					
-			CardRule.SP_TYPE.HEAL:
+			CardRule.SP_TYPE.HEAL, CardRule.TYPE_UNCOVER_HEAL:
 				if (Global.user.hero == Global.HERO_TYPE.MASTER):
 					# less effective for MASTER
 					time_remain += base_time / 2
@@ -494,9 +491,15 @@ func perform_click_for_ui(ui_r, ui_c):
 					Global.user.gold += 1
 					Global.user.save_game() # TODO: is it too frequent?
 
-		flip_state = 1 # TODO: check if this one is correct
+		# uncover the special card
+		# MUST be at the end asthe position of the special card may change when having effects
+		rows[ir].set_card_state(ic, CardRule.CARD_STATE.UNCOVER)
+
+		flip1 = rc_to_n(ir, ic)
+
+		flip_state = 1
 		
-		return sp_type # return the kind of special card
+		return rows[ir].get_card_type(ic) # return the kind of special card
 #
 	# if it is a normal card
 	# no matter how, uncover it
@@ -536,7 +539,7 @@ func perform_click_for_ui(ui_r, ui_c):
 					
 					return CLICK_PERFORMED.NO_SETTLEMENT
 				
-				flip_state = 2 # TODO: is this correct? Or should be 0? I believe for settlement, this should be reset later...
+				flip_state = 2
 				
 				if (rows[tr1].get_card_type(tc1) != rows[tr2].get_card_type(tc2)):
 					# user click different cards, but they are different types
@@ -544,7 +547,7 @@ func perform_click_for_ui(ui_r, ui_c):
 				else:
 					return CLICK_PERFORMED.NO_SETTLEMENT
 					
-		3:
+		2:
 			flip3 = rc_to_n(ir, ic)
 			
 			return CLICK_PERFORMED.SETTLEMENT
@@ -583,19 +586,19 @@ func settle():
 				status = STATUS.CREDIT
 			CardRule.SP_TYPE.MAP:
 				# when a match is found, remove the matched cards
-				if (matched != -1):
-					for ir in range(Global.MAXR):
+				if (matched_type != CardRule.TYPE_UNDEFINED):
+					for ir in range(Global.MAXR): # TODO: maybe we should only loop till cur_n_rows?
 						for ic in range(Global.MAXC):
 							# assumption: these cards are UNCOVER and not special card, after perform_click()
 							if (rows[ir].get_card_state(ic) == CardRule.CARD_STATE.UNCOVER and 
-								rows[ir].is_sp(ic)):
+								!rows[ir].is_sp(ic)):
 									rows[ir].set_card_state(ic, CardRule.CARD_STATE.NE)
 									
 									card_remain -= 1
 					
 					# add aother score as at least two cards are removed	
 					score += 1
-			CardRule.SP_TYPE.HEAL:
+			CardRule.SP_TYPE.HEAL, CardRule.TYPE_UNCOVER_HEAL:
 				pass
 			CardRule.SP_TYPE.TREASURE:
 				pass

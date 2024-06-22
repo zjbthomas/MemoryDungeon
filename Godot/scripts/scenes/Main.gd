@@ -8,7 +8,8 @@ const REINFORCE_TIME = 1.2
 const CHAOS_TIME = 2
 const GOLD_TIME = 0.6
 const MAP_TIME = 1
-const HEAL_TIME = 0.6
+const LONG_HEAL_TIME = 0.6
+const SHORT_HEAL_TIME = 0.05
 const TREASURE_TIME = 0.6
 
 const AI_SETTLE_TIME = 0.3
@@ -243,13 +244,13 @@ func _on_board_card_button_clicked(ir, ic):
 					
 					# TODO: the cards to recover are dynamically found; update_all_cards() is safe, but not efficient
 					update_all_cards()
-				CardRule.SP_TYPE.HEAL:
+				CardRule.SP_TYPE.HEAL, CardRule.TYPE_UNCOVER_HEAL:
 					update_am_bar()
 					
 					if (Global.user.hero == Global.HERO_TYPE.MASTER):
-						$SettleTimer.wait_time = HEAL_TIME
+						$SettleTimer.wait_time = LONG_HEAL_TIME
 					else:
-						$SettleTimer.wait_time = 0.05 # TODO: as HEAL is visible to MASTER, the display time is shorter; can we directly call settle()?
+						$SettleTimer.wait_time = SHORT_HEAL_TIME # TODO: as HEAL is visible to MASTER, the display time is shorter; can we directly call settle()?
 					
 					update_one_card(ir, ic)
 					

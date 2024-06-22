@@ -17,7 +17,7 @@ enum SP_TYPE { # from worst to best as evil and clown use worst types
 } 
 
 const TYPE_UNDEFINED = CARD_STATE.NE
-const TYPE_UNCOVER_HEAL = SP_TYPE.TREASURE + 1
+const TYPE_UNCOVER_HEAL = SP_TYPE.TREASURE + 1 # TODO: TREASURE is not a fixed value
 
 const OFFSET = CARD_STATE.COVER - Global.MAXK # [- Global.MAXK - CardRule.CARD_STATE.COVER, CardRule.CARD_STATE.COVER - 1]
 

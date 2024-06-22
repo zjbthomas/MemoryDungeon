@@ -58,7 +58,7 @@ animations = [{
 "texture": ExtResource("9_kwpau")
 }],
 "loop": true,
-"name": &"4",
+"name": &"3",
 "speed": 5.0
 }, {
 "frames": [{
@@ -66,7 +66,7 @@ animations = [{
 "texture": ExtResource("7_0ero2")
 }],
 "loop": true,
-"name": &"5",
+"name": &"4",
 "speed": 5.0
 }, {
 "frames": [{
@@ -74,7 +74,7 @@ animations = [{
 "texture": ExtResource("8_3so1x")
 }],
 "loop": true,
-"name": &"6",
+"name": &"5",
 "speed": 5.0
 }]
 
@@ -226,7 +226,7 @@ show_percentage = false
 [node name="StatusSprite" type="AnimatedSprite2D" parent="LeftPanel/GameStatus/TopPanel"]
 position = Vector2(383, 20)
 sprite_frames = SubResource("SpriteFrames_oh4u8")
-animation = &"6"
+animation = &"5"
 
 [node name="LevelLabel" type="RichTextLabel" parent="LeftPanel/GameStatus/TopPanel"]
 offset_left = 466.0

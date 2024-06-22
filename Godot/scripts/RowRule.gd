@@ -37,6 +37,7 @@ func new_row(n_level_k, n_erase, n_level_sp):
 	var selected_sp = randi() % n_level_sp # [0, n_level_sp - 1]
 	while (Global.user.owned_sp[selected_sp] == false):
 		selected_sp = randi() % n_level_sp
+
 	cards[sp_pos].type = selected_sp
 	
 	# generate each kind has how many cards in this row
