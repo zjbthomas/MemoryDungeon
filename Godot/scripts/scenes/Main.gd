@@ -183,7 +183,7 @@ func update_all_cards():
 			update_one_card(ir, ic)
 			
 func update_one_card(ir, ic):
-	$MainGUI/Board.update_one_card(ir, ic, game.rows[ir].cards[ic])
+	$MainGUI/Board.update_one_card(ir, ic, game.card_card_for_ui(ir, ic))
 
 func _on_board_card_button_clicked(ir, ic):
 	if (game.is_ai_turn == false):
@@ -194,7 +194,7 @@ func _on_board_card_button_clicked(ir, ic):
 			
 			$MainGUI/RightPanel/GameFunctions/ShopFunction/GainRect.visible = false
 			
-			match (game.perform_click(ir, ic)):
+			match (game.perform_click_for_ui(ir, ic)):
 				GameRule.CLICK_PERFORMED.NO_SETTLEMENT:
 					update_one_card(ir, ic)
 				GameRule.CLICK_PERFORMED.SETTLEMENT:
@@ -287,4 +287,113 @@ func _on_board_card_button_clicked(ir, ic):
 
 
 func _on_settle_timer_timeout():
-	print("stop")
+	# call settle()
+	game.settle()
+	
+	# TODO: this->update() what's this?
+	
+	# update status
+	if (game.status == GameRule.STATUS.EMPTY):
+		$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.visible = false
+	elif (game.status <= GameRule.STATUS.CRITICAL):
+		$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.play(str(game.status))
+		$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.visible = true
+	elif (game.status == GameRule.STATUS.CREDIT):
+		$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.play(str(GameRule.STATUS.BONUS))
+		$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.visible = true
+		
+		$MainGUI/RightPanel/GameFunctions/ShopFunction/GainRect.visible = true
+		
+	# update progress bar for level
+	update_level_bar()
+	
+	# update all cards
+	update_all_cards()
+
+
+	#string msg = "";
+	#if (winGame) // If go to the next level.
+	#{
+		#this->amTimer->stop();
+#
+		#// update UI first, as other operations later are blocking operations.
+		#// hide progress bars
+		#ui->levelPB->setVisible(false);
+#
+		#ui->amPB->setVisible(false);
+		#ui->hpPB->setVisible(false);
+#
+		#this->updateSidebar(false);
+#
+		#// hide status
+		#ui->statusLbl->setVisible(false);
+		#ui->goldLbl->setVisible(false);
+#
+		#this->updateAllCards();
+#
+		#// Set the buttons.
+		#ui->pauseBtn->setVisible(false);
+		#ui->resumeBtn->setVisible(false);
+#
+		#this->enabledHeroBtn = true;
+#
+		#// Rewards to the game.
+		#if (foundTreasure)
+		#{
+			#msg="You find a gift in this floor!\nPlease receive it!";
+#
+			#MessageDialog* messageDialog = new MessageDialog(this, msg, "Wow!", true, this->user);
+			#messageDialog->setModal(true);
+			#messageDialog->exec();
+			#delete messageDialog;
+#
+		#}
+#
+		#switch (this->floorType)
+		#{
+		#case GameRule::NORMAL:
+			#this->user->setGold(this->user->getGold() + 1);
+#
+			#break;
+		#case GameRule::CLOWN:
+			#this->user->setGold(this->user->getGold() + 3);
+#
+			#break;
+		#case GameRule::EVIL:
+			#this->user->setGold(this->user->getGold() + 5);
+#
+			#msg="You get the chest from beating EVIL!\nLet's open it!";
+#
+			#MessageDialog* messageDialog = new MessageDialog(this, msg, "Wow!", true, this->user);
+			#messageDialog->setModal(true);
+			#messageDialog->exec();
+			#delete messageDialog;
+#
+			#break;
+		#}
+#
+		#// update user file as credit changed
+		#this->user->writeFile();
+#
+		#ui->goldLbl->setText(QString::number(this->user->getGold()));
+#
+		#this->updateItemPB();
+#
+		#// update saved level and write to user file
+		#this->user->setSavedLevel(this->game->getLevel());
+#
+		#ui->savedLbl->setText(QString::number(this->game->getLevel()));
+#
+		#if (this->game->getLevel() > this->user->getBestLevel()) {
+			#this->user->setBsetLevel(this->game->getLevel());
+#
+			#ui->bestLbl->setText(QString::number(this->game->getLevel()));
+		#}
+#
+		#this->user->writeFile();
+#
+		#// Show the button to the next floor.
+		#ui->infoTB->setText(QString::fromStdString("Well done!\nLet's go to the next floor!"));
+#
+		#ui->nextFloorBtn->setVisible(true);
+	#}

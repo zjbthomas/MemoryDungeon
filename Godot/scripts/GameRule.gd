@@ -3,6 +3,7 @@ extends Node
 class_name GameRule
 
 enum FLOOR_TYPE {NORMAL, CLOWN, EVIL}
+enum STATUS {EMPTY,SCORE,BONUS,COMBO,BREAK,CRITICAL,CREDIT,AISCORE}
 
 # should not overlapped with SP_TYPE
 enum CLICK_PERFORMED {
@@ -15,6 +16,8 @@ const MIN_TIME_EASY = 12
 
 const ADD_GOLD = 3
 
+const CRITICAL_RATE = 30
+
 var rows = []
 
 # for a single game - used in new_level()
@@ -23,7 +26,7 @@ var n_erase:int = 2 # ow many identical cards to erase them - MUST be 2 or 3
 var n_level_k = 0 # should not be bigger than maxk
 var n_level_sp = 0 # should not be bigger than maxsp
 var n_pop:int = 0
-var base_time = 0 # TODO: as main timer in game has an interval of 100 ms, the unit for this is 10 seconds
+var base_time = 0
 var objective = 0
 
 # used to record and response in the game progress
@@ -37,11 +40,14 @@ var matched = -1
 var is_combo = false
 
 # variables that interact between the class and the GUI
-var score = 0 # R only, add score automatically
-var time_remain = 0
+var score:int = 0 # R only, add score automatically
+var time_remain:int = 0
 var level:int = 0 # R/W
 
 var found_treasure:bool = false
+
+var win_game:bool = false
+var status:STATUS = STATUS.EMPTY
 
 # Variables for AI parts.
 var is_in_ai_mode = false
@@ -59,7 +65,13 @@ func _init():
 	# initial AI
 	for ix in range(Global.MAXR * Global.MAXC):
 		ai_memory.append(false)
+
+func card_card_for_ui(ui_r, ui_c):
+	var r = mirror_ui_rc(ui_r, ui_c)[0]
+	var c = mirror_ui_rc(ui_r, ui_c)[1]
 	
+	return rows[r].cards[c]
+
 # Generate a new level.
 func new_level():
 	# not AI mode
@@ -184,10 +196,10 @@ func start():
 
 	card_remain = 0
 	
-	# when starting a floor, we need to create cur_n_rows rows, so we set it to 0 and pop_row()
+	# when starting a floor, we need to create cur_n_rows rows, so we set it to 0 and pop_rows()
 	var temp_r = cur_n_rows
-	cur_n_rows = 0 # pop_row() will use and modify this value, so we reset it to 0 here
-	pop_row(temp_r)
+	cur_n_rows = 0 # pop_rows() will use and modify this value, so we reset it to 0 here
+	pop_rows(temp_r)
 	cur_n_rows = temp_r
 	
 	shuffle_cards()
@@ -196,7 +208,7 @@ func start():
 	ai_flip_state = 0
 
 # make a new row available in the game, and decide whether game over
-func pop_row(n_pop_rows):
+func pop_rows(n_pop_rows):
 	if ((cur_n_rows + n_pop_rows) > Global.MAXR):
 		# game over, reset the board
 		for ir in range(Global.MAXR):
@@ -216,7 +228,7 @@ func pop_row(n_pop_rows):
 		
 		for i in range(n_sp_rows):
 			var rand = last_r + randi() % n_pop_rows # a random row number
-			while (random_r1 != null and rand != random_r1):
+			while (random_r1 != null and rand == random_r1):
 				rand = last_r + randi() % n_pop_rows
 			
 			rows[rand].new_row(n_level_k, n_erase, n_level_sp)
@@ -294,7 +306,7 @@ func shuffle_cards():
 	for ir in range(cur_n_rows):
 		for ic in range(Global.MAXC):
 			if (rows[ir].get_card_state(ic) != CardRule.CARD_STATE.NE and !rows[ir].is_sp(ic)):
-				n_per_k[rows[ir].get_card_type(ic) - CardRule.OFFSET - 1] += 1
+				n_per_k[rows[ir].get_card_type(ic) - CardRule.OFFSET] += 1
 
 	# shuffle
 	for ir in range(cur_n_rows):
@@ -305,11 +317,14 @@ func update_cur_n_rows():
 	# find the empty row position
 	# notice that the row indeces in game are mirrored, which means we find the minimum r with enabled cards
 	var empty_r_ix = 0
+	var stop_flag = false
 	for ir in range(cur_n_rows):
+		if (stop_flag):
+			break
 		for ic in range(Global.MAXC):
 			if (rows[ir].get_card_state(ic) != CardRule.CARD_STATE.NE):
 				empty_r_ix = ir
-				ir = cur_n_rows # TODO: this is for breaking the ir loop as well
+				stop_flag = true
 				break
 
 	# move the rows to fill the empty row
@@ -333,13 +348,24 @@ func n_to_rc(n):
 	var r:int = n / Global.MAXC
 	var c:int = n % Global.MAXC
 	
-	# TODO: do we need to mirror the row?
+	return [r, c]
+
+func mirror_ui_rc(ui_r, ui_c):
+	var r = ui_r
+	var c = ui_c
 	
+	# mirrored the rows which is avaliable in the game
+	if (ui_r < cur_n_rows):
+		r = cur_n_rows - (ui_r + 1)
+		
 	return [r, c]
 
 # response to a click.
 # if a special card is clicked, return the kind of that card; Otherwise, return whether a single card or a pair of cards is clicked
-func perform_click(ir, ic):
+func perform_click_for_ui(ui_r, ui_c):
+	var ir = mirror_ui_rc(ui_r, ui_c)[0]
+	var ic = mirror_ui_rc(ui_r, ui_c)[1]
+	
 	# if it is a special card
 	if (rows[ir].is_sp(ic)):
 		# cover previously clicked cards
@@ -358,9 +384,15 @@ func perform_click(ir, ic):
 				tc = n_to_rc(flip2)[1]
 				rows[tr].set_card_state(tc, CardRule.CARD_STATE.COVER)
 	
+		# uncover the special card first and record its type
+		# this is because the position of the special card will changed when having effects
+		flip1 = rc_to_n(ir, ic)
+		rows[ir].set_card_state(ic, CardRule.CARD_STATE.UNCOVER)
+		var sp_type = rows[ir].get_card_type(ic)
+		
 		# special card effect
 		# TODO: move this to a single function
-		match (rows[ir].get_card_type(ic)):
+		match (sp_type):
 			CardRule.SP_TYPE.REINFORCE:
 				# effect 1: minus the score by the number of rows left
 				if (score >= (Global.MAXR - cur_n_rows)):
@@ -368,11 +400,8 @@ func perform_click(ir, ic):
 				
 				# effect 2: pop a new row and show it
 				if (cur_n_rows < Global.MAXR):
-					pop_row(1)
-					
-					# update the row number as new row is added
-					ir += 1 # TODO: is this correct and why we need this?
-					
+					pop_rows(1)
+
 					# uncover newly added row
 					for ic_new in range(Global.MAXC):
 						rows[cur_n_rows - 1].set_card_state(ic_new, CardRule.CARD_STATE.UNCOVER)
@@ -405,7 +434,7 @@ func perform_click(ir, ic):
 					
 				Global.user.save_game() # TODO: is it too frequent?
 			CardRule.SP_TYPE.MAP:
-				matched = -1 # TODO: why class member here? Where it is used?
+				matched = -1 # used in settle() so a class member variable is needed
 				
 				var n_pairs
 				var temp_pos
@@ -465,13 +494,9 @@ func perform_click(ir, ic):
 					Global.user.gold += 1
 					Global.user.save_game() # TODO: is it too frequent?
 
-		# uncover the special card
-		rows[ir].set_card_state(ic, CardRule.CARD_STATE.UNCOVER)
-		
-		flip1 = rc_to_n(ir, ic)
 		flip_state = 1 # TODO: check if this one is correct
 		
-		return rows[ir].get_card_type(ic) # return the kind of special card
+		return sp_type # return the kind of special card
 #
 	# if it is a normal card
 	# no matter how, uncover it
@@ -511,357 +536,216 @@ func perform_click(ir, ic):
 					
 					return CLICK_PERFORMED.NO_SETTLEMENT
 				
+				flip_state = 2 # TODO: is this correct? Or should be 0? I believe for settlement, this should be reset later...
+				
 				if (rows[tr1].get_card_type(tc1) != rows[tr2].get_card_type(tc2)):
 					# user click different cards, but they are different types
-					flip3 = rc_to_n(ir, ic) # TODO: why?
-					
-					flip_state = 2 # TODO: is this correct? Or should be 0? I believe for settlement, this should be reset later...
-					
-					return CLICK_PERFORMED.SETTLEMENT # settle to show the two wrongly clicked cards for user to remember
+					return CLICK_PERFORMED.SETTLEMENT
 				else:
-					flip_state = 2
+					return CLICK_PERFORMED.NO_SETTLEMENT
 					
 		3:
 			flip3 = rc_to_n(ir, ic)
 			
 			return CLICK_PERFORMED.SETTLEMENT
 
-#// When a hint or a pair of cards are shown for a given time, decide what to do next. Used in the closing timer.
-#// Input: A pointer pointed to a boolean whether game wins or not.
-#// Output: The number of row is available in the game and a boolean pointer.
-#// Call: n2RC(), row::getkind(), row::row::getstate(), row::setstate().
-#int GameRule::settle(bool* winGame,int* status)
-#{
-	#*status = EMPTY;
-#
-	#int sr1,sc1,sr2,sc2,sr3,sc3;
-	#n2RC(this->flip1,&sr1,&sc1);
-#
-	#// If it is a special card.
-	#if (this->rowArr[sr1].getCardKind(sc1) == 0)
-	#{
-		#*status = BONUS;
-		#switch (this->rowArr[sr1].getSp(sc1))
-		#{
-		#case Row::REINFORCE:
-			#// cover the newly added row
-			#for (int c = 0; c < this->maxC; c++) {
-				#this->rowArr[this->currentR - 1].setCardState(c, Row::COVER);
-			#}
-#
-			#if (this->score > 0) {
-				#(this->score)--;
-			#}
-#
-			#*status=BREAK;
-#
-			#break;
-#
-		#case Row::CHAOS:
-			#// cover all the cards
-			#for (int r=0; r < this->maxR; r++)
-			#{
-				#for (int c = 0; c < this->maxC; c++)
-				#{
-					#if (this->rowArr[r].getCardState(c) != Row::NE) {
-						#this->rowArr[r].setCardState(c, Row::COVER);
-					#}
-				#}
-			#}
-			#break;
-#
-		#case Row::GOLD:
-			#*status = CREDIT;
-			#break;
-#
-		#case Row::MAP:
-			#// when a match is found, remove the matched cards
-			#if (this->match != -1)
-			#{
-				#for (int cn = 0; cn < (this->maxR)*(this->maxC); cn++)
-				#{
-					#int tr,tc;
-					#n2RC(cn,&tr,&tc);
-					#if ((this->rowArr[tr].getCardState(tc) == Row::UNCOVER) && (this->rowArr[tr].getCardKind(tc) != 0))
-					#{
-						#this->rowArr[tr].setCardState(tc, Row::NE);
-#
-						#(this->cardRemain)--;
-					#}
-				#}
-			#}
-#
-			#(this->score)++;
-#
-			#break;
-		#case Row::HEAL:
-			#break;
-		#case Row::TREASURE:
-			#break;
-		#}
-#
-		#this->rowArr[sr1].setCardState(sc1,Row::NE);
-#
-		#//(this->score)++;
-		#(this->cardRemain)--;
-	#}
-	#else
-	#{
-		#// it is a normal card
-		#n2RC(this->flip2,&sr2,&sc2);
-		#n2RC(this->flip3,&sr3,&sc3);
-#
-		#switch (this->eraseN)
-		#{
-		#case 2:
-			#if (this->rowArr[sr1].getCardKind(sc1) == this->rowArr[sr2].getCardKind(sc2))
-			#{
-				#// remove two cards
-				#this->rowArr[sr1].setCardState(sc1, Row::NE);
-				#this->rowArr[sr2].setCardState(sc2, Row::NE);
-#
-				#// add score
-				#(this->score)++;
-#
-				#*status=SCORE;
-#
-				#// handle combo except BERSERKER
-				#if (this->hero != BERSERKER)
-				#{
-					#if (this->isCombo)
-					#{
-						#// add one more score
-						#(this->score)++;
-#
-						#*status=COMBO;
-					#}
-					#else
-						#this->isCombo = true;
-				#}
-				#else
-				#{
-					#// CRITICAL system for BERSERKER.
-					#int criticalRoll = rand() % 100 + 1;
-					#if (criticalRoll <= this->CRITICALRATE) // Here set the critical rate.
-					#{
-						#// add 2 points
-						#(this->score)+=2;
-#
-						#*status=CRITICAL;
-					#}
-				#}
-#
-				#// update remaining card number
-				#(this->cardRemain) -= (this->eraseN);
-#
-			#}
-			#else
-			#{
-				#// cover cards if not matched
-				#this->rowArr[sr1].setCardState(sc1, Row::COVER);
-				#this->rowArr[sr2].setCardState(sc2, Row::COVER);
-#
-				#// reset combo flag
-				#this->isCombo=false;
-			#}
-			#break;
-		#case 3:
-			#if ((this->rowArr[sr1].getCardKind(sc1) == this->rowArr[sr2].getCardKind(sc2)) &&
-				#(this->rowArr[sr1].getCardKind(sc1)==this->rowArr[sr3].getCardKind(sc3)))
-			#{
-				#this->rowArr[sr1].setCardState(sc1,Row::NE);
-				#this->rowArr[sr2].setCardState(sc2,Row::NE);
-				#this->rowArr[sr3].setCardState(sc3,Row::NE);
-#
-				#// add score
-				#(this->score)++;
-#
-				#*status=SCORE;
-#
-				#// handle combo except BERSERKER
-				#if (this->hero != BERSERKER)
-				#{
-					#if (this->isCombo)
-					#{
-						#// add one more score
-						#(this->score)++;
-#
-						#*status=COMBO;
-					#}
-					#else
-						#this->isCombo = true;
-				#}
-				#else
-				#{
-					#// CRITICAL system for BERSERKER.
-					#int criticalRoll = rand() % 100 + 1;
-					#if (criticalRoll <= this->CRITICALRATE) // Here set the critical rate.
-					#{
-						#// add 2 points
-						#(this->score)+=2;
-#
-						#*status=CRITICAL;
-					#}
-				#}
-#
-				#// update remaining card number
-				#(this->cardRemain) -= (this->eraseN);
-			#}
-			#else
-			#{
-				#this->rowArr[sr1].setCardState(sc1,Row::COVER);
-				#this->rowArr[sr2].setCardState(sc2,Row::COVER);
-				#this->rowArr[sr3].setCardState(sc3,Row::COVER);
-#
-				#// reset combo flag
-				#this->isCombo=false;
-			#}
-			#break;
-		#}
-	#}
-#
-	#// after removing cards, move remaining cards downwards
-	#this->moveCardsDownwards();
-#
-	#// when the game is not end but no card left, pop new rows
-	#if (this->cardRemain == 0)
-	#{
-		#// Pop half of maximum rows right now, and the left time will change into score.
-		#(this->score) += (this->timeRemain) / 10; // TODO: a magic number here
-#
-		#*status = BONUS;
-#
-		#this->popRow(this->maxR / 2);
-#
-		#this->shuffleCards();
-	#}
-#
-	#// win game
-	#if ((this->score) >= (this->objective))
-	#{
-		#*winGame = true;
-#
-		#// remove all cards
-		#for (int n = 0; n < (this->maxR) * (this->maxC); n++)
-		#{
-			#n2RC(n,&sr1,&sc1);
-			#this->rowArr[sr1].setCardState(sc1,Row::NE);
-		#}
-	#}
-	#else {
-		#*winGame=false;
-	#}
-#
-	#return this->updateCurrentR();
-#}
-#
-#// The card will move downwards if there is no card below.
-#int GameRule::moveCardsDownwards()
-#{
-	#// Notice that the row indeces in game are mirrored.
-	#for (int r = 0; r < this->currentR ;r++)
-	#{
-		#for (int c=0; c < this->maxC; c++)
-		#{
-			#if (this->rowArr[r].getCardState(c) != Row::NE)
-			#{
-				#for (int tr = r + 1; tr < this->currentR; tr++)
-				#{
-					#if (this->rowArr[tr].getCardState(c) == Row::NE)
-					#{
-						#this->rowArr[tr].setCardState(c, this->rowArr[r].getCardState(c));
-						#this->rowArr[tr].setCardKind(c,this->rowArr[r].getCardKind(c));
-						#this->rowArr[tr].setSp(c,this->rowArr[r].getSp(c));
-						#this->rowArr[r].setCardState(c, Row::NE);
-						#break;
-					#}
-				#}
-			#}
-		#}
-	#}
-	#return this->updateCurrentR(); // This is a MUST!!
-#}
-#
+func settle():
+	status = STATUS.EMPTY # TODO: actually, status can also be updated when cards are clicked
+	
+	# assumption: flip1 is always set
+	var tr1 = n_to_rc(flip1)[0]
+	var tc1 = n_to_rc(flip1)[1]
+	
+	if (rows[tr1].is_sp(tc1)):
+		# if it is a special card
+		# TODO: score handling in this part should be re-considered
+		# as default, we set BONUS as staus and add one score
+		status = STATUS.BONUS # default staus
+		score += 1
+		
+		match (rows[tr1].get_card_type(tc1)):
+			CardRule.SP_TYPE.REINFORCE:
+				# cover the newly popped row
+				for ic in range(Global.MAXC):
+					rows[cur_n_rows - 1].set_card_state(ic, CardRule.CARD_STATE.COVER)
+				
+				# no score added for REINFORCE, so we minus 1 back
+				score -= 1
+				
+				status = STATUS.BREAK
+			CardRule.SP_TYPE.CHAOS:
+				# cover all cards
+				for ir in range(Global.MAXR):
+					for ic in range(Global.MAXC):
+						if (rows[ir].get_card_state(ic) != CardRule.CARD_STATE.NE):
+							rows[ir].set_card_state(ic, CardRule.CARD_STATE.COVER)
+			CardRule.SP_TYPE.GOLD:
+				status = STATUS.CREDIT
+			CardRule.SP_TYPE.MAP:
+				# when a match is found, remove the matched cards
+				if (matched != -1):
+					for ir in range(Global.MAXR):
+						for ic in range(Global.MAXC):
+							# assumption: these cards are UNCOVER and not special card, after perform_click()
+							if (rows[ir].get_card_state(ic) == CardRule.CARD_STATE.UNCOVER and 
+								rows[ir].is_sp(ic)):
+									rows[ir].set_card_state(ic, CardRule.CARD_STATE.NE)
+									
+									card_remain -= 1
+					
+					# add aother score as at least two cards are removed	
+					score += 1
+			CardRule.SP_TYPE.HEAL:
+				pass
+			CardRule.SP_TYPE.TREASURE:
+				pass
 
+		# remove the special card
+		rows[tr1].set_card_state(tc1, CardRule.CARD_STATE.NE)
+		card_remain -= 1
+		
+	else:
+		# a normal card
+		# TODO: the logic for handle n_erase == 2 and 3 are similar, better to combine them into one func
+		match (n_erase):
+			2:
+				var tr2 = n_to_rc(flip2)[0]
+				var tc2 = n_to_rc(flip2)[1]
+				
+				if (rows[tr1].get_card_type(tc1) == rows[tr2].get_card_type(tc2)):
+					# remove two cards
+					rows[tr1].set_card_state(tc1, CardRule.CARD_STATE.NE)
+					rows[tr2].set_card_state(tc2, CardRule.CARD_STATE.NE)
+					
+					# add score
+					score += 1
+					
+					status = STATUS.SCORE
+					
+					# combo and critical
+					if (Global.user.hero != Global.HERO_TYPE.BERSERKER):
+						if (is_combo):
+							# add one more score
+							score += 1
+							
+							status = STATUS.COMBO
+						else:
+							is_combo = true
+					else:
+						# critical for BERSERKER
+						var critical_roll = randi() % 100 + 1 # [0, 99] -> [1, 100]
+						if (critical_roll <= CRITICAL_RATE):
+							# add 2 points
+							score += 2
+							
+							status = STATUS.CRITICAL
+							
+					# update remaining card number
+					card_remain -= n_erase
+				else:
+					# cover cards if not matched
+					rows[tr1].set_card_state(tc1, CardRule.CARD_STATE.COVER)
+					rows[tr2].set_card_state(tc2, CardRule.CARD_STATE.COVER)
+					
+					# reset combo flag
+					is_combo = false
+			3:
+				var tr2 = n_to_rc(flip2)[0]
+				var tc2 = n_to_rc(flip2)[1]
+				var tr3 = n_to_rc(flip3)[0]
+				var tc3 = n_to_rc(flip3)[1]
+				
+				if (rows[tr1].get_card_type(tc1) == rows[tr2].get_card_type(tc2) and 
+					rows[tr1].get_card_type(tc1) == rows[tr3].get_card_type(tc3)):
+					# remove cards
+					rows[tr1].set_card_state(tc1, CardRule.CARD_STATE.NE)
+					rows[tr2].set_card_state(tc2, CardRule.CARD_STATE.NE)
+					rows[tr3].set_card_state(tc3, CardRule.CARD_STATE.NE)
+					
+					# add score
+					score += 1
+					
+					status = STATUS.SCORE
+					
+					# combo and critical
+					if (Global.user.hero != Global.HERO_TYPE.BERSERKER):
+						if (is_combo):
+							# add one more score
+							score += 1
+							
+							status = STATUS.COMBO
+						else:
+							is_combo = true
+					else:
+						# critical for BERSERKER
+						var critical_roll = randi() % 100 + 1 # [0, 99] -> [1, 100]
+						if (critical_roll <= CRITICAL_RATE):
+							# add 2 points
+							score += 2
+							
+							status = STATUS.CRITICAL
+							
+					# update remaining card number
+					card_remain -= n_erase
+				else:
+					# cover cards if not matched
+					rows[tr1].set_card_state(tc1, CardRule.CARD_STATE.COVER)
+					rows[tr2].set_card_state(tc2, CardRule.CARD_STATE.COVER)
+					rows[tr3].set_card_state(tc3, CardRule.CARD_STATE.COVER)
+					
+					# reset combo flag
+					is_combo = false
+				
+	# reset flip_state
+	flip_state = 0
+#
+	# after removing cards, move remaining cards downwards
+	move_cards_downwards()
+#
+	# when the game is not end but no card left, pop new rows
+	if (card_remain == 0):
+		# pop half of maximum rows right now, and the left time will change into score
+		score += time_remain # TODO: is this too large?
+#
+		status = STATUS.BONUS
+#
+		pop_rows(int(Global.MAXR / 2))
+		
+		shuffle_cards()
 
+	# win game
+	if (score >= objective):
+		win_game = true
+		
+		# remove all cards
+		for ir in range(Global.MAXR):
+			for ic in range(Global.MAXC):
+				rows[ir].set_card_state(ic, CardRule.CARD_STATE.NE)
+	else:
+		win_game = false
 
-#
-#// Get the rule.
-#// Output: the number represent the rule.
-#int GameRule::getEraseN()
-#{
-	#return this->eraseN;
-#}
-#
-#// Get how many kinds is at the game.
-#// Output: the current number of kinds.
-#int GameRule::getLevelKN()
-#{
-	#return this->levelKN;
-#}
+	#TODO: return this->updateCurrentR();
 
-#// Get the base time.
-#// Output: the current basetime.
-#int GameRule::getBaseTime()
-#{
-	#return this->baseTime;
-#}
-#
-#// Get the score.
-#// Output: the score.
-#int GameRule::getObjective()
-#{
-	#return this->objective;
-#}
-#
-#// Get the score.
-#// Output: the current score.
-#int GameRule::getScore()
-#{
-	#return this->score;
-#}
-#
-#// Get the left time.
-#// Output: the left time.
-#int GameRule::getTimeRemain()
-#{
-	#return this->timeRemain;
-#}
-#
-#// Set the left time.
-#// Input: which time to set.
-#void GameRule::setTimeRemain(int t)
-#{
-	#this->timeRemain = t;
-#}
-#
-#// Get the level.
-#// Output: the current level.
-#int GameRule::getLevel()
-#{
-	#return this->level;
-#}
-#
-#// Set the level.
-#// Input: which level.
-#void GameRule::setLevel(int l)
-#{
-	#this->level = l;
-#}
-#
-#// Decode an index to row and column.
-#// Input: index and two return pointers.
-#void GameRule::n2RC(int n, int* sr, int* sc)
-#{
-	#*sr = n / (this->maxC);
-	#*sc = n % (this->maxC);
-#
-	#// Mirrored the rows which is avaliable in the game.
-	#if (*sr < this->currentR) {
-		#*sr = this->currentR - (*sr + 1);
-	#}
-#}
-#
+# a card will move downwards if there is no card below
+# TODO: can we just move card objects?
+func move_cards_downwards():
+	# notice that the row indeces in game are mirrored
+	for ir in range(cur_n_rows):
+		for ic in range(Global.MAXC):
+			if (rows[ir].get_card_state(ic) != CardRule.CARD_STATE.NE):
+				for tr in range(ir + 1, cur_n_rows):
+					if (rows[tr].get_card_state(ic) == CardRule.CARD_STATE.NE):
+						# move card to empty position
+						rows[tr].set_card_state(ic, rows[ir].get_card_state(ic))
+						rows[tr].set_card_type(ic, rows[ir].get_card_type(ic))
+						
+						# delete card
+						rows[ir].set_card_state(ic, CardRule.CARD_STATE.NE)
+						
+						break
+						
+	update_cur_n_rows() # this is a must to remove empty rows
+
 #// Start a new AI game.
 #// Input: the expected forget percentage of the AI.
 #void GameRule::newAILevel(int forgetRate)

@@ -35,7 +35,7 @@ func new_row(n_level_k, n_erase, n_level_sp):
 	
 	# find a purchased sp
 	var selected_sp = randi() % n_level_sp # [0, n_level_sp - 1]
-	while (Global.user.owned_sp[-selected_sp - 1] == false):
+	while (Global.user.owned_sp[selected_sp] == false):
 		selected_sp = randi() % n_level_sp
 	cards[sp_pos].type = selected_sp
 	
@@ -65,10 +65,10 @@ func new_row(n_level_k, n_erase, n_level_sp):
 	for ix in range(Global.MAXC):
 		if (ix != sp_pos):
 			var selected_k = CardRule.gen_random_k(last_k, n_per_k)
-				
+	
 			cards[ix].type = selected_k
 			
-			n_per_k[selected_k - CardRule.OFFSET - 1] -= 1
+			n_per_k[selected_k - CardRule.OFFSET] -= 1
 
 # randomly generate a row of cards
 # used at the start of a game
@@ -79,7 +79,7 @@ func one_random_row(last_k, n_per_k):
 			
 		cards[ix].type = selected_k
 		
-		n_per_k[selected_k - CardRule.OFFSET - 1] -= 1
+		n_per_k[selected_k - CardRule.OFFSET] -= 1
 
 # when there is a "chaos" operation, use this random function
 func shuffle(n_per_k):
@@ -89,4 +89,4 @@ func shuffle(n_per_k):
 				
 			cards[ix].type = selected_k
 			
-			n_per_k[selected_k - CardRule.OFFSET - 1] -= 1
+			n_per_k[selected_k - CardRule.OFFSET] -= 1

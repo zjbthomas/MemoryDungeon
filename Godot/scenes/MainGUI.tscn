@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=3 uid="uid://buxygbltbcmi"]
+[gd_scene load_steps=40 format=3 uid="uid://buxygbltbcmi"]
 
 [ext_resource type="Texture2D" uid="uid://x6jteamcfk4a" path="res://images/screens/form_main.jpg" id="1_efv5e"]
 [ext_resource type="Texture2D" uid="uid://bqvo588ul5rel" path="res://images/screens/button_ng.png" id="2_8pq6p"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://dn28kq267l1ty" path="res://images/screens/bonus.png" id="6_2tosm"]
 [ext_resource type="Texture2D" uid="uid://bsha73spa37vs" path="res://images/screens/break.png" id="7_0ero2"]
 [ext_resource type="Texture2D" uid="uid://p2binvxgqis7" path="res://images/screens/critical.png" id="8_3so1x"]
+[ext_resource type="Texture2D" uid="uid://dulaiv43ulpcw" path="res://images/screens/combo.png" id="9_kwpau"]
 [ext_resource type="Texture2D" uid="uid://c1rsq60exp63d" path="res://images/screens/score.png" id="9_tmq3c"]
 [ext_resource type="Texture2D" uid="uid://cma6nwav005xd" path="res://images/heroes/0.png" id="10_bf16y"]
 [ext_resource type="Texture2D" uid="uid://btu8nx3wbftyq" path="res://images/heroes/0_d.png" id="11_onaxc"]
@@ -38,10 +39,26 @@ bg_color = Color(1, 1, 0, 1)
 animations = [{
 "frames": [{
 "duration": 1.0,
+"texture": ExtResource("9_tmq3c")
+}],
+"loop": true,
+"name": &"1",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": ExtResource("6_2tosm")
 }],
 "loop": true,
-"name": &"bonus",
+"name": &"2",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("9_kwpau")
+}],
+"loop": true,
+"name": &"4",
 "speed": 5.0
 }, {
 "frames": [{
@@ -49,7 +66,7 @@ animations = [{
 "texture": ExtResource("7_0ero2")
 }],
 "loop": true,
-"name": &"break",
+"name": &"5",
 "speed": 5.0
 }, {
 "frames": [{
@@ -57,15 +74,7 @@ animations = [{
 "texture": ExtResource("8_3so1x")
 }],
 "loop": true,
-"name": &"critical",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": ExtResource("9_tmq3c")
-}],
-"loop": true,
-"name": &"score",
+"name": &"6",
 "speed": 5.0
 }]
 
@@ -217,7 +226,7 @@ show_percentage = false
 [node name="StatusSprite" type="AnimatedSprite2D" parent="LeftPanel/GameStatus/TopPanel"]
 position = Vector2(383, 20)
 sprite_frames = SubResource("SpriteFrames_oh4u8")
-animation = &"bonus"
+animation = &"6"
 
 [node name="LevelLabel" type="RichTextLabel" parent="LeftPanel/GameStatus/TopPanel"]
 offset_left = 466.0

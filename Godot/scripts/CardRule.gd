@@ -25,9 +25,13 @@ var state: CARD_STATE
 var type
 
 static func gen_random_k(last_k, n_per_k):
-	var selected_k = randi() % (last_k + 1) + OFFSET
-	while (n_per_k[selected_k - OFFSET - 1] <= 0):
-		selected_k = randi() % (last_k + 1) + OFFSET
+	var max_k = last_k + 1
+	if (max_k >= Global.MAXK):
+		max_k -= 1
+	
+	var selected_k = randi() % max_k + OFFSET
+	while (n_per_k[selected_k - OFFSET] <= 0):
+		selected_k = randi() % max_k + OFFSET
 		
 	return selected_k
 

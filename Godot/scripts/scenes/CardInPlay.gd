@@ -13,12 +13,6 @@ func _process(delta):
 func _on_card_button_pressed():
 	card_button_clicked.emit()
 	
-func uncover(card):
-	$Cards.play(str(card.type))
-
-func cover():
-	$Cards.play("0")
-	
 func update(card):
 	var display = card.get_how_display()
 	match (display):

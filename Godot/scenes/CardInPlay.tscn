@@ -3099,7 +3099,7 @@ script = ExtResource("1_yvlfc")
 
 [node name="Cards" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_2f18g")
-animation = &"0"
+animation = &"-19"
 centered = false
 
 [node name="CardButton" type="Button" parent="Cards"]
