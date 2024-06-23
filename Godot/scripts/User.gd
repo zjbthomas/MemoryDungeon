@@ -154,3 +154,6 @@ func gacha(cost):
 		save_game()
 		
 		return [type, true]
+
+func get_collection_rate():
+	return int(100 * (owned_k.count(true) + owned_sp.count(true)) / (Global.MAXK + Global.MAXSP))

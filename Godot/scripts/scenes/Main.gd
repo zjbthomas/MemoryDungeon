@@ -17,14 +17,58 @@ const AI_SETTLE_TIME = 0.3
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	randomize() # call only once
-	
-	# some initialization for the game
-	game.level = Global.user.saved_level
-	$MainGUI/LeftPanel/GameStatus/BottomPanel/HeroSprite.play(str(Global.user.hero))
+
+	_setup()
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	pass
+
+func _setup():
+	# game status
+	$MainGUI/LeftPanel/GameStatus/TopPanel/LevelBar.visible = false
+	$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.visible = false
+	
+	$MainGUI/LeftPanel/GameStatus/BottomPanel/AMBar.visible = false
+	$MainGUI/LeftPanel/GameStatus/BottomPanel/HPBar.visible = false
+	
+	if (Global.user.saved_level != 0):
+		$MainGUI/LeftPanel/GameStatus/TopPanel/LevelLabel.text = "[center][b]" + str(Global.user.saved_level)
+	else:
+		$MainGUI/LeftPanel/GameStatus/TopPanel/LevelLabel.text = "[center][b]0"
+	
+	# controls
+	$MainGUI/LeftPanel/GameControls/NewGameButton.visible = false
+	$MainGUI/LeftPanel/GameControls/PauseButton.visible = false
+	$MainGUI/LeftPanel/GameControls/ResumeButton.visible = false
+	
+	if (Global.user.saved_level != 0):
+		$MainGUI/LeftPanel/GameControls/NextFloorButton.visible = true
+		
+	$MainGUI/LeftPanel/GameStatus/BottomPanel/HeroSprite/HeroButton.visible = true
+	
+	# user info
+	$MainGUI/RightPanel/UserStatus/UsernameLabel.text = "[center][b]" + Global.user.username
+	
+	# update collection status
+	$MainGUI/RightPanel/UserStatus/CollectionBar.visible = true
+	update_collection_bar()
+	
+	$MainGUI/RightPanel/UserStatus/BestLabel.text = "[center]" + str(Global.user.best_level)
+	$MainGUI/RightPanel/UserStatus/SavedLabel.text = "[center]" + str(Global.user.saved_level)
+	
+	$MainGUI/RightPanel/GameFunctions/ShopFunction/GoldLabel.text = str(Global.user.gold)
+	$MainGUI/RightPanel/GameFunctions/ShopFunction/GoldLabel.visible = true
+	
+	$MainGUI/RightPanel/GameFunctions/ShopFunction/GainRect.visible = false
+	
+	# floor info
+	$MainGUI/RightPanel/FloorInfo/MessageLabel.text = "[b]Come on to a new floor!"
+	$MainGUI/RightPanel/FloorInfo/EvilRect.visible = false
+	
+	# init game and hero
+	game.level = Global.user.saved_level
+	$MainGUI/LeftPanel/GameStatus/BottomPanel/HeroSprite.play(str(Global.user.hero))
 
 func _on_main_gui_next_floor_button_pressed():
 	start(false)
@@ -171,6 +215,11 @@ func update_hp_bar():
 	$MainGUI/LeftPanel/GameStatus/BottomPanel/HPBar.max_value = Global.MAXR
 	$MainGUI/LeftPanel/GameStatus/BottomPanel/HPBar.value = Global.MAXR - (game.update_cur_n_rows() - 1) # TODO: do we need to call update_cur_n_rows or just use cur_n_rows?
 
+func update_collection_bar():
+	$MainGUI/RightPanel/UserStatus/CollectionBar.min_value = 0
+	$MainGUI/RightPanel/UserStatus/CollectionBar.max_value = 100
+	$MainGUI/RightPanel/UserStatus/CollectionBar.value = Global.user.get_collection_rate()
+
 # TODO: we should set a flag call is_processing; group all operations into two functions when is_processing is set and clear
 func update_function_controls(is_processing):
 	$MainGUI/RightPanel/GameFunctions/ShopFunction/ShopButton.visible = !is_processing
@@ -291,8 +340,6 @@ func _on_settle_timer_timeout():
 	# call settle()
 	game.settle()
 	
-	# TODO: this->update() what's this?
-	
 	# update status
 	if (game.status == GameRule.STATUS.EMPTY):
 		$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.visible = false
@@ -311,6 +358,7 @@ func _on_settle_timer_timeout():
 	# update all cards
 	update_all_cards()
 
+	# TODO: win game logic; should move to a separate function
 	if (game.win_game):
 		$AMTimer.stop()
 		
@@ -319,9 +367,7 @@ func _on_settle_timer_timeout():
 		$MainGUI/LeftPanel/GameStatus/TopPanel/LevelBar.visible = false
 		$MainGUI/LeftPanel/GameStatus/BottomPanel/AMBar.visible = false
 		$MainGUI/LeftPanel/GameStatus/BottomPanel/HPBar.visible = false
-		
-		update_function_controls(false)
-		
+
 		# hide status
 		$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.visible = false
 		$MainGUI/RightPanel/GameFunctions/ShopFunction/GainRect.visible = false
@@ -335,78 +381,106 @@ func _on_settle_timer_timeout():
 		
 		# handle TREASURE
 		if (game.found_treasure):
-			# TODO
 			$BlurContainer/WrapperWindow.load_window("message")
 			$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Wow!", "You find a gift in this floor![p]Please receive it!", true)
 			$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(func(): $BlurContainer.complete())
 			$BlurContainer.activate()
 
-	#string msg = "";
+		# add gold and gift
+		# TODO: all magic numbers here!
+		match (game.floor_type):
+			GameRule.FLOOR_TYPE.NORMAL:
+				Global.user.gold += 1
+			GameRule.FLOOR_TYPE.CLOWN:
+				Global.user.gold += 3
+			GameRule.FLOOR_TYPE.EVIL:
+				Global.user.gold += 5
+				
+				$BlurContainer/WrapperWindow.load_window("message")
+				$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Wow!", "You get the chest from beating EVIL![p]Let's open it!", true)
+				$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(func(): $BlurContainer.complete())
+				$BlurContainer.activate()
+	
+		$MainGUI/RightPanel/GameFunctions/ShopFunction/GoldLabel.text = str(Global.user.gold)
 
-#
-		#// Set the buttons.
-		#ui->pauseBtn->setVisible(false);
-		#ui->resumeBtn->setVisible(false);
-#
-		#this->enabledHeroBtn = true;
-#
-		#// Rewards to the game.
-		#if (foundTreasure)
-		#{
-			#msg="You find a gift in this floor!\nPlease receive it!";
-#
-			#MessageDialog* messageDialog = new MessageDialog(this, msg, "Wow!", true, this->user);
-			#messageDialog->setModal(true);
-			#messageDialog->exec();
-			#delete messageDialog;
-#
-		#}
-#
-		#switch (this->floorType)
-		#{
-		#case GameRule::NORMAL:
-			#this->user->setGold(this->user->getGold() + 1);
-#
-			#break;
-		#case GameRule::CLOWN:
-			#this->user->setGold(this->user->getGold() + 3);
-#
-			#break;
-		#case GameRule::EVIL:
-			#this->user->setGold(this->user->getGold() + 5);
-#
-			#msg="You get the chest from beating EVIL!\nLet's open it!";
-#
-			#MessageDialog* messageDialog = new MessageDialog(this, msg, "Wow!", true, this->user);
-			#messageDialog->setModal(true);
-			#messageDialog->exec();
-			#delete messageDialog;
-#
-			#break;
-		#}
-#
-		#// update user file as credit changed
-		#this->user->writeFile();
-#
-		#ui->goldLbl->setText(QString::number(this->user->getGold()));
-#
-		#this->updateItemPB();
-#
-		#// update saved level and write to user file
-		#this->user->setSavedLevel(this->game->getLevel());
-#
-		#ui->savedLbl->setText(QString::number(this->game->getLevel()));
-#
-		#if (this->game->getLevel() > this->user->getBestLevel()) {
-			#this->user->setBsetLevel(this->game->getLevel());
-#
-			#ui->bestLbl->setText(QString::number(this->game->getLevel()));
-		#}
-#
-		#this->user->writeFile();
-#
-		#// Show the button to the next floor.
-		#ui->infoTB->setText(QString::fromStdString("Well done!\nLet's go to the next floor!"));
-#
-		#ui->nextFloorBtn->setVisible(true);
-	#}
+		# update function controls here as gold value changed
+		update_function_controls(false)
+		
+		# update collection bar as gift provided
+		update_collection_bar()
+
+		# update saved level
+		Global.user.saved_level = game.level
+		
+		$MainGUI/RightPanel/UserStatus/SavedLabel.text = "[center]" + str(Global.user.saved_level)
+		
+		# update best level
+		if (game.level > Global.user.best_level):
+			Global.user.best_level = game.level
+			
+			$MainGUI/RightPanel/UserStatus/BestLabel.text = "[center]" + str(Global.user.best_level)
+
+		# save game
+		Global.user.save_game()
+
+		# show the button to the next floor
+		$MainGUI/RightPanel/FloorInfo/MessageLabel.text = "[b]Well done![p]Let's go to the next floor!"
+
+		$MainGUI/LeftPanel/GameControls/NextFloorButton.visible = true
+
+
+func _on_am_timer_timeout():
+	if (game.time_remain > 0):
+		game.time_remain -= 1
+		update_am_bar()
+	else:
+		# helmet break
+		if ($SettleTimer.is_stopped()):
+			var survive = game.pop_rows(game.n_pop)
+			
+			if (survive):
+				# a new row is popped, update all cards
+				update_all_cards()
+				
+				# progress bars changed
+				update_level_bar()
+				update_hp_bar()
+				
+				# reset status
+				$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.visible = false
+				$MainGUI/RightPanel/GameFunctions/ShopFunction/GainRect.visible = false
+				
+				update_am_bar() # TODO: does the order matter here?
+			else:
+				# game over
+				# stop timing
+				$AMTimer.stop()
+				$SettleTimer.stop()
+				
+				# reset everything
+				# TODO: can we put it into a function as RESET?
+				update_all_cards()
+				
+				$MainGUI/LeftPanel/GameStatus/TopPanel/LevelLabel.text = "[center][b]0"
+				
+				$MainGUI/LeftPanel/GameStatus/TopPanel/LevelBar.visible = false
+				
+				$MainGUI/LeftPanel/GameStatus/BottomPanel/AMBar.visible = false
+				$MainGUI/LeftPanel/GameStatus/BottomPanel/HPBar.visible = false
+				
+				$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.visible = false
+				$MainGUI/RightPanel/GameFunctions/ShopFunction/GainRect.visible = false
+				
+				update_function_controls(false)
+	
+				$MainGUI/LeftPanel/GameControls/NewGameButton.visible = true
+				$MainGUI/LeftPanel/GameControls/PauseButton.visible = false
+				$MainGUI/LeftPanel/GameControls/ResumeButton.visible = false
+				
+				$MainGUI/LeftPanel/GameStatus/BottomPanel/HeroSprite/HeroButton.visible = true
+
+				# message for game over
+				$BlurContainer/WrapperWindow.load_window("message")
+				$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Gameover", "Time's Up![p]Gameover.", false)
+				$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(func(): $BlurContainer.complete())
+				$BlurContainer.activate()
