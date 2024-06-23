@@ -186,7 +186,7 @@ func update_all_cards():
 func update_one_card(ir, ic):
 	$MainGUI/Board.update_one_card(ir, ic, game.card_card_for_ui(ir, ic))
 
-func _on_board_card_button_clicked(ir, ic):
+func _on_board_card_button_pressed(ir, ic):
 	if (game.is_ai_turn == false):
 		if (!$AMTimer.is_stopped() and $SettleTimer.is_stopped()):
 			# game is running and not in settle phase
@@ -311,26 +311,38 @@ func _on_settle_timer_timeout():
 	# update all cards
 	update_all_cards()
 
+	if (game.win_game):
+		$AMTimer.stop()
+		
+		# update UI
+		# hide progress bars
+		$MainGUI/LeftPanel/GameStatus/TopPanel/LevelBar.visible = false
+		$MainGUI/LeftPanel/GameStatus/BottomPanel/AMBar.visible = false
+		$MainGUI/LeftPanel/GameStatus/BottomPanel/HPBar.visible = false
+		
+		update_function_controls(false)
+		
+		# hide status
+		$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.visible = false
+		$MainGUI/RightPanel/GameFunctions/ShopFunction/GainRect.visible = false
+		
+		update_all_cards()
+		
+		# set controls
+		$MainGUI/LeftPanel/GameControls/PauseButton.visible = false
+		$MainGUI/LeftPanel/GameControls/ResumeButton.visible = false
+		$MainGUI/LeftPanel/GameStatus/BottomPanel/HeroSprite/HeroButton.visible = true
+		
+		# handle TREASURE
+		if (game.found_treasure):
+			# TODO
+			$BlurContainer/WrapperWindow.load_window("message")
+			$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Wow!", "You find a gift in this floor![p]Please receive it!", true)
+			$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(func(): $BlurContainer.complete())
+			$BlurContainer.activate()
 
 	#string msg = "";
-	#if (winGame) // If go to the next level.
-	#{
-		#this->amTimer->stop();
-#
-		#// update UI first, as other operations later are blocking operations.
-		#// hide progress bars
-		#ui->levelPB->setVisible(false);
-#
-		#ui->amPB->setVisible(false);
-		#ui->hpPB->setVisible(false);
-#
-		#this->updateSidebar(false);
-#
-		#// hide status
-		#ui->statusLbl->setVisible(false);
-		#ui->goldLbl->setVisible(false);
-#
-		#this->updateAllCards();
+
 #
 		#// Set the buttons.
 		#ui->pauseBtn->setVisible(false);

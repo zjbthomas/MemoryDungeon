@@ -132,3 +132,25 @@ func cal_last_k(n_level_k):
 			break
 			
 	return last_k
+
+func gacha(cost):
+	# first substract the credit
+	gold -= cost
+
+	# generate a random card.
+	var type = randi() % Global.MAXK + 1
+
+	if (owned_k[type - 1]):
+		# old card
+		gold += 1 # pay back by 1
+		
+		save_game()
+		
+		return [type, false]
+	else:
+		# a new card
+		owned_k[type - 1] = true
+		
+		save_game()
+		
+		return [type, true]

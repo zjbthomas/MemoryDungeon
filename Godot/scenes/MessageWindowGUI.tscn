@@ -4,14 +4,13 @@
 [ext_resource type="Script" path="res://scripts/scenes/MessageWindowGUI.gd" id="2_5ti5s"]
 [ext_resource type="Texture2D" uid="uid://cu7shfco5s5l1" path="res://images/screens/icon_m.png" id="3_0p0sl"]
 [ext_resource type="Texture2D" uid="uid://bwkj88vqd58iu" path="res://images/screens/button_ok.png" id="4_mb26j"]
+[ext_resource type="PackedScene" uid="uid://cc1yjbeih51ex" path="res://scenes/CardInDraw.tscn" id="4_ua8ap"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_uyumv"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xgy1o"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_43dr4"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l5n85"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6euyw"]
 
@@ -57,6 +56,10 @@ offset_bottom = 49.0
 position = Vector2(47, 46)
 texture = ExtResource("3_0p0sl")
 
+[node name="CardInDraw" parent="ImageContainer" instance=ExtResource("4_ua8ap")]
+position = Vector2(47, 46)
+scale = Vector2(1.35, 1.35)
+
 [node name="OKButton" type="Button" parent="."]
 layout_mode = 1
 anchors_preset = 7
@@ -72,8 +75,9 @@ grow_vertical = 0
 theme_override_styles/normal = SubResource("StyleBoxEmpty_uyumv")
 theme_override_styles/hover = SubResource("StyleBoxEmpty_xgy1o")
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_43dr4")
-theme_override_styles/disabled = SubResource("StyleBoxEmpty_l5n85")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_6euyw")
 icon = ExtResource("4_mb26j")
+flat = true
 
+[connection signal="card_flipped" from="ImageContainer/CardInDraw" to="." method="_on_card_in_draw_card_flipped"]
 [connection signal="pressed" from="OKButton" to="." method="_on_ok_button_pressed"]
