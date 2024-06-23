@@ -461,6 +461,8 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_y2d5s")
 icon = ExtResource("22_ws0lc")
 
 [connection signal="pressed" from="LeftPanel/GameControls/NewGameButton" to="." method="_on_new_game_button_pressed"]
+[connection signal="pressed" from="LeftPanel/GameControls/PauseButton" to="." method="_on_pause_button_pressed"]
+[connection signal="pressed" from="LeftPanel/GameControls/ResumeButton" to="." method="_on_resume_button_pressed"]
 [connection signal="pressed" from="LeftPanel/GameControls/NextFloorButton" to="." method="_on_next_floor_button_pressed"]
 [connection signal="pressed" from="LeftPanel/GameStatus/BottomPanel/HeroSprite/HeroButton" to="." method="_on_hero_button_pressed"]
 [connection signal="pressed" from="RightPanel/ExitButton" to="." method="_on_exit_button_pressed"]

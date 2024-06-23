@@ -77,6 +77,28 @@ func _on_main_gui_new_game_button_pressed():
 	game.level = Global.user.saved_level
 	start(false)
 
+func _on_main_gui_pause_button_pressed():
+	if ($SettleTimer.is_stopped()):
+		$AMTimer.stop()
+		
+	$MainGUI/LeftPanel/GameControls/NewGameButton.visible = true
+	$MainGUI/LeftPanel/GameControls/PauseButton.visible = false
+	$MainGUI/LeftPanel/GameControls/ResumeButton.visible = true
+	
+	$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.visible = false
+	$MainGUI/RightPanel/GameFunctions/ShopFunction/GainRect.visible = false
+	
+	update_function_controls(false)
+
+func _on_main_gui_resume_button_pressed():
+	$MainGUI/LeftPanel/GameControls/NewGameButton.visible = false
+	$MainGUI/LeftPanel/GameControls/PauseButton.visible = true
+	$MainGUI/LeftPanel/GameControls/ResumeButton.visible = false
+	
+	update_function_controls(true)
+	
+	$AMTimer.start()
+
 # for hero system
 func _on_main_gui_hero_button_pressed():
 	$BlurContainer/WrapperWindow.load_window("hero")
