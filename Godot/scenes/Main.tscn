@@ -28,6 +28,7 @@ one_shot = true
 [node name="AITimer" type="Timer" parent="."]
 one_shot = true
 
+[connection signal="ai_button_pressed" from="MainGUI" to="." method="_on_main_gui_ai_button_pressed"]
 [connection signal="hero_button_pressed" from="MainGUI" to="." method="_on_main_gui_hero_button_pressed"]
 [connection signal="new_game_button_pressed" from="MainGUI" to="." method="_on_main_gui_new_game_button_pressed"]
 [connection signal="next_floor_button_pressed" from="MainGUI" to="." method="_on_main_gui_next_floor_button_pressed"]
@@ -36,3 +37,4 @@ one_shot = true
 [connection signal="card_button_pressed" from="MainGUI/Board" to="." method="_on_board_card_button_pressed"]
 [connection signal="timeout" from="AMTimer" to="." method="_on_am_timer_timeout"]
 [connection signal="timeout" from="SettleTimer" to="." method="_on_settle_timer_timeout"]
+[connection signal="timeout" from="AITimer" to="." method="_on_ai_timer_timeout"]

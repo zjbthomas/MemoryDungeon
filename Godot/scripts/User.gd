@@ -157,3 +157,18 @@ func gacha(cost):
 
 func get_collection_rate():
 	return int(100 * (owned_k.count(true) + owned_sp.count(true)) / (Global.MAXK + Global.MAXSP))
+
+# save_game() is automatically called in this function
+func handle_ai_end_game(score, ai_score):
+	var gain_gold:int = (score - ai_score) / 4 + 1
+	if (gain_gold > 0):
+		gold += gain_gold
+#
+	# ajust AI remember percentage
+	var adjustment = score - ai_score
+	
+	ai_forget_rate = clamp(ai_forget_rate + adjustment, 0, 100)
+
+	save_game()
+	
+	return gain_gold

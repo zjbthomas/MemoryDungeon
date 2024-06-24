@@ -4,7 +4,10 @@ signal next_floor_button_pressed
 signal new_game_button_pressed
 signal pause_button_pressed
 signal resume_button_pressed
+
 signal hero_button_pressed
+
+signal ai_button_pressed
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -29,8 +32,14 @@ func _on_resume_button_pressed():
 func _on_hero_button_pressed():
 	hero_button_pressed.emit()
 
+func _on_ai_button_pressed():
+	ai_button_pressed.emit()
+
 func _on_exit_button_pressed():
 	get_tree().quit()
+
+
+
 
 
 

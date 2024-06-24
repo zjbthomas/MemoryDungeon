@@ -3100,6 +3100,8 @@ script = ExtResource("1_yvlfc")
 [node name="Cards" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_2f18g")
 animation = &"1"
+frame = 11
+frame_progress = 0.0567803
 centered = false
 
 [node name="CardButton" type="Button" parent="Cards"]

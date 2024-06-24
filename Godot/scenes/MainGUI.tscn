@@ -465,4 +465,5 @@ icon = ExtResource("22_ws0lc")
 [connection signal="pressed" from="LeftPanel/GameControls/ResumeButton" to="." method="_on_resume_button_pressed"]
 [connection signal="pressed" from="LeftPanel/GameControls/NextFloorButton" to="." method="_on_next_floor_button_pressed"]
 [connection signal="pressed" from="LeftPanel/GameStatus/BottomPanel/HeroSprite/HeroButton" to="." method="_on_hero_button_pressed"]
+[connection signal="pressed" from="RightPanel/GameFunctions/AIFunction/AIButton" to="." method="_on_ai_button_pressed"]
 [connection signal="pressed" from="RightPanel/ExitButton" to="." method="_on_exit_button_pressed"]

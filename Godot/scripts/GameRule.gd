@@ -53,9 +53,8 @@ var status:STATUS = STATUS.EMPTY
 # Variables for AI parts.
 var is_in_ai_mode = false
 var is_ai_turn = false # at the beginning is player's turn
-var ai_forget_rate = 100 # The maximum value is 100%
+var ai_remember_rate = 100 # The maximum value is 100%
 var ai_memory = []
-var ai_flip_state = 0
 var ai_score = 0
 
 func _init():
@@ -67,7 +66,7 @@ func _init():
 	for ix in range(Global.MAXR * Global.MAXC):
 		ai_memory.append(false)
 
-func card_card_for_ui(ui_r, ui_c):
+func get_card_for_ui(ui_r, ui_c):
 	var r = mirror_ui_rc(ui_r, ui_c)[0]
 	var c = mirror_ui_rc(ui_r, ui_c)[1]
 	
@@ -145,6 +144,7 @@ func new_level():
 	if (Global.user.hero == Global.HERO_TYPE.MASTER):
 		time_remain += 3
 
+	win_game = false
 	score = 0
 	is_combo = false
 
@@ -206,7 +206,7 @@ func start():
 	shuffle_cards()
 	
 	flip_state = 0
-	ai_flip_state = 0
+	#ai_flip_state = 0
 
 # make a new row available in the game, and decide whether game over
 func pop_rows(n_pop_rows):
@@ -289,10 +289,8 @@ func pop_rows(n_pop_rows):
 func shuffle_cards():
 	var n_per_k = []
 	n_per_k.resize(Global.MAXK)
-	
-	for ik in range(Global.MAXK):
-		n_per_k[ik] = 0
-#
+	n_per_k.fill(0)
+
 	# check and store how many cards per kind
 	for ir in range(cur_n_rows):
 		for ic in range(Global.MAXC):
@@ -357,10 +355,13 @@ func mirror_ui_rc(ui_r, ui_c):
 
 # response to a click.
 # if a special card is clicked, return the kind of that card; Otherwise, return whether a single card or a pair of cards is clicked
-func perform_click_for_ui(ui_r, ui_c):
+func perform_click_from_ui(ui_r, ui_c):
 	var ir = mirror_ui_rc(ui_r, ui_c)[0]
 	var ic = mirror_ui_rc(ui_r, ui_c)[1]
 	
+	return perform_click(ir, ic)
+
+func perform_click(ir, ic):
 	# if it is a special card
 	if (rows[ir].is_sp(ic)):
 		# cover previously clicked cards
@@ -494,59 +495,59 @@ func perform_click_for_ui(ui_r, ui_c):
 		flip_state = 1
 		
 		return rows[ir].get_card_type(ic) # return the kind of special card
-#
-	# if it is a normal card
-	# no matter how, uncover it
-	rows[ir].set_card_state(ic, CardRule.CARD_STATE.UNCOVER)
-	
-	match (flip_state):
-		0:
-			flip1 = rc_to_n(ir, ic)
-			flip_state = 1
-			return CLICK_PERFORMED.NO_SETTLEMENT
-		1:
-			flip2 = rc_to_n(ir, ic)
-			
-			if (n_erase == 2):
+	else:
+		# if it is a normal card
+		# no matter how, uncover it
+		rows[ir].set_card_state(ic, CardRule.CARD_STATE.UNCOVER)
+		
+		match (flip_state):
+			0:
+				flip1 = rc_to_n(ir, ic)
+				flip_state = 1
+				return CLICK_PERFORMED.NO_SETTLEMENT
+			1:
+				flip2 = rc_to_n(ir, ic)
 				
-				# user click the same card, cover it
-				if (flip1 == flip2):
-					rows[ir].set_card_state(ic, CardRule.CARD_STATE.COVER)
+				if (n_erase == 2):
 					
-					flip_state = 0
+					# user click the same card, cover it
+					if (flip1 == flip2):
+						rows[ir].set_card_state(ic, CardRule.CARD_STATE.COVER)
+						
+						flip_state = 0
+						
+						return CLICK_PERFORMED.NO_SETTLEMENT
+					else:
+						return CLICK_PERFORMED.SETTLEMENT
+						
+				else: # n_erase == 3
+					var tr1 = n_to_rc(flip1)[0]
+					var tc1 = n_to_rc(flip1)[1]
+					var tr2 = n_to_rc(flip2)[0]
+					var tc2 = n_to_rc(flip2)[1]
 					
-					return CLICK_PERFORMED.NO_SETTLEMENT
-				else:
-					return CLICK_PERFORMED.SETTLEMENT
+					# user click the same card, cover it
+					if (flip1 == flip2):
+						rows[ir].set_card_state(ic, CardRule.CARD_STATE.COVER)
+						
+						flip_state = 0
+						
+						return CLICK_PERFORMED.NO_SETTLEMENT
 					
-			else: # n_erase == 3
-				var tr1 = n_to_rc(flip1)[0]
-				var tc1 = n_to_rc(flip1)[1]
-				var tr2 = n_to_rc(flip2)[0]
-				var tc2 = n_to_rc(flip2)[1]
+					flip_state = 2
+					
+					if (rows[tr1].get_card_type(tc1) != rows[tr2].get_card_type(tc2)):
+						# user click different cards, but they are different types
+						return CLICK_PERFORMED.SETTLEMENT
+					else:
+						return CLICK_PERFORMED.NO_SETTLEMENT
+						
+			2:
+				flip3 = rc_to_n(ir, ic)
 				
-				# user click the same card, cover it
-				if (flip1 == flip2):
-					rows[ir].set_card_state(ic, CardRule.CARD_STATE.COVER)
-					
-					flip_state = 0
-					
-					return CLICK_PERFORMED.NO_SETTLEMENT
+				flip_state = 3
 				
-				flip_state = 2
-				
-				if (rows[tr1].get_card_type(tc1) != rows[tr2].get_card_type(tc2)):
-					# user click different cards, but they are different types
-					return CLICK_PERFORMED.SETTLEMENT
-				else:
-					return CLICK_PERFORMED.NO_SETTLEMENT
-					
-		2:
-			flip3 = rc_to_n(ir, ic)
-			
-			flip_state = 3
-			
-			return CLICK_PERFORMED.SETTLEMENT
+				return CLICK_PERFORMED.SETTLEMENT
 
 func settle():
 	status = STATUS.EMPTY # TODO: actually, status can also be updated when cards are clicked
@@ -654,7 +655,7 @@ func settle():
 				
 				match flip_state:
 					2:
-						# cover cards as they should not be matched (as in perform_click_for_ui())
+						# cover cards as they should not be matched (as in perform_click_from_ui())
 						rows[tr1].set_card_state(tc1, CardRule.CARD_STATE.COVER)
 						rows[tr2].set_card_state(tc2, CardRule.CARD_STATE.COVER)
 					3:
@@ -734,7 +735,7 @@ func settle():
 	else:
 		win_game = false
 
-	#TODO: return this->updateCurrentR();
+	update_cur_n_rows()
 
 # a card will move downwards if there is no card below
 # TODO: can we just move card objects?
@@ -756,266 +757,214 @@ func move_cards_downwards():
 						
 	update_cur_n_rows() # this is a must to remove empty rows
 
-#// Start a new AI game.
-#// Input: the expected forget percentage of the AI.
-#void GameRule::newAILevel(int forgetRate)
-#{
-	#this->isAIMode = true;
-#
-	#// Initialize the AI system.
-	#this->aiForgetRate = forgetRate;
-#
-	#for (int n = 0; n < (this->maxR) * (this->maxC); n++) {
-		#this->aiMemoryArr[n] = false;
-	#}
-#
-	#this->aiScore = 0;
-#
-	#// Start a new game.
-	#this->isAITurn = false;
-#
-	#this->eraseN = 2; // force to only match 2 cards
-#
-	#int ownedKN = 0;
-	#for (int k = 0; k < this->maxK; k++)
-	#{
-		#if (this->ownedKArr[k]) {
-			#ownedKN++;
-		#}
-	#}
-	#this->levelKN = ownedKN;
-#
-	#this->levelSpN = 0; // no special card
-#
-	#this->currentR = this->maxR; // all rows used
-#
-	#this->score = 0;
-#
-	#this->start();
-#}
-#
-#// Do an AI click action.
-#// Output: the index number of the progress.
-#int GameRule::aiAction()
-#{
-	#int sr,sc;
-#
-	#// First the AI will forget some EXISTED cards if it is its first click.
-	#// Change the forget percentage into an effective one.
-	#int rememberN=0;
-	#for (int n = 0; n < (this->maxR) * (this->maxC); n++)
-	#{
-		#n2RC(n,&sr,&sc);
-		#if ((this->aiMemoryArr[n]) && (this->rowArr[sr].getCardState(sc) != Row::NE)) {
-			#rememberN++;
-		#}
-	#}
-#
-	#int effectiveForgetRate;
-	#if (rememberN == 0) {
-		#effectiveForgetRate = this->aiForgetRate;
-	#}
-	#else {
-		#effectiveForgetRate = 100 - pow((float)(100 - (this->aiForgetRate)) /100.0 , 1.0 / (float)rememberN) * 100;
-	#}
-#
-	#// a histogram of card kinds that AI remember
-	#int* aiPerKNArr = new int[this->maxK];
-	#for (int k = 0; k < this->maxK; k++) {
-		#aiPerKNArr[k]=0;
-	#}
-#
-	#for (int n = 0; n < (this->maxR) * (this->maxC); n++)
-	#{
-		#n2RC(n,&sr,&sc);
-		#if ((this->aiMemoryArr[n]) && (this->rowArr[sr].getCardState(sc) != Row::NE))
-		#{
-			#// AI will first forget some cards
-			#int forgetRoll = rand() % 100 + 1;
-			#if ((forgetRoll <= effectiveForgetRate) &&
-				#(this->aiFlipState == 1)) { // will not forget when AI is in action
-				#this->aiMemoryArr[n] = false;
-			#}
-			#else
-			#{
-				#aiPerKNArr[this->rowArr[sr].getCardKind(sc) - 1]++;
-			#}
-		#}
-	#}
-#
-	#// Then the AI will click a card.
-	#// first check whether the AI remember two identical cards.
-	#int possibleK=0;
-	#for (int k = 0; k < this->maxK; k++)
-	#{
-		#if (aiPerKNArr[k] >= 2) // TODO: safe to change this to eraseN?
-		#{
-			#possibleK = k + 1; // an offset 1 is added as 0 is special kind
-			#break;
-		#}
-	#}
-#
-	#switch (this->aiFlipState)
-	#{
-	#case 1:
-		#if (possibleK != 0)
-		#{
-			#for (int n = 0; n < (this->maxR) * (this->maxC); n++)
-			#{
-				#n2RC(n,&sr,&sc);
-				#if ((this->aiMemoryArr[n]) &&
-					#(this->rowArr[sr].getCardState(sc) != Row::NE) &&
-					#(this->rowArr[sr].getCardKind(sc) == possibleK))
-				#{
-					#this->performClick(n);
-					#break;
-				#}
-			#}
-		#}
-		#else
-		#{
-			#// Randomly click a card that it does not remember.
-			#int clickPos = rand() % ((this->maxR) * (this->maxC));
-			#n2RC(clickPos,&sr,&sc);
-			#while ((this->aiMemoryArr[clickPos]) || (this->rowArr[sr].getCardState(sc) == Row::NE))
-			#{
-				#clickPos = rand() % ((this->maxR) * (this->maxC));
-				#n2RC(clickPos,&sr,&sc);
-			#}
-#
-			#this->performClick(clickPos);
-#
-			#// update memory
-			#this->aiMemoryArr[clickPos] = true;
-#
-			#// if AI now remembers a pair
-			#aiPerKNArr[this->rowArr[sr].getCardKind(sc) - 1]++;
-#
-			#// TODO: do we really need the following two lines?
-			#if (aiPerKNArr[this->rowArr[sr].getCardKind(sc) - 1] >= 2) // TODO: safe to change this to eraseN?
-				#possibleK = this->rowArr[sr].getCardKind(sc);
-		#}
-#
-		#(this->aiFlipState)++;
-		#break;
-	#case 2:
-		#if (possibleK != 0)
-		#{
-			#for (int n = 0; n < (this->maxR) * (this->maxC); n++)
-			#{
-				#n2RC(n,&sr,&sc);
-				#if ((this->aiMemoryArr[n]) &&
-					#(this->rowArr[sr].getCardState(sc) != Row::NE) &&
-					#(this->rowArr[sr].getCardKind(sc) == possibleK) &&
-					#(n != this->flip1)) // will not click the same card that is already uncovered
-				#{
-					#this->performClick(n);
-					#break;
-				#}
-			#}
-		#}
-		#else
-		#{
-			#// Randomly click a card that it does not remember.
-			#int clickPos = rand() % ((this->maxR) * (this->maxC));
-			#n2RC(clickPos,&sr,&sc);
-			#while ((this->aiMemoryArr[clickPos]) ||
-				   #(this->rowArr[sr].getCardState(sc) == Row::NE) ||
-				   #(clickPos == this->flip1))
-			#{
-				#clickPos = rand() % ((this->maxR) * (this->maxC));
-				#n2RC(clickPos,&sr,&sc);
-			#}
-#
-			#this->performClick(clickPos);
-#
-			#this->aiMemoryArr[clickPos] = true;
-		#}
-#
-		#(this->aiFlipState)++;
-		#break;
-#
-	#case 3:
-		#this->aiFlipState = 1;
-		#break;
-	#}
-#
-	#delete [] aiPerKNArr;
-	#return this->aiFlipState;
-#
-#}
-#
-#// A closing function that designed dedicately for AI.
-#// Input: A pointer pointed to a boolean whether game wins or not.
-#// Output: The number of row is available in the game and a boolean pointer.
-#int GameRule::settleAI(bool* winGame,int* status)
-#{
-	#*status = EMPTY;
-#
-	#int sr1,sc1,sr2,sc2;
-	#n2RC(this->flip1,&sr1,&sc1);
-	#n2RC(this->flip2,&sr2,&sc2);
-#
-	#if (this->rowArr[sr1].getCardKind(sc1) == this->rowArr[sr2].getCardKind(sc2))
-	#{
-		#this->rowArr[sr1].setCardState(sc1,Row::NE);
-		#this->rowArr[sr2].setCardState(sc2,Row::NE);
-#
-		#if (this->isAITurn == false)
-		#{
-			#(this->score)++;
-			#*status=SCORE;
-		#}
-		#else
-		#{
-			#(this->aiScore)++;
-			#*status=AISCORE;
-		#}
-#
-		#(this->cardRemain) -= (this->eraseN);
-	#}
-	#else
-	#{
-		#this->rowArr[sr1].setCardState(sc1,Row::COVER);
-		#this->rowArr[sr2].setCardState(sc2,Row::COVER);
-#
-		#// AI remembers all opened cards
-		#this->aiMemoryArr[this->flip1]=true;
-		#this->aiMemoryArr[this->flip2]=true;
-#
-		#// if one fails to match cards, swap turn
-		#this->isAITurn = !(this->isAITurn);
-	#}
-#
-	#// win game
-	#// TODO: why this logic?
-	#if (this->cardRemain == 0)
-		#*winGame=true;
-	#else
-		#*winGame = false;
-#
-	#return this->updateCurrentR();
-#}
-#
-#// Get whether AI system is on or off.
-#// Output: the state of the AI system.
-#bool GameRule::getIsAIMode()
-#{
-	#return this->isAIMode;
-#}
-#
-#// Get who is controlling the game.
-#// Output: a Boolean to show who is controlling the game.
-#bool GameRule::getIsAITurn()
-#{
-	#return this->isAITurn;
-#}
-#
-#// Get the score of the AI.
-#// Output: the score of the AI.
-#int GameRule::getAIScore()
-#{
-	#return this->aiScore;
-#}
-#
+# start a new AI game
+func new_ai_level(rate):
+	is_in_ai_mode = true
+	
+	# init AI system
+	ai_remember_rate = rate
+	
+	for n in range(Global.MAXR * Global.MAXC):
+		ai_memory[n] = false
 
+	ai_score = 0
+	
+	# start a new game
+	is_ai_turn = false
+	
+	n_erase = 2 # only 2 is implemented
+
+	n_level_k = Global.user.owned_k.count(true) # use all owned normal types
+	
+	n_level_sp = 0 # no special card
+	
+	cur_n_rows = Global.MAXR # use all rows
+	
+	score = 0
+	
+	start()
+
+# a closing function that designed dedicately for AI
+func settle_ai():
+	status = STATUS.EMPTY
+	
+	var tr1 = n_to_rc(flip1)[0]
+	var tc1 = n_to_rc(flip1)[1]
+	var tr2 = n_to_rc(flip2)[0]
+	var tc2 = n_to_rc(flip2)[1]
+
+	if (rows[tr1].get_card_type(tc1) == rows[tr2].get_card_type(tc2)):
+		# remove two cards
+		rows[tr1].set_card_state(tc1, CardRule.CARD_STATE.NE)
+		rows[tr2].set_card_state(tc2, CardRule.CARD_STATE.NE)
+
+		if (!is_ai_turn):
+			score += 1
+			
+			status = STATUS.SCORE
+		else:
+			ai_score += 1
+			status = STATUS.AISCORE
+			
+		card_remain -= n_erase
+	else:
+		# cover cards if not matched
+		rows[tr1].set_card_state(tc1, CardRule.CARD_STATE.COVER)
+		rows[tr2].set_card_state(tc2, CardRule.CARD_STATE.COVER)
+
+		# AI remembers all opened cards
+		ai_memory[flip1] = true
+		ai_memory[flip2] = true
+		
+		# change turn
+		is_ai_turn = !is_ai_turn
+	
+	# reset flip_state
+	flip_state = 0
+	
+	flip1 = -1
+	flip2 = -1
+	flip3 = -1
+	
+	# win game
+	# TODO: why this logic? Looks like just a condition for game over instead of winning
+	if (card_remain == 0):
+		win_game = true
+	else:
+		win_game = false
+
+	update_cur_n_rows()
+
+# perform an AI click action.
+func perform_ai_action():
+	# first the AI will forget some EXISTED cards if it is its first click.
+	# TODO: why here?
+	# the remember percentage is converted into an effective one (rate for each remembered card)
+	var n_remember = 0
+	for n in range(Global.MAXR * Global.MAXC):
+		var tr = n_to_rc(n)[0]
+		var tc = n_to_rc(n)[1]
+		
+		if (ai_memory[n] and rows[tr].get_card_state(tc) != CardRule.CARD_STATE.NE):
+			n_remember += 1
+		
+	var eff_rate = null
+	if (n_remember == 0):
+		eff_rate = ai_remember_rate
+	else:
+		eff_rate = 100 - pow(float((100 - ai_remember_rate) / 100.0), 1.0 / float(n_remember)) * 100
+	
+	# get a histogram of card types that AI remembers
+	var ai_n_per_k = []
+	ai_n_per_k.resize(Global.MAXK)
+	ai_n_per_k.fill(0)
+	
+	for n in range(Global.MAXR * Global.MAXC):
+		var tr = n_to_rc(n)[0]
+		var tc = n_to_rc(n)[1]
+		
+		if (ai_memory[n] and rows[tr].get_card_state(tc) != CardRule.CARD_STATE.NE):
+			# AI will first forget some cards
+			var forget_roll = randi() % 100 + 1
+			if (forget_roll <= eff_rate and 
+				flip_state == 0): # # TODO: will not forget cards when AI starts its action; why this is needed? And why only 0?
+				ai_memory[n] = false
+			else:
+				ai_n_per_k[rows[tr].get_card_type(tc) - CardRule.OFFSET] += 1
+
+	# then AI will click a card.
+	# first check if AI remembers two identical cards
+	var possible_type = CardRule.TYPE_UNDEFINED
+	for it in range(Global.MAXK):
+		if (ai_n_per_k[it] >= 2): # TODO: safe to change this to eraseN?
+			possible_type = it + CardRule.OFFSET
+			break
+	
+	match (flip_state):
+		0:
+			if (possible_type != CardRule.TYPE_UNDEFINED):
+				# click a card AI remembers and also has matching pairs
+				for n in range(Global.MAXR * Global.MAXC):
+					var tr = n_to_rc(n)[0]
+					var tc = n_to_rc(n)[1]
+					
+					if (ai_memory[n] and 
+						rows[tr].get_card_state(tc) != CardRule.CARD_STATE.NE and 
+						rows[tr].get_card_type(tc) != possible_type):
+							perform_click(tr, tc)
+							break
+							
+			else:
+				# randomly click a card that it does not remember
+				var click_pos = randi() % (Global.MAXR * Global.MAXC)
+				var tr = n_to_rc(click_pos)[0]
+				var tc = n_to_rc(click_pos)[1]
+				
+				while (ai_memory[click_pos] or rows[tr].get_card_state(tc) == CardRule.CARD_STATE.NE):
+					click_pos = randi() % (Global.MAXR * Global.MAXC)
+					tr = n_to_rc(click_pos)[0]
+					tc = n_to_rc(click_pos)[1]
+					
+				perform_click(tr, tc)
+				
+				# udpate memory
+				ai_memory[click_pos] = true
+				
+				# if AI now remembers a pair
+				ai_n_per_k[rows[tr].get_card_type(tc) - CardRule.OFFSET] += 1
+
+				#// TODO: do we really need the following two lines?
+				if (ai_n_per_k[rows[tr].get_card_type(tc) - CardRule.OFFSET] >= 2): # TODO: safe to change this to eraseN?
+					possible_type = rows[tr].get_card_type(tc)
+
+			flip_state = 1
+		1:
+			if (possible_type != CardRule.TYPE_UNDEFINED):
+				for n in range(Global.MAXR * Global.MAXC):
+					var tr = n_to_rc(n)[0]
+					var tc = n_to_rc(n)[1]
+					
+					if (ai_memory[n] and 
+						rows[tr].get_card_state(tc) != CardRule.CARD_STATE.NE and 
+						rows[tr].get_card_type(tc) == possible_type and 
+						n != flip1): # will not click the same card that is already uncovered
+						
+						perform_click(tr, tc)
+						
+						break
+			else:
+				# TODO: similar logic, better to create a function
+				# randomly click a card that it does not remember
+				var click_pos = randi() % (Global.MAXR * Global.MAXC)
+				var tr = n_to_rc(click_pos)[0]
+				var tc = n_to_rc(click_pos)[1]
+				
+				while (ai_memory[click_pos] or
+						rows[tr].get_card_state(tc) == CardRule.CARD_STATE.NE or
+						click_pos == flip1):
+					click_pos = randi() % (Global.MAXR * Global.MAXC)
+					tr = n_to_rc(click_pos)[0]
+					tc = n_to_rc(click_pos)[1]
+					
+				perform_click(tr, tc)
+				
+				# udpate memory
+				ai_memory[click_pos] = true
+			
+			flip_state = 2
+		2:
+			flip_state = 0
+	
+	return flip_state
+
+# response whether a card is clickable or not.
+func is_card_clickable_from_ui(ui_r, ui_c):
+	var ir = mirror_ui_rc(ui_r, ui_c)[0]
+	var ic = mirror_ui_rc(ui_r, ui_c)[1]
+	
+	if (rows[ir].is_sp(ic) or rows[ir].get_card_state(ic) == CardRule.CARD_STATE.COVER):
+		return true
+	elif (flip_state == 1 and flip1 == rc_to_n(ir, ic) and !is_in_ai_mode):
+		return true
+	else:
+		return false

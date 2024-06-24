@@ -44,10 +44,11 @@ func is_sp():
 
 func get_how_display():
 	# make HEAL visible for MASTER
-	if (is_sp() and Global.user.hero == Global.HERO_TYPE.MASTER and type == SP_TYPE.HEAL and state != CARD_STATE.NE):
-		state = CARD_STATE.UNCOVER
-		type = TYPE_UNCOVER_HEAL
-		return type
+	if (is_sp() and Global.user.hero == Global.HERO_TYPE.MASTER and state != CARD_STATE.NE):
+		if (type == SP_TYPE.HEAL or type == TYPE_UNCOVER_HEAL):
+			state = CARD_STATE.UNCOVER
+			type = TYPE_UNCOVER_HEAL
+			return type
 		
 	if state == CARD_STATE.UNCOVER:
 		return type

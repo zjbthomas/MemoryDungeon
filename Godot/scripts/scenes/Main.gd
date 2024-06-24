@@ -1,5 +1,7 @@
 extends Node
 
+# TODO： this script should work as a ViewModel; all UI operations should move to GUI
+
 var game = GameRule.new()
 
 const LONG_SETTLE_TIME = 0.4
@@ -12,6 +14,7 @@ const LONG_HEAL_TIME = 0.6
 const SHORT_HEAL_TIME = 0.05
 const TREASURE_TIME = 0.6
 
+const AI_ACTION_TIME = 1
 const AI_SETTLE_TIME = 0.3
 
 # Called when the node enters the scene tree for the first time.
@@ -194,7 +197,7 @@ func start(is_by_config):
 	
 func update_level_bar():
 	# TODO: we mix changing colors of the progress bar and setting its value together; should be separated
-	if (game.is_ai_turn == false):
+	if (game.is_in_ai_mode == false):
 		if (game.floor_type == GameRule.FLOOR_TYPE.NORMAL):
 			$MainGUI/LeftPanel/GameStatus/TopPanel/LevelBar.get_theme_stylebox("background").bg_color = Color.BLACK
 			$MainGUI/LeftPanel/GameStatus/TopPanel/LevelBar.get_theme_stylebox("fill").bg_color = Color.YELLOW
@@ -255,18 +258,18 @@ func update_all_cards():
 			update_one_card(ir, ic)
 			
 func update_one_card(ir, ic):
-	$MainGUI/Board.update_one_card(ir, ic, game.card_card_for_ui(ir, ic))
+	$MainGUI/Board.update_one_card(ir, ic, game.get_card_for_ui(ir, ic))
 
 func _on_board_card_button_pressed(ir, ic):
-	if (game.is_ai_turn == false):
-		if (!$AMTimer.is_stopped() and $SettleTimer.is_stopped()):
+	if (game.is_in_ai_mode == false):
+		if (!$AMTimer.is_stopped() and $SettleTimer.is_stopped() and game.is_card_clickable_from_ui(ir, ic)):
 			# game is running and not in settle phase
 			# hide status
 			$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.visible = false
 			
 			$MainGUI/RightPanel/GameFunctions/ShopFunction/GainRect.visible = false
 			
-			match (game.perform_click_for_ui(ir, ic)):
+			match (game.perform_click_from_ui(ir, ic)):
 				GameRule.CLICK_PERFORMED.NO_SETTLEMENT:
 					update_one_card(ir, ic)
 				GameRule.CLICK_PERFORMED.SETTLEMENT:
@@ -342,21 +345,22 @@ func _on_board_card_button_pressed(ir, ic):
 	else:
 		# AI mode
 		# TODO: is this logic correct?
-		update_one_card(ir, ic)
-		if ($AITimer.is_stopped() and game.rows[ir].get_card_state(ic) == CardRule.CARD_STATE.COVER):
-			# hide status
-			$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.visible = false
+		if ($AITimer.is_stopped() and game.is_card_clickable_from_ui(ir, ic)):
+			#update_one_card(ir, ic)
 			
-			$MainGUI/RightPanel/GameFunctions/ShopFunction/GainRect.visible = false
-			
-			var click_performed = game.perform_click(ir, ic)
-			
-			update_one_card(ir, ic)	
-			
-			if (click_performed == GameRule.CLICK_PERFORMED.SETTLEMENT):
-				$AITimer.wait_time = AI_SETTLE_TIME
-				$AITimer.start()
-
+			if (game.get_card_for_ui(ir, ic).state == CardRule.CARD_STATE.COVER):
+				# hide status
+				$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.visible = false
+				
+				$MainGUI/RightPanel/GameFunctions/ShopFunction/GainRect.visible = false
+				
+				var click_performed = game.perform_click_from_ui(ir, ic)
+				
+				update_one_card(ir, ic)	
+				
+				if (click_performed == GameRule.CLICK_PERFORMED.SETTLEMENT):
+					$AITimer.wait_time = AI_SETTLE_TIME
+					$AITimer.start()
 
 func _on_settle_timer_timeout():
 	# call settle()
@@ -506,3 +510,163 @@ func _on_am_timer_timeout():
 				$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Gameover", "Time's Up![p]Gameover.", false)
 				$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(func(): $BlurContainer.complete())
 				$BlurContainer.activate()
+
+func _on_main_gui_ai_button_pressed():
+	var ai_remember_rate = 100 - Global.user.ai_forget_rate # TODO: why not directly use remember rate?
+	
+	game.new_ai_level(ai_remember_rate)
+	
+	$MainGUI/LeftPanel/GameStatus/TopPanel/LevelLabel.text = "[center][b]U"
+	$MainGUI/LeftPanel/GameStatus/TopPanel/LevelLabel.visible = true
+	
+	# set progress bars
+	update_level_bar()
+	$MainGUI/LeftPanel/GameStatus/TopPanel/LevelBar.visible = true
+	
+	$MainGUI/LeftPanel/GameStatus/BottomPanel/AMBar.visible = false
+	$MainGUI/LeftPanel/GameStatus/BottomPanel/HPBar.visible = false
+
+	# set right panel
+	update_function_controls(false)
+
+	# update cards
+	update_all_cards()
+	
+	# set controls
+	$MainGUI/LeftPanel/GameControls/NextFloorButton.visible = false
+
+	$MainGUI/LeftPanel/GameControls/NewGameButton.visible = true
+	$MainGUI/LeftPanel/GameControls/PauseButton.visible = false
+	$MainGUI/LeftPanel/GameControls/ResumeButton.visible = false
+	
+	$MainGUI/LeftPanel/GameStatus/BottomPanel/HeroSprite/HeroButton.visible = true # TODO: why?
+
+	# show message
+	var msg = "Ready to fight your master![p]" + \
+			  "The forget percentage of your master is " + str(ai_remember_rate)+ "%!"
+
+	$MainGUI/RightPanel/FloorInfo/MessageLabel.visible = true
+	$MainGUI/RightPanel/FloorInfo/MessageLabel.text = "[b]" + msg
+
+	$BlurContainer/WrapperWindow.load_window("message")
+	$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Get set!", msg, false)
+	$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(func(): $BlurContainer.complete())
+	$BlurContainer.activate()
+
+
+func _on_ai_timer_timeout():
+	$AITimer.stop() # TODO: this may not be needed
+	
+	var start_ai_timer = false
+	
+	if (!game.is_ai_turn):
+		game.settle_ai() # this will change is_ai_turn
+	
+		if (game.status == GameRule.STATUS.SCORE):
+			update_level_bar()
+			
+			$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.play(str(game.status))
+			$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.visible = true
+
+		update_all_cards()
+		
+		# change to AI's turn
+		if (game.is_ai_turn):
+			$MainGUI/LeftPanel/GameStatus/TopPanel/LevelLabel.text = "[center][b]M"
+			
+			$MainGUI/LeftPanel/GameControls/NewGameButton.visible = false
+			
+			update_function_controls(true)
+
+			start_ai_timer = true
+
+	else:
+		# AI's turn
+		match game.perform_ai_action():
+			0: # this is actually reset from 3, which means we need to settle
+				game.settle_ai()
+				
+				if (game.status == GameRule.STATUS.AISCORE):
+					update_level_bar()
+					
+					$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.play(str(GameRule.STATUS.BREAK))
+					$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.visible = true
+				
+				# change to player's turn
+				if (!game.is_ai_turn):
+					$MainGUI/LeftPanel/GameStatus/TopPanel/LevelLabel.text = "[center][b]U"
+					
+					$MainGUI/LeftPanel/GameControls/NewGameButton.visible = true
+					
+					update_function_controls(true)
+
+			1, 2: # AI continues its action
+				start_ai_timer = true
+				
+		update_all_cards()
+		
+		# TODO: seems like this should be put into case 0 above
+		if (game.is_ai_turn):
+			start_ai_timer = true
+
+	if (game.win_game):
+		# stop AI timer in case the previous if statement activate it
+		# TODO: check the logic here; do we just reset the flag without stop the timer?
+		$AITimer.stop()
+		start_ai_timer = false
+		
+		# reset UI
+		$MainGUI/LeftPanel/GameStatus/TopPanel/LevelBar.visible = false
+		
+		$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.visible = false
+		$MainGUI/RightPanel/GameFunctions/ShopFunction/GainRect.visible = false
+		
+		update_function_controls(false)
+		
+		update_all_cards()
+		
+		# show message
+		if (game.score == game.ai_score):
+			var msg = "You get the same score as your master.[p]Please start another training!"
+			
+			$MainGUI/RightPanel/FloorInfo/MessageLabel.text = "[b]" + msg
+			
+			$BlurContainer/WrapperWindow.load_window("message")
+			$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Draw", msg, false)
+			$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(func(): $BlurContainer.complete())
+			$BlurContainer.activate()
+		elif (game.score > game.ai_score):
+			var gain_gold = Global.user.handle_ai_end_game(game.score, game.ai_score)
+			
+			$MainGUI/RightPanel/GameFunctions/ShopFunction/GoldLabel.text = str(Global.user.gold)
+			update_function_controls(false) # update as gold changed
+			
+			var msg = "Congratulations! You win your master![p]" + \
+					  "You have earn "+ str(gain_gold) + " credits![p]" + \
+					  "Please start a new training to win more!"
+			
+			$MainGUI/RightPanel/FloorInfo/MessageLabel.text = "[b]" + msg
+			
+			$BlurContainer/WrapperWindow.load_window("message")
+			$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Win", msg, false)
+			$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(func(): $BlurContainer.complete())
+			$BlurContainer.activate()
+		elif (game.score < game.ai_score):
+			Global.user.handle_ai_end_game(game.score, game.ai_score)
+			
+			var msg = "Sorry you lose this time![p]" + \
+					  "Please start a new training and try again!";
+			
+			$MainGUI/RightPanel/FloorInfo/MessageLabel.text = "[b]" + msg
+			
+			$BlurContainer/WrapperWindow.load_window("message")
+			$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Win", msg, false)
+			$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(func(): $BlurContainer.complete())
+			$BlurContainer.activate()
+			
+		$MainGUI/LeftPanel/GameControls/NewGameButton.visible = true
+		$MainGUI/LeftPanel/GameStatus/BottomPanel/HeroSprite/HeroButton.visible = true
+
+	if (start_ai_timer):
+		$AITimer.wait_time = AI_ACTION_TIME # TODO: this timer is reused for two different purposes; shall we use two timers?
+		$AITimer.start()
