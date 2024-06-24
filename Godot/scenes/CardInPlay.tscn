@@ -2868,7 +2868,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"1",
-"speed": 5.0
+"speed": 20.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -3099,7 +3099,7 @@ script = ExtResource("1_yvlfc")
 
 [node name="Cards" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_2f18g")
-animation = &"-19"
+animation = &"1"
 centered = false
 
 [node name="CardButton" type="Button" parent="Cards"]
