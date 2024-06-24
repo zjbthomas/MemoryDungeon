@@ -196,7 +196,7 @@ func start():
 			rows[ir].set_card_state(ic, CardRule.CARD_STATE.NE)
 
 	card_remain = 0
-	
+		
 	# when starting a floor, we need to create cur_n_rows rows, so we set it to 0 and pop_rows()
 	var temp_r = cur_n_rows
 	cur_n_rows = 0 # pop_rows() will use and modify this value, so we reset it to 0 here
@@ -237,12 +237,7 @@ func pop_rows(n_pop_rows):
 				rows[rand].set_card_state(ic, CardRule.CARD_STATE.COVER)
 				
 			cur_n_rows += 1
-			
-			# add a new row of cards to temporary pointers
-			flip1 += Global.MAXC
-			flip2 += Global.MAXC
-			flip3 += Global.MAXC
-			
+
 			card_remain += Global.MAXC
 			
 			# saved to be used later
@@ -283,11 +278,6 @@ func pop_rows(n_pop_rows):
 				
 					cur_n_rows += 1
 		
-					# add a new row of cards to temporary pointers
-					flip1 += Global.MAXC
-					flip2 += Global.MAXC
-					flip3 += Global.MAXC
-					
 					card_remain += Global.MAXC
 					
 		# reset timer
