@@ -336,6 +336,10 @@ func rc_to_n(ir, ic):
 	return ir * Global.MAXC + ic
 
 func n_to_rc(n):
+	if (n == -1):
+		print("Error in converting coordinate!")
+		get_tree().quit() # TODO
+	
 	var r:int = n / Global.MAXC
 	var c:int = n % Global.MAXC
 	
@@ -540,6 +544,8 @@ func perform_click_for_ui(ui_r, ui_c):
 		2:
 			flip3 = rc_to_n(ir, ic)
 			
+			flip_state = 3
+			
 			return CLICK_PERFORMED.SETTLEMENT
 
 func settle():
@@ -645,52 +651,63 @@ func settle():
 			3:
 				var tr2 = n_to_rc(flip2)[0]
 				var tc2 = n_to_rc(flip2)[1]
-				var tr3 = n_to_rc(flip3)[0]
-				var tc3 = n_to_rc(flip3)[1]
 				
-				if (rows[tr1].get_card_type(tc1) == rows[tr2].get_card_type(tc2) and 
-					rows[tr1].get_card_type(tc1) == rows[tr3].get_card_type(tc3)):
-					# remove cards
-					rows[tr1].set_card_state(tc1, CardRule.CARD_STATE.NE)
-					rows[tr2].set_card_state(tc2, CardRule.CARD_STATE.NE)
-					rows[tr3].set_card_state(tc3, CardRule.CARD_STATE.NE)
-					
-					# add score
-					score += 1
-					
-					status = STATUS.SCORE
-					
-					# combo and critical
-					if (Global.user.hero != Global.HERO_TYPE.BERSERKER):
-						if (is_combo):
-							# add one more score
+				match flip_state:
+					2:
+						# cover cards as they should not be matched (as in perform_click_for_ui())
+						rows[tr1].set_card_state(tc1, CardRule.CARD_STATE.COVER)
+						rows[tr2].set_card_state(tc2, CardRule.CARD_STATE.COVER)
+					3:
+						var tr3 = n_to_rc(flip3)[0]
+						var tc3 = n_to_rc(flip3)[1]
+				
+						if (rows[tr1].get_card_type(tc1) == rows[tr2].get_card_type(tc2) and 
+							rows[tr1].get_card_type(tc1) == rows[tr3].get_card_type(tc3)):
+							# remove cards
+							rows[tr1].set_card_state(tc1, CardRule.CARD_STATE.NE)
+							rows[tr2].set_card_state(tc2, CardRule.CARD_STATE.NE)
+							rows[tr3].set_card_state(tc3, CardRule.CARD_STATE.NE)
+							
+							# add score
 							score += 1
 							
-							status = STATUS.COMBO
+							status = STATUS.SCORE
+							
+							# combo and critical
+							if (Global.user.hero != Global.HERO_TYPE.BERSERKER):
+								if (is_combo):
+									# add one more score
+									score += 1
+									
+									status = STATUS.COMBO
+								else:
+									is_combo = true
+							else:
+								# critical for BERSERKER
+								var critical_roll = randi() % 100 + 1 # [0, 99] -> [1, 100]
+								if (critical_roll <= CRITICAL_RATE):
+									# add 2 points
+									score += 2
+									
+									status = STATUS.CRITICAL
+									
+							# update remaining card number
+							card_remain -= n_erase
 						else:
-							is_combo = true
-					else:
-						# critical for BERSERKER
-						var critical_roll = randi() % 100 + 1 # [0, 99] -> [1, 100]
-						if (critical_roll <= CRITICAL_RATE):
-							# add 2 points
-							score += 2
+							# cover cards if not matched
+							rows[tr1].set_card_state(tc1, CardRule.CARD_STATE.COVER)
+							rows[tr2].set_card_state(tc2, CardRule.CARD_STATE.COVER)
+							rows[tr3].set_card_state(tc3, CardRule.CARD_STATE.COVER)
 							
-							status = STATUS.CRITICAL
-							
-					# update remaining card number
-					card_remain -= n_erase
-				else:
-					# cover cards if not matched
-					rows[tr1].set_card_state(tc1, CardRule.CARD_STATE.COVER)
-					rows[tr2].set_card_state(tc2, CardRule.CARD_STATE.COVER)
-					rows[tr3].set_card_state(tc3, CardRule.CARD_STATE.COVER)
-					
-					# reset combo flag
-					is_combo = false
+							# reset combo flag
+							is_combo = false
 				
 	# reset flip_state
 	flip_state = 0
+	
+	flip1 = -1
+	flip2 = -1
+	flip3 = -1
 #
 	# after removing cards, move remaining cards downwards
 	move_cards_downwards()
