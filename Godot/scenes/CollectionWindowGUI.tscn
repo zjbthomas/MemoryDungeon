@@ -1,0 +1,68 @@
+[gd_scene load_steps=10 format=3 uid="uid://cmandydrbkhtl"]
+
+[ext_resource type="Texture2D" uid="uid://degqqhi14y1nm" path="res://images/screens/form_find.jpg" id="1_kknxe"]
+[ext_resource type="Script" path="res://scripts/scenes/CollectionWindowGUI.gd" id="2_mqich"]
+[ext_resource type="Texture2D" uid="uid://b5tjxld08pn22" path="res://images/screens/button_close_f.png" id="3_l0ueg"]
+[ext_resource type="PackedScene" uid="uid://dp5g6sw5pjtah" path="res://scenes/CardInShow.tscn" id="3_rbwdu"]
+[ext_resource type="Script" path="res://scripts/nodes/ScrollContainer.gd" id="4_cj4b8"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_uyumv"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xgy1o"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_43dr4"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6euyw"]
+
+[node name="CollectionWindowGUI" type="TextureRect"]
+texture = ExtResource("1_kknxe")
+script = ExtResource("2_mqich")
+card_in_show = ExtResource("3_rbwdu")
+
+[node name="OKButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 53.5
+offset_top = -121.0
+offset_right = 235.5
+offset_bottom = -13.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_uyumv")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_xgy1o")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_43dr4")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_6euyw")
+icon = ExtResource("3_l0ueg")
+flat = true
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 0
+offset_left = 37.0
+offset_top = 21.0
+offset_right = 497.0
+offset_bottom = 131.0
+horizontal_scroll_mode = 2
+vertical_scroll_mode = 0
+script = ExtResource("4_cj4b8")
+kineticScrollTime = 0.1
+kineticScrollBias = 0.01
+swipeTolerance = 100
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ScrollContainer"]
+layout_mode = 2
+
+[node name="CollectionRateLabel" type="RichTextLabel" parent="."]
+offset_left = 115.0
+offset_top = 214.0
+offset_right = 181.0
+offset_bottom = 242.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/normal_font_size = 20
+bbcode_enabled = true
+text = "[center]100%"
+
+[connection signal="pressed" from="OKButton" to="." method="_on_ok_button_pressed"]

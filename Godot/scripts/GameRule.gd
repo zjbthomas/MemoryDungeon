@@ -23,7 +23,7 @@ var rows = []
 
 # for a single game - used in new_level()
 var floor_type
-var n_erase:int = 2 # ow many identical cards to erase them - MUST be 2 or 3
+var n_erase:int = 2 # how many identical cards to erase them - MUST be 2 or 3
 var n_level_k = 0 # should not be bigger than maxk
 var n_level_sp = 0 # should not be bigger than maxsp
 var n_pop:int = 0

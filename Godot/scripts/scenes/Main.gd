@@ -116,6 +116,11 @@ func _on_hero_selected(ix):
 	
 	$MainGUI/LeftPanel/GameStatus/BottomPanel/HeroSprite.play(str(Global.user.hero))
 
+func _on_main_gui_collection_button_pressed():
+	$BlurContainer/WrapperWindow.load_window("collection")
+	$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(func(): $BlurContainer.complete())
+	$BlurContainer.activate()
+
 func start(is_by_config):
 	if (not is_by_config):
 		game.new_level() # start a new level
