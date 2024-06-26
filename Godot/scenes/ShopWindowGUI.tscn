@@ -1,0 +1,180 @@
+[gd_scene load_steps=9 format=3 uid="uid://dqwwfgq1xf2v0"]
+
+[ext_resource type="Texture2D" uid="uid://u2nl7red8vox" path="res://images/screens/form_shop.jpg" id="1_jcu2q"]
+[ext_resource type="Script" path="res://scripts/scenes/ShopWindowGUI.gd" id="2_6lyy6"]
+[ext_resource type="Texture2D" uid="uid://crqgl7v3riaee" path="res://images/screens/button_close.png" id="3_i2jod"]
+[ext_resource type="PackedScene" uid="uid://cc1yjbeih51ex" path="res://scenes/CardInDraw.tscn" id="4_1rf4o"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_uyumv"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xgy1o"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_43dr4"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6euyw"]
+
+[node name="ShopWindowGUI" type="TextureRect"]
+texture = ExtResource("1_jcu2q")
+script = ExtResource("2_6lyy6")
+
+[node name="Shelf" type="GridContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 32.0
+offset_top = 77.0
+offset_right = -34.0
+offset_bottom = -420.0
+grow_horizontal = 2
+grow_vertical = 2
+columns = 5
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="Shelf"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+
+[node name="CardInDraw" parent="Shelf/AspectRatioContainer" groups=["draw_cards"] instance=ExtResource("4_1rf4o")]
+
+[node name="AspectRatioContainer2" type="AspectRatioContainer" parent="Shelf"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+
+[node name="CardInDraw" parent="Shelf/AspectRatioContainer2" groups=["draw_cards"] instance=ExtResource("4_1rf4o")]
+
+[node name="AspectRatioContainer3" type="AspectRatioContainer" parent="Shelf"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+
+[node name="CardInDraw" parent="Shelf/AspectRatioContainer3" groups=["draw_cards"] instance=ExtResource("4_1rf4o")]
+
+[node name="AspectRatioContainer4" type="AspectRatioContainer" parent="Shelf"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+
+[node name="CardInDraw" parent="Shelf/AspectRatioContainer4" groups=["draw_cards"] instance=ExtResource("4_1rf4o")]
+
+[node name="AspectRatioContainer5" type="AspectRatioContainer" parent="Shelf"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+
+[node name="CardInDraw" parent="Shelf/AspectRatioContainer5" groups=["draw_cards"] instance=ExtResource("4_1rf4o")]
+
+[node name="AspectRatioContainer6" type="AspectRatioContainer" parent="Shelf"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+
+[node name="CardInDraw" parent="Shelf/AspectRatioContainer6" groups=["draw_cards"] instance=ExtResource("4_1rf4o")]
+
+[node name="AspectRatioContainer7" type="AspectRatioContainer" parent="Shelf"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+
+[node name="CardInDraw" parent="Shelf/AspectRatioContainer7" groups=["draw_cards"] instance=ExtResource("4_1rf4o")]
+
+[node name="AspectRatioContainer8" type="AspectRatioContainer" parent="Shelf"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+
+[node name="CardInDraw" parent="Shelf/AspectRatioContainer8" groups=["draw_cards"] instance=ExtResource("4_1rf4o")]
+
+[node name="AspectRatioContainer9" type="AspectRatioContainer" parent="Shelf"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+
+[node name="CardInDraw" parent="Shelf/AspectRatioContainer9" groups=["draw_cards"] instance=ExtResource("4_1rf4o")]
+
+[node name="AspectRatioContainer10" type="AspectRatioContainer" parent="Shelf"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+
+[node name="CardInDraw" parent="Shelf/AspectRatioContainer10" groups=["draw_cards"] instance=ExtResource("4_1rf4o")]
+
+[node name="OKButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -82.5
+offset_top = -99.0
+offset_right = 84.5
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_uyumv")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_xgy1o")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_43dr4")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_6euyw")
+icon = ExtResource("3_i2jod")
+flat = true
+
+[node name="GoldLabel" type="RichTextLabel" parent="."]
+layout_mode = 0
+offset_left = 290.0
+offset_top = 351.0
+offset_right = 451.0
+offset_bottom = 374.0
+theme_override_colors/default_color = Color(1, 1, 0, 1)
+theme_override_font_sizes/normal_font_size = 14
+theme_override_font_sizes/bold_font_size = 14
+bbcode_enabled = true
+text = "[center][b]0G"
+
+[node name="PriceLabel" type="RichTextLabel" parent="."]
+layout_mode = 0
+offset_left = 290.0
+offset_top = 373.0
+offset_right = 451.0
+offset_bottom = 396.0
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 14
+bbcode_enabled = true
+text = "[center]10G"
+
+[node name="InfoLabel" type="RichTextLabel" parent="."]
+layout_mode = 0
+offset_left = 52.0
+offset_top = 418.0
+offset_right = 451.0
+offset_bottom = 511.0
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/bold_font_size = 16
+bbcode_enabled = true
+text = "Line 1
+Line 2
+Line 3
+Line 4"
+
+[connection signal="card_button_pressed" from="Shelf/AspectRatioContainer/CardInDraw" to="." method="_on_card_in_draw_card_button_pressed"]
+[connection signal="card_flipped" from="Shelf/AspectRatioContainer/CardInDraw" to="." method="_on_card_in_draw_card_flipped"]
+[connection signal="card_button_pressed" from="Shelf/AspectRatioContainer2/CardInDraw" to="." method="_on_card_in_draw_card_button_pressed"]
+[connection signal="card_flipped" from="Shelf/AspectRatioContainer2/CardInDraw" to="." method="_on_card_in_draw_card_flipped"]
+[connection signal="card_button_pressed" from="Shelf/AspectRatioContainer3/CardInDraw" to="." method="_on_card_in_draw_card_button_pressed"]
+[connection signal="card_flipped" from="Shelf/AspectRatioContainer3/CardInDraw" to="." method="_on_card_in_draw_card_flipped"]
+[connection signal="card_button_pressed" from="Shelf/AspectRatioContainer4/CardInDraw" to="." method="_on_card_in_draw_card_button_pressed"]
+[connection signal="card_flipped" from="Shelf/AspectRatioContainer4/CardInDraw" to="." method="_on_card_in_draw_card_flipped"]
+[connection signal="card_button_pressed" from="Shelf/AspectRatioContainer5/CardInDraw" to="." method="_on_card_in_draw_card_button_pressed"]
+[connection signal="card_flipped" from="Shelf/AspectRatioContainer5/CardInDraw" to="." method="_on_card_in_draw_card_flipped"]
+[connection signal="card_button_pressed" from="Shelf/AspectRatioContainer6/CardInDraw" to="." method="_on_card_in_draw_card_button_pressed"]
+[connection signal="card_flipped" from="Shelf/AspectRatioContainer6/CardInDraw" to="." method="_on_card_in_draw_card_flipped"]
+[connection signal="card_button_pressed" from="Shelf/AspectRatioContainer7/CardInDraw" to="." method="_on_card_in_draw_card_button_pressed"]
+[connection signal="card_flipped" from="Shelf/AspectRatioContainer7/CardInDraw" to="." method="_on_card_in_draw_card_flipped"]
+[connection signal="card_button_pressed" from="Shelf/AspectRatioContainer8/CardInDraw" to="." method="_on_card_in_draw_card_button_pressed"]
+[connection signal="card_flipped" from="Shelf/AspectRatioContainer8/CardInDraw" to="." method="_on_card_in_draw_card_flipped"]
+[connection signal="card_button_pressed" from="Shelf/AspectRatioContainer9/CardInDraw" to="." method="_on_card_in_draw_card_button_pressed"]
+[connection signal="card_flipped" from="Shelf/AspectRatioContainer9/CardInDraw" to="." method="_on_card_in_draw_card_flipped"]
+[connection signal="card_button_pressed" from="Shelf/AspectRatioContainer10/CardInDraw" to="." method="_on_card_in_draw_card_button_pressed"]
+[connection signal="card_flipped" from="Shelf/AspectRatioContainer10/CardInDraw" to="." method="_on_card_in_draw_card_flipped"]
+[connection signal="pressed" from="OKButton" to="." method="_on_ok_button_pressed"]

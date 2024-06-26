@@ -17,7 +17,8 @@ enum HERO_TYPE {WIZARD=0,BERSERKER=1,HUNTER=2,MASTER=3}
 const WINDOW_TYPE = {
 	"message": "res://scenes//MessageWindowGUI.tscn",
 	"hero": "res://scenes//HeroWindowGUI.tscn",
-	"collection": "res://scenes//CollectionWindowGUI.tscn"
+	"collection": "res://scenes//CollectionWindowGUI.tscn",
+	"shop": "res://scenes//ShopWindowGUI.tscn"
 }
 
 var user = User.new()

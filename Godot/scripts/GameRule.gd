@@ -424,49 +424,50 @@ func perform_click(ir, ic):
 					
 				Global.user.save_game() # TODO: is it too frequent?
 			CardRule.SP_TYPE.MAP:
-				matched_type = CardRule.TYPE_UNDEFINED # used in settle() so a class member variable is needed
+				if (card_remain >= n_erase):
+					matched_type = CardRule.TYPE_UNDEFINED # used in settle() so a class member variable is needed
+					
+					var n_pairs
+					var temp_pos
+					
+					var temp_matched_type = CardRule.TYPE_UNDEFINED # for HUNTER who finds two pairs
 				
-				var n_pairs
-				var temp_pos
-				
-				var temp_matched_type = CardRule.TYPE_UNDEFINED # for HUNTER who finds two pairs
-			
-				# how many pairs to match
-				if (Global.user.hero == Global.HERO_TYPE.HUNTER):
-					n_pairs = 2
-				else:
-					n_pairs = 1	
+					# how many pairs to match
+					if (Global.user.hero == Global.HERO_TYPE.HUNTER):
+						n_pairs = 2
+					else:
+						n_pairs = 1	
 
-				# find pairs
-				for ip in range(n_pairs):
-					# find one card first
-					for fn in range(Global.MAXR * Global.MAXC): # we use multiplication here so we only need to break one loop
-						var ir_find = n_to_rc(fn)[0]
-						var ic_find = n_to_rc(fn)[1]
-
-						if (rows[ir_find].get_card_state(ic_find) == CardRule.CARD_STATE.COVER and 
-							!rows[ir_find].is_sp(ic_find) and
-							rows[ir_find].get_card_type(ic_find) != temp_matched_type):
-								rows[ir_find].set_card_state(ic_find, CardRule.CARD_STATE.UNCOVER)
-								matched_type = rows[ir_find].get_card_type(ic_find)
-								temp_pos = fn
-								temp_matched_type = rows[ir_find].get_card_type(ic_find)
-
-								break
-						
-					# find other cards that match the reference
-					for en in range(n_erase, 2 - 1, -1): # [3, 2]
-						for fn in range(temp_pos + 1, Global.MAXR * Global.MAXC): # we use multiplication here so we only need to break one loop
+					# find pairs
+					for ip in range(n_pairs):
+						# find one card first
+						for fn in range(Global.MAXR * Global.MAXC): # we use multiplication here so we only need to break one loop
 							var ir_find = n_to_rc(fn)[0]
 							var ic_find = n_to_rc(fn)[1]
-							
+
 							if (rows[ir_find].get_card_state(ic_find) == CardRule.CARD_STATE.COVER and 
 								!rows[ir_find].is_sp(ic_find) and
-								rows[ir_find].get_card_type(ic_find) == matched_type):
+								rows[ir_find].get_card_type(ic_find) != temp_matched_type):
 									rows[ir_find].set_card_state(ic_find, CardRule.CARD_STATE.UNCOVER)
+									matched_type = rows[ir_find].get_card_type(ic_find)
 									temp_pos = fn
-									
+									temp_matched_type = rows[ir_find].get_card_type(ic_find)
+
 									break
+							
+						# find other cards that match the reference
+						for en in range(n_erase, 2 - 1, -1): # [3, 2]
+							for fn in range(temp_pos + 1, Global.MAXR * Global.MAXC): # we use multiplication here so we only need to break one loop
+								var ir_find = n_to_rc(fn)[0]
+								var ic_find = n_to_rc(fn)[1]
+								
+								if (rows[ir_find].get_card_state(ic_find) == CardRule.CARD_STATE.COVER and 
+									!rows[ir_find].is_sp(ic_find) and
+									rows[ir_find].get_card_type(ic_find) == matched_type):
+										rows[ir_find].set_card_state(ic_find, CardRule.CARD_STATE.UNCOVER)
+										temp_pos = fn
+										
+										break
 					
 			CardRule.SP_TYPE.HEAL, CardRule.TYPE_UNCOVER_HEAL:
 				if (Global.user.hero == Global.HERO_TYPE.MASTER):

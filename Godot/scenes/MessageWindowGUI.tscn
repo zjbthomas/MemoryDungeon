@@ -79,5 +79,6 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_6euyw")
 icon = ExtResource("4_mb26j")
 flat = true
 
+[connection signal="card_button_pressed" from="ImageContainer/CardInDraw" to="." method="_on_card_in_draw_card_button_pressed"]
 [connection signal="card_flipped" from="ImageContainer/CardInDraw" to="." method="_on_card_in_draw_card_flipped"]
 [connection signal="pressed" from="OKButton" to="." method="_on_ok_button_pressed"]

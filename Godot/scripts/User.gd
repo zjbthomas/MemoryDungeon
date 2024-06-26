@@ -138,9 +138,9 @@ func gacha(cost):
 	gold -= cost
 
 	# generate a random card.
-	var type = randi() % Global.MAXK + 1
+	var type = randi() % Global.MAXK
 
-	if (owned_k[type - 1]):
+	if (owned_k[type]):
 		# old card
 		gold += 1 # pay back by 1
 		
@@ -149,7 +149,7 @@ func gacha(cost):
 		return [type, false]
 	else:
 		# a new card
-		owned_k[type - 1] = true
+		owned_k[type] = true
 		
 		save_game()
 		

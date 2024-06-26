@@ -26,7 +26,7 @@ var type
 
 static func gen_random_k(last_k, n_per_k):
 	var max_k = last_k + 1
-	if (max_k >= Global.MAXK):
+	if (max_k > Global.MAXK):
 		max_k -= 1
 	
 	var selected_k = randi() % max_k + OFFSET

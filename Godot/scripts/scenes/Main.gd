@@ -121,6 +121,15 @@ func _on_main_gui_collection_button_pressed():
 	$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(func(): $BlurContainer.complete())
 	$BlurContainer.activate()
 
+func _on_main_gui_shop_button_pressed():
+	$BlurContainer/WrapperWindow.load_window("shop")
+	$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(_on_shop_ok_button_pressed)
+	$BlurContainer.activate()
+	
+func _on_shop_ok_button_pressed():
+	$BlurContainer.complete()
+	update_collection_bar()
+
 func start(is_by_config):
 	if (not is_by_config):
 		game.new_level() # start a new level
@@ -191,15 +200,17 @@ func start(is_by_config):
 
 			$MainGUI/RightPanel/FloorInfo/EvilRect.visible = true
 
+	$MainGUI/LeftPanel/GameStatus/TopPanel/LevelLabel.visible = true
+
 	$BlurContainer/WrapperWindow.load_window("message")
 	$BlurContainer/WrapperWindow.get_loaded_window().setup_ui(title, msg, false)
-	$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(func(): $BlurContainer.complete())
+	$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(_on_start_ok_button_pressed)
 	$BlurContainer.activate()
-#
-	$MainGUI/LeftPanel/GameStatus/TopPanel/LevelLabel.visible = true
 	
+func _on_start_ok_button_pressed():
+	$BlurContainer.complete()
 	$AMTimer.start()
-	
+
 func update_level_bar():
 	# TODO: we mix changing colors of the progress bar and setting its value together; should be separated
 	if (game.is_in_ai_mode == false):
@@ -412,6 +423,7 @@ func _on_settle_timer_timeout():
 		
 		# handle TREASURE
 		if (game.found_treasure):
+			# TODO: check if this one is modal
 			$BlurContainer/WrapperWindow.load_window("message")
 			$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Wow!", "You find a gift in this floor![p]Please receive it!", true)
 			$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(func(): $BlurContainer.complete())
@@ -427,6 +439,7 @@ func _on_settle_timer_timeout():
 			GameRule.FLOOR_TYPE.EVIL:
 				Global.user.gold += 5
 				
+				# TODO: check if this one is modal
 				$BlurContainer/WrapperWindow.load_window("message")
 				$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Wow!", "You get the chest from beating EVIL![p]Let's open it!", true)
 				$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(func(): $BlurContainer.complete())

@@ -22,12 +22,6 @@ func setup_ui(title, message, is_gift):
 		
 		$OKButton.disabled = false
 	else:
-		var rets = Global.user.gacha(0)
-		var type = rets[0]
-		_is_new_type = rets[1]
-		
-		$ImageContainer/CardInDraw.setup_card(type)
-		
 		$ImageContainer/DefaultImage.visible = false
 		$ImageContainer/CardInDraw.visible = true
 		
@@ -35,6 +29,13 @@ func setup_ui(title, message, is_gift):
 
 func _on_ok_button_pressed():
 	ok_button_pressed.emit()
+
+func _on_card_in_draw_card_button_pressed(card):
+	var rets = Global.user.gacha(0)
+	var type = rets[0]
+	_is_new_type = rets[1]
+	
+	card.card_flip(type)
 
 func _on_card_in_draw_card_flipped():
 	if (_is_new_type):
