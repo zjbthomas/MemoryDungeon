@@ -82,7 +82,7 @@ func new_level():
 	var n_owned_k = Global.user.owned_k.count(true)
 
 	if level % 10 == 0: # an Evil Level
-		floor_type = FLOOR_TYPE.EVIL;
+		floor_type = FLOOR_TYPE.EVIL
 
 		n_erase = 3
 
@@ -151,13 +151,15 @@ func new_level():
 	start()
 
 # Generate a new level by pre-set conditions.
-func new_level_by_config(n_erase, n_level_k, cur_n_rows, n_pop):
+func new_level_by_config(n_erase:int, n_level_k:int, cur_n_rows:int, n_pop:int):
 	is_in_ai_mode = false
 
 	level += 1
 
+	floor_type = FLOOR_TYPE.NORMAL # floor is always set to normal when jump
+
 	# variables that can be set by user
-	self.n_erase = 3
+	self.n_erase = n_erase
 	self.n_level_k = n_level_k
 	self.cur_n_rows = cur_n_rows
 	self.n_pop = n_pop

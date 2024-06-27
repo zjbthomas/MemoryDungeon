@@ -1,0 +1,86 @@
+[gd_scene load_steps=9 format=3 uid="uid://cq0w2wp8twygw"]
+
+[ext_resource type="Texture2D" uid="uid://bwo3pjiwstol" path="res://images/screens/form_set.jpg" id="1_ejmxb"]
+[ext_resource type="Script" path="res://scripts/scenes/JumpWindowGUI.gd" id="2_exofr"]
+[ext_resource type="Texture2D" uid="uid://bwkj88vqd58iu" path="res://images/screens/button_ok.png" id="5_s0i6a"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_uyumv"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xgy1o"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_43dr4"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6euyw"]
+
+[sub_resource type="Theme" id="Theme_4sffn"]
+LineEdit/constants/minimum_character_width = 2
+
+[node name="JumpWindowGUI" type="TextureRect"]
+texture = ExtResource("1_ejmxb")
+script = ExtResource("2_exofr")
+
+[node name="OKButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -71.5
+offset_top = -86.0
+offset_right = 71.5
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_uyumv")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_xgy1o")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_43dr4")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_6euyw")
+icon = ExtResource("5_s0i6a")
+flat = true
+
+[node name="ATKSpinBox" type="SpinBox" parent="."]
+layout_mode = 0
+offset_left = 387.0
+offset_top = 96.0
+offset_right = 441.0
+offset_bottom = 127.0
+theme = SubResource("Theme_4sffn")
+min_value = 2.0
+max_value = 3.0
+value = 2.0
+alignment = 1
+
+[node name="KSpinBox" type="SpinBox" parent="."]
+offset_left = 387.0
+offset_top = 193.0
+offset_right = 441.0
+offset_bottom = 224.0
+theme = SubResource("Theme_4sffn")
+min_value = 2.0
+max_value = 5.0
+value = 2.0
+alignment = 1
+
+[node name="RowSpinBox" type="SpinBox" parent="."]
+offset_left = 387.0
+offset_top = 292.0
+offset_right = 441.0
+offset_bottom = 323.0
+theme = SubResource("Theme_4sffn")
+min_value = 1.0
+max_value = 6.0
+value = 1.0
+alignment = 1
+
+[node name="RSpinBox" type="SpinBox" parent="."]
+offset_left = 387.0
+offset_top = 391.0
+offset_right = 441.0
+offset_bottom = 422.0
+theme = SubResource("Theme_4sffn")
+min_value = 1.0
+max_value = 3.0
+value = 1.0
+alignment = 1
+
+[connection signal="pressed" from="OKButton" to="." method="_on_ok_button_pressed"]

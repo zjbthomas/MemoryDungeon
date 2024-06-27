@@ -18,5 +18,4 @@ func activate():
 	
 func complete():
 	hide()
-	$WrapperWindow.hide()
-	$WrapperWindow.get_loaded_window().queue_free()
+	$WrapperWindow.unload_window()

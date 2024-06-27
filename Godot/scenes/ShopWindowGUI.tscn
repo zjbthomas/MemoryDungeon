@@ -1,9 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://dqwwfgq1xf2v0"]
+[gd_scene load_steps=10 format=3 uid="uid://dqwwfgq1xf2v0"]
 
 [ext_resource type="Texture2D" uid="uid://u2nl7red8vox" path="res://images/screens/form_shop.jpg" id="1_jcu2q"]
 [ext_resource type="Script" path="res://scripts/scenes/ShopWindowGUI.gd" id="2_6lyy6"]
 [ext_resource type="Texture2D" uid="uid://crqgl7v3riaee" path="res://images/screens/button_close.png" id="3_i2jod"]
 [ext_resource type="PackedScene" uid="uid://cc1yjbeih51ex" path="res://scenes/CardInDraw.tscn" id="4_1rf4o"]
+[ext_resource type="PackedScene" uid="uid://8vw6uk1ffr4l" path="res://scenes/BlurContainer.tscn" id="5_f1bg3"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_uyumv"]
 
@@ -156,6 +157,14 @@ text = "Line 1
 Line 2
 Line 3
 Line 4"
+
+[node name="BlurContainer" parent="." instance=ExtResource("5_f1bg3")]
+layout_mode = 0
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+grow_horizontal = 1
+grow_vertical = 1
 
 [connection signal="card_button_pressed" from="Shelf/AspectRatioContainer/CardInDraw" to="." method="_on_card_in_draw_card_button_pressed"]
 [connection signal="card_flipped" from="Shelf/AspectRatioContainer/CardInDraw" to="." method="_on_card_in_draw_card_flipped"]

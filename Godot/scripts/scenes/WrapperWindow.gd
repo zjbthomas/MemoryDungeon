@@ -17,5 +17,10 @@ func load_window(name):
 	_loaded_gui = load(Global.WINDOW_TYPE.get(name)).instantiate()
 	add_child(_loaded_gui)
 
+func unload_window():
+	hide()
+	remove_child(_loaded_gui) # we need this as queue_free() is not performed immediately
+	_loaded_gui.queue_free()
+
 func get_loaded_window():
 	return _loaded_gui

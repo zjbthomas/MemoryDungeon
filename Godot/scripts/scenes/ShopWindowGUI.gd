@@ -67,8 +67,12 @@ func _on_ok_button_pressed():
 			
 			$BlurContainer/WrapperWindow.load_window("message")
 			$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Wow!", msg, true)
-			$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(func(): $BlurContainer.complete())
+			$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(_on_gift_ok_button_pressed)
 			$BlurContainer.activate()
-			
-		ok_button_pressed.emit()
+		else:
+			ok_button_pressed.emit()
+
+func _on_gift_ok_button_pressed():
+	$BlurContainer.complete()
+	ok_button_pressed.emit()
 			

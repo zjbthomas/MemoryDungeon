@@ -35,10 +35,7 @@ func _setup():
 	$MainGUI/LeftPanel/GameStatus/BottomPanel/AMBar.visible = false
 	$MainGUI/LeftPanel/GameStatus/BottomPanel/HPBar.visible = false
 	
-	if (Global.user.saved_level != 0):
-		$MainGUI/LeftPanel/GameStatus/TopPanel/LevelLabel.text = "[center][b]" + str(Global.user.saved_level)
-	else:
-		$MainGUI/LeftPanel/GameStatus/TopPanel/LevelLabel.text = "[center][b]0"
+	$MainGUI/LeftPanel/GameStatus/TopPanel/LevelLabel.text = "[center][b]" + str(Global.user.saved_level)
 	
 	# controls
 	$MainGUI/LeftPanel/GameControls/NewGameButton.visible = false
@@ -76,6 +73,7 @@ func _setup():
 func _on_main_gui_next_floor_button_pressed():
 	start(false)
 
+# TODO: new_game_button should only be available after game over
 func _on_main_gui_new_game_button_pressed():
 	game.level = Global.user.saved_level
 	start(false)
@@ -125,7 +123,88 @@ func _on_main_gui_shop_button_pressed():
 	$BlurContainer/WrapperWindow.load_window("shop")
 	$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(_on_shop_ok_button_pressed)
 	$BlurContainer.activate()
+
+func _on_main_gui_jump_button_pressed():
+	# minus credit, write to the user file and refresh to show
+	Global.user.gold -= Global.COST_JUMP
+	Global.user.save_game()
 	
+	$MainGUI/RightPanel/GameFunctions/ShopFunction/GoldLabel.text = str(Global.user.gold)
+	
+	update_function_controls(false)
+	
+	# show message
+	var msg = "You pay " + str(Global.COST_JUMP) + " credits to buy the items.[p]" + \
+					"Ready to choose the next floor!"
+	
+	$BlurContainer/WrapperWindow.load_window("message")
+	$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Jumping", msg, false)
+	$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(_on_jump_msg_ok_button_pressed)
+	$BlurContainer.activate()
+	
+func _on_jump_msg_ok_button_pressed():
+	$BlurContainer.complete()
+	
+	# show jump form
+	$BlurContainer/WrapperWindow.load_window("jump")
+	$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(_on_jump_ok_button_pressed)
+	$BlurContainer.activate()
+
+func _on_jump_ok_button_pressed(n_erase, n_level_k, n_rows, n_pop):
+	$BlurContainer.complete()
+	
+	# set and start a new level
+	game.level = Global.user.saved_level
+	
+	game.new_level_by_config(n_erase, n_level_k, n_rows, n_pop)
+
+	start(true)
+
+func _on_main_gui_reset_button_pressed():
+	# convert saved level to gold
+	var gain_gold = int(Global.user.saved_level / 3) # TODO: magic number here
+	
+	Global.user.saved_level = 0
+	Global.user.gold + gain_gold
+	Global.user.save_game()
+	
+	game.level = 0
+	
+	# update UI
+	$MainGUI/RightPanel/GameFunctions/ShopFunction/GoldLabel.text = Global.user.gold
+	
+	$MainGUI/LeftPanel/GameStatus/TopPanel/LevelLabel.text = "[center][b]0"
+	$MainGUI/RightPanel/UserStatus/SavedLabel.text = "[center]0"
+
+	# acts like game over
+	# stop timing
+	$AMTimer.stop()
+	$SettleTimer.stop()
+	
+	# update UI
+	$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.visible = false
+	$MainGUI/RightPanel/GameFunctions/ShopFunction/GainRect.visible = false
+	
+	update_function_controls(false)
+	
+	$MainGUI/LeftPanel/GameControls/NewGameButton.visible = true
+	$MainGUI/LeftPanel/GameControls/PauseButton.visible = false
+	$MainGUI/LeftPanel/GameControls/ResumeButton.visible = false
+	
+	$MainGUI/LeftPanel/GameControls/NextFloorButton.visible = false
+	
+	$MainGUI/LeftPanel/GameStatus/BottomPanel/HeroSprite/HeroButton.visible = true
+	
+	# show message
+	var msg = "Welcome back to your hometown![p]" + \
+					"Your conquests give you "+ str(gain_gold) + " golds.[p]" + \
+					"Ready to fight again!"
+	
+	$BlurContainer/WrapperWindow.load_window("message")
+	$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Welcome home!", msg, false)
+	$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(func(): $BlurContainer.complete())
+	$BlurContainer.activate()
+
 func _on_shop_ok_button_pressed():
 	$BlurContainer.complete()
 	update_collection_bar()
@@ -337,7 +416,7 @@ func _on_board_card_button_pressed(ir, ic):
 				CardRule.SP_TYPE.HEAL, CardRule.TYPE_UNCOVER_HEAL:
 					update_am_bar()
 					
-					if (Global.user.hero == Global.HERO_TYPE.MASTER):
+					if (Global.user.hero != Global.HERO_TYPE.MASTER):
 						$SettleTimer.wait_time = LONG_HEAL_TIME
 					else:
 						$SettleTimer.wait_time = SHORT_HEAL_TIME # TODO: as HEAL is visible to MASTER, the display time is shorter; can we directly call settle()?
@@ -423,55 +502,67 @@ func _on_settle_timer_timeout():
 		
 		# handle TREASURE
 		if (game.found_treasure):
-			# TODO: check if this one is modal
 			$BlurContainer/WrapperWindow.load_window("message")
 			$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Wow!", "You find a gift in this floor![p]Please receive it!", true)
-			$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(func(): $BlurContainer.complete())
+			$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(_on_found_treasure_ok_button_clicked)
+			$BlurContainer.activate()
+		else:
+			_settle_check_floor_type()
+
+func _on_found_treasure_ok_button_clicked():
+	$BlurContainer.complete()
+	_settle_check_floor_type()
+	
+func _settle_check_floor_type():
+	# add gold and gift
+	# TODO: all magic numbers here!
+	match (game.floor_type):
+		GameRule.FLOOR_TYPE.NORMAL:
+			Global.user.gold += 1
+			_settle_update_ui()
+		GameRule.FLOOR_TYPE.CLOWN:
+			Global.user.gold += 3
+			_settle_update_ui()
+		GameRule.FLOOR_TYPE.EVIL:
+			Global.user.gold += 5
+			
+			$BlurContainer/WrapperWindow.load_window("message")
+			$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Wow!", "You get the chest from beating EVIL![p]Let's open it!", true)
+			$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(func(): _on_evil_gift_ok_button_pressed)
 			$BlurContainer.activate()
 
-		# add gold and gift
-		# TODO: all magic numbers here!
-		match (game.floor_type):
-			GameRule.FLOOR_TYPE.NORMAL:
-				Global.user.gold += 1
-			GameRule.FLOOR_TYPE.CLOWN:
-				Global.user.gold += 3
-			GameRule.FLOOR_TYPE.EVIL:
-				Global.user.gold += 5
-				
-				# TODO: check if this one is modal
-				$BlurContainer/WrapperWindow.load_window("message")
-				$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Wow!", "You get the chest from beating EVIL![p]Let's open it!", true)
-				$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(func(): $BlurContainer.complete())
-				$BlurContainer.activate()
+func _on_evil_gift_ok_button_pressed():
+	$BlurContainer.complete()
+	_settle_update_ui()
+
+func _settle_update_ui():
+	$MainGUI/RightPanel/GameFunctions/ShopFunction/GoldLabel.text = str(Global.user.gold)
+
+	# update function controls here as gold value changed
+	update_function_controls(false)
 	
-		$MainGUI/RightPanel/GameFunctions/ShopFunction/GoldLabel.text = str(Global.user.gold)
+	# update collection bar as gift provided
+	update_collection_bar()
 
-		# update function controls here as gold value changed
-		update_function_controls(false)
+	# update saved level
+	Global.user.saved_level = game.level
+	
+	$MainGUI/RightPanel/UserStatus/SavedLabel.text = "[center]" + str(Global.user.saved_level)
+	
+	# update best level
+	if (game.level > Global.user.best_level):
+		Global.user.best_level = game.level
 		
-		# update collection bar as gift provided
-		update_collection_bar()
+		$MainGUI/RightPanel/UserStatus/BestLabel.text = "[center]" + str(Global.user.best_level)
 
-		# update saved level
-		Global.user.saved_level = game.level
-		
-		$MainGUI/RightPanel/UserStatus/SavedLabel.text = "[center]" + str(Global.user.saved_level)
-		
-		# update best level
-		if (game.level > Global.user.best_level):
-			Global.user.best_level = game.level
-			
-			$MainGUI/RightPanel/UserStatus/BestLabel.text = "[center]" + str(Global.user.best_level)
+	# save game
+	Global.user.save_game()
 
-		# save game
-		Global.user.save_game()
-
-		# show the button to the next floor
-		$MainGUI/RightPanel/FloorInfo/MessageLabel.text = "[b]Well done![p]Let's go to the next floor!"
-
-		$MainGUI/LeftPanel/GameControls/NextFloorButton.visible = true
-
+	# show the button to the next floor
+	$MainGUI/RightPanel/FloorInfo/EvilRect.visible = false
+	$MainGUI/RightPanel/FloorInfo/MessageLabel.text = "[b]Well done![p]Let's go to the next floor!"
+	
+	$MainGUI/LeftPanel/GameControls/NextFloorButton.visible = true
 
 func _on_am_timer_timeout():
 	if (game.time_remain > 0):
@@ -500,9 +591,13 @@ func _on_am_timer_timeout():
 				# stop timing
 				$AMTimer.stop()
 				$SettleTimer.stop()
-				
+			
 				# reset everything
 				# TODO: can we put it into a function as RESET?
+				
+				# reset user level to 0
+				Global.user.saved_level = 0
+				
 				update_all_cards()
 				
 				$MainGUI/LeftPanel/GameStatus/TopPanel/LevelLabel.text = "[center][b]0"

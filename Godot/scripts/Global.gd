@@ -18,7 +18,8 @@ const WINDOW_TYPE = {
 	"message": "res://scenes//MessageWindowGUI.tscn",
 	"hero": "res://scenes//HeroWindowGUI.tscn",
 	"collection": "res://scenes//CollectionWindowGUI.tscn",
-	"shop": "res://scenes//ShopWindowGUI.tscn"
+	"shop": "res://scenes//ShopWindowGUI.tscn",
+	"jump": "res://scenes//JumpWindowGUI.tscn"
 }
 
 var user = User.new()
