@@ -390,6 +390,8 @@ func _on_board_card_button_pressed(ir, ic):
 					# update all cards as REINFORCE shows all cards
 					update_all_cards()
 					
+					SoundEffect.play("break")
+					
 					$SettleTimer.wait_time = REINFORCE_TIME
 					$SettleTimer.start()
 				CardRule.SP_TYPE.CHAOS:
@@ -401,6 +403,8 @@ func _on_board_card_button_pressed(ir, ic):
 					# update all cards as CHAOS shows all cards
 					update_all_cards()
 					
+					SoundEffect.play("chaos")
+					
 					$SettleTimer.wait_time = CHAOS_TIME
 					$SettleTimer.start()
 				CardRule.SP_TYPE.GOLD:
@@ -411,12 +415,16 @@ func _on_board_card_button_pressed(ir, ic):
 					$SettleTimer.start()
 					
 					update_one_card(ir, ic)
+					
+					SoundEffect.play("positive_sp_cards")
 				CardRule.SP_TYPE.MAP:
 					$SettleTimer.wait_time = MAP_TIME
 					$SettleTimer.start()
 					
 					# TODO: the cards to recover are dynamically found; update_all_cards() is safe, but not efficient
 					update_all_cards()
+					
+					SoundEffect.play("positive_sp_cards")
 				CardRule.SP_TYPE.HEAL, CardRule.TYPE_UNCOVER_HEAL:
 					update_am_bar()
 					
@@ -426,6 +434,8 @@ func _on_board_card_button_pressed(ir, ic):
 						$SettleTimer.wait_time = SHORT_HEAL_TIME # TODO: as HEAL is visible to MASTER, the display time is shorter; can we directly call settle()?
 					
 					update_one_card(ir, ic)
+					
+					SoundEffect.play("positive_sp_cards")
 					
 					$SettleTimer.start()
 				CardRule.SP_TYPE.TREASURE:
@@ -437,6 +447,8 @@ func _on_board_card_button_pressed(ir, ic):
 					$SettleTimer.wait_time = TREASURE_TIME
 					
 					update_one_card(ir, ic)
+					
+					SoundEffect.play("positive_sp_cards")
 					
 					$SettleTimer.start()
 			
@@ -487,8 +499,8 @@ func _on_settle_timer_timeout():
 		
 		$MainGUI/RightPanel/GameFunctions/ShopFunction/GainRect.visible = true
 		
+		SoundEffect.play("gain_gold")
 	
-		
 	# update progress bar for level
 	update_level_bar()
 	
@@ -602,6 +614,8 @@ func _on_am_timer_timeout():
 				$MainGUI/RightPanel/GameFunctions/ShopFunction/GainRect.visible = false
 				
 				update_am_bar() # TODO: does the order matter here?
+				
+				SoundEffect.play("break")
 			else:
 				# game over
 				# stop timing
@@ -725,7 +739,7 @@ func _on_ai_timer_timeout():
 					$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.play(str(GameRule.STATUS.BREAK))
 					$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.visible = true
 					
-					SoundEffect.play("card_remove") # TODO: AI removed card sound effect
+					SoundEffect.play("break")
 				
 				# change to player's turn
 				if (!game.is_ai_turn):

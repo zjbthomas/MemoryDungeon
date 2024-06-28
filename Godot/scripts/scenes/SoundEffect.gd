@@ -4,6 +4,10 @@ const _STREAM_TYPE = {
 	"card_flip": "res://musics//card_flip.mp3",
 	"card_remove": "res://musics//card_remove.mp3",
 	"card_cover": "res://musics//card_cover.mp3",
+	"break": "res://musics//break.mp3",
+	"gain_gold": "res://musics//gain_gold.mp3",
+	"chaos": "res://musics//chaos.mp3",
+	"positive_sp_cards": "res://musics//positive_sp_cards.mp3"
 }
 
 var _streams = {}
