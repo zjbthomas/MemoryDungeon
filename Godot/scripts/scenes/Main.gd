@@ -367,6 +367,8 @@ func _on_board_card_button_pressed(ir, ic):
 			match (game.perform_click_from_ui(ir, ic)):
 				GameRule.CLICK_PERFORMED.NO_SETTLEMENT:
 					update_one_card(ir, ic)
+					
+					SoundEffect.play("card_flip")
 				GameRule.CLICK_PERFORMED.SETTLEMENT:
 					match (game.n_erase):
 						2:
@@ -375,6 +377,8 @@ func _on_board_card_button_pressed(ir, ic):
 							$SettleTimer.wait_time = SHORT_SETTLE_TIME
 					
 					update_one_card(ir, ic)
+					
+					SoundEffect.play("card_flip")
 					
 					$SettleTimer.start()
 				CardRule.SP_TYPE.REINFORCE:
@@ -453,6 +457,8 @@ func _on_board_card_button_pressed(ir, ic):
 				
 				update_one_card(ir, ic)	
 				
+				SoundEffect.play("card_flip")
+				
 				if (click_performed == GameRule.CLICK_PERFORMED.SETTLEMENT):
 					$AITimer.wait_time = AI_SETTLE_TIME
 					$AITimer.start()
@@ -464,14 +470,24 @@ func _on_settle_timer_timeout():
 	# update status
 	if (game.status == GameRule.STATUS.EMPTY):
 		$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.visible = false
+		
+		SoundEffect.play("card_cover")
 	elif (game.status <= GameRule.STATUS.CRITICAL):
 		$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.play(str(game.status))
 		$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.visible = true
+		
+		# play sound
+		match game.status:
+			GameRule.STATUS.SCORE, GameRule.STATUS.COMBO, GameRule.STATUS.CRITICAL: # normal cards removed
+				SoundEffect.play("card_remove")
+		
 	elif (game.status == GameRule.STATUS.CREDIT):
 		$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.play(str(GameRule.STATUS.BONUS))
 		$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.visible = true
 		
 		$MainGUI/RightPanel/GameFunctions/ShopFunction/GainRect.visible = true
+		
+	
 		
 	# update progress bar for level
 	update_level_bar()
@@ -681,6 +697,8 @@ func _on_ai_timer_timeout():
 			$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.play(str(game.status))
 			$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.visible = true
 
+			SoundEffect.play("card_remove")
+
 		update_all_cards()
 		
 		# change to AI's turn
@@ -690,6 +708,8 @@ func _on_ai_timer_timeout():
 			$MainGUI/LeftPanel/GameControls/NewGameButton.visible = false
 			
 			update_function_controls(true)
+
+			SoundEffect.play("card_cover")
 
 			start_ai_timer = true
 
@@ -704,6 +724,8 @@ func _on_ai_timer_timeout():
 					
 					$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.play(str(GameRule.STATUS.BREAK))
 					$MainGUI/LeftPanel/GameStatus/TopPanel/StatusSprite.visible = true
+					
+					SoundEffect.play("card_remove") # TODO: AI removed card sound effect
 				
 				# change to player's turn
 				if (!game.is_ai_turn):
@@ -712,8 +734,12 @@ func _on_ai_timer_timeout():
 					$MainGUI/LeftPanel/GameControls/NewGameButton.visible = true
 					
 					update_function_controls(true)
+					
+					SoundEffect.play("card_cover") # TODO: maybe a different sound when AI fails?
 
 			1, 2: # AI continues its action
+				SoundEffect.play("card_flip")
+				
 				start_ai_timer = true
 				
 		update_all_cards()

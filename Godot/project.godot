@@ -11,13 +11,15 @@ config_version=5
 [application]
 
 config/name="MemoryDungeon"
-run/main_scene="res://scenes/Login.tscn"
+run/main_scene="res://scenes/LoadScreen.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [autoload]
 
 Global="*res://scripts/Global.gd"
+BGM="*res://scenes/BGM.tscn"
+SoundEffect="*res://scenes/SoundEffect.tscn"
 
 [display]
 
