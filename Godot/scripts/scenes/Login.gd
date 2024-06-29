@@ -21,6 +21,8 @@ func _on_login_button_pressed():
 	var password = $PasswordLineEdit.text
 	
 	if username == "" or password == "":
+		SoundEffect.play("notification_error")
+		
 		$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Error", "Please input valid username and password!", false)
 		$BlurContainer.activate()
 	
@@ -32,13 +34,19 @@ func _on_login_button_pressed():
 		Global.user.LOGIN_STATUS.NEW_LOGIN:
 			_is_successful_login = true
 			
+			SoundEffect.play("notification_ok")
+			
 			$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("A New Comer!", "Welcome " + username + "![p]This is your first time to the dungeon.[p]We have marked down your name on our list.[p]Hope you find your memory back!", false)
 			$BlurContainer.activate()
 		Global.user.LOGIN_STATUS.WRONG_PASSWORD:
+			SoundEffect.play("notification_error")
+			
 			$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Error", "Password wrong![p]You are not allowed to get into the dungeon!", false)
 			$BlurContainer.activate()
 		Global.user.LOGIN_STATUS.SUCCESSFUL_LOGIN:
 			_is_successful_login = true
+			
+			SoundEffect.play("notification_ok")
 			
 			$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Welcome back!", "Welcome back to the dungeon, " + username + "!", false)
 			$BlurContainer.activate()

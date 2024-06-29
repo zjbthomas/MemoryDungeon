@@ -7,7 +7,11 @@ const _STREAM_TYPE = {
 	"break": "res://musics//break.mp3",
 	"gain_gold": "res://musics//gain_gold.mp3",
 	"chaos": "res://musics//chaos.mp3",
-	"positive_sp_cards": "res://musics//positive_sp_cards.mp3"
+	"positive_sp_cards": "res://musics//positive_sp_cards.mp3",
+	"notification_ok": "res://musics//notification_ok.mp3",
+	"notification_error": "res://musics//notification_error.mp3",
+	"win": "res://musics//win.mp3",
+	"lose": "res://musics//lose.mp3"
 }
 
 var _streams = {}

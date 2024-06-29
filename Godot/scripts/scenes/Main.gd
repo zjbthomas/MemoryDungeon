@@ -281,6 +281,8 @@ func start(is_by_config):
 
 	$MainGUI/LeftPanel/GameStatus/TopPanel/LevelLabel.visible = true
 
+	SoundEffect.play("notification_ok")
+
 	$BlurContainer/WrapperWindow.load_window("message")
 	$BlurContainer/WrapperWindow.get_loaded_window().setup_ui(title, msg, false)
 	$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(_on_start_ok_button_pressed)
@@ -586,6 +588,9 @@ func _settle_update_ui():
 	# save game
 	Global.user.save_game()
 
+	# play win game sound
+	SoundEffect.play("win")
+
 	# show the button to the next floor
 	$MainGUI/RightPanel/FloorInfo/EvilRect.visible = false
 	$MainGUI/RightPanel/FloorInfo/MessageLabel.text = "[b]Well done![p]Let's go to the next floor!"
@@ -648,6 +653,8 @@ func _on_am_timer_timeout():
 				
 				$MainGUI/LeftPanel/GameStatus/BottomPanel/HeroSprite/HeroButton.visible = true
 
+				SoundEffect.play("lose")
+
 				# message for game over
 				$BlurContainer/WrapperWindow.load_window("message")
 				$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Gameover", "Time's Up![p]Gameover.", false)
@@ -690,6 +697,8 @@ func _on_main_gui_ai_button_pressed():
 
 	$MainGUI/RightPanel/FloorInfo/MessageLabel.visible = true
 	$MainGUI/RightPanel/FloorInfo/MessageLabel.text = "[b]" + msg
+
+	SoundEffect.play("notification_ok")
 
 	$BlurContainer/WrapperWindow.load_window("message")
 	$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Get set!", msg, false)
@@ -784,6 +793,8 @@ func _on_ai_timer_timeout():
 			
 			$MainGUI/RightPanel/FloorInfo/MessageLabel.text = "[b]" + msg
 			
+			SoundEffect.play("lose")
+			
 			$BlurContainer/WrapperWindow.load_window("message")
 			$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Draw", msg, false)
 			$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(func(): $BlurContainer.complete())
@@ -800,6 +811,8 @@ func _on_ai_timer_timeout():
 			
 			$MainGUI/RightPanel/FloorInfo/MessageLabel.text = "[b]" + msg
 			
+			SoundEffect.play("win")
+			
 			$BlurContainer/WrapperWindow.load_window("message")
 			$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Win", msg, false)
 			$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(func(): $BlurContainer.complete())
@@ -811,6 +824,8 @@ func _on_ai_timer_timeout():
 					  "Please start a new training and try again!";
 			
 			$MainGUI/RightPanel/FloorInfo/MessageLabel.text = "[b]" + msg
+			
+			SoundEffect.play("lose")
 			
 			$BlurContainer/WrapperWindow.load_window("message")
 			$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Win", msg, false)
