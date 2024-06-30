@@ -11,7 +11,10 @@ const _STREAM_TYPE = {
 	"notification_ok": "res://musics//notification_ok.mp3",
 	"notification_error": "res://musics//notification_error.mp3",
 	"win": "res://musics//win.mp3",
-	"lose": "res://musics//lose.mp3"
+	"lose": "res://musics//lose.mp3",
+	"card_draw": "res://musics//card_draw.mp3",
+	"lucky_draw": "res://musics//lucky_draw.mp3",
+	"unlucky_draw": "res://musics//unlucky_draw.mp3",
 }
 
 var _streams = {}

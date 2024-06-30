@@ -39,6 +39,8 @@ func _on_card_in_draw_card_button_pressed(card):
 			
 			$InfoLabel.text = "Finding..."
 			
+			SoundEffect.play("card_draw")
+			
 			card.card_flip(type)
 		else:
 			$InfoLabel.text = "Not enough gold!"
@@ -46,8 +48,12 @@ func _on_card_in_draw_card_button_pressed(card):
 func _on_card_in_draw_card_flipped():
 	if (_is_new_type):
 		$InfoLabel.text = "You find part of your memory!"
+		
+		SoundEffect.play("lucky_draw")
 	else:
 		$InfoLabel.text = "Sorry, you are not lucky enough this time."
+		
+		SoundEffect.play("unlucky_draw")
 
 	# update price
 	_price -= 1

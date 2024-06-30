@@ -115,11 +115,15 @@ func _on_hero_selected(ix):
 	$MainGUI/LeftPanel/GameStatus/BottomPanel/HeroSprite.play(str(Global.user.hero))
 
 func _on_main_gui_collection_button_pressed():
+	SoundEffect.play("notification_ok")
+	
 	$BlurContainer/WrapperWindow.load_window("collection")
 	$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(func(): $BlurContainer.complete())
 	$BlurContainer.activate()
 
 func _on_main_gui_shop_button_pressed():
+	SoundEffect.play("notification_ok")
+	
 	$BlurContainer/WrapperWindow.load_window("shop")
 	$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(_on_shop_ok_button_pressed)
 	$BlurContainer.activate()
@@ -136,6 +140,8 @@ func _on_main_gui_jump_button_pressed():
 	# show message
 	var msg = "You pay " + str(Global.COST_JUMP) + " credits to buy the items.[p]" + \
 					"Ready to choose the next floor!"
+	
+	SoundEffect.play("notification_ok")
 	
 	$BlurContainer/WrapperWindow.load_window("message")
 	$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Jumping", msg, false)
@@ -171,7 +177,7 @@ func _on_main_gui_reset_button_pressed():
 	game.level = 0
 	
 	# update UI
-	$MainGUI/RightPanel/GameFunctions/ShopFunction/GoldLabel.text = Global.user.gold
+	$MainGUI/RightPanel/GameFunctions/ShopFunction/GoldLabel.text = str(Global.user.gold)
 	
 	$MainGUI/LeftPanel/GameStatus/TopPanel/LevelLabel.text = "[center][b]0"
 	$MainGUI/RightPanel/UserStatus/SavedLabel.text = "[center]0"
@@ -199,6 +205,8 @@ func _on_main_gui_reset_button_pressed():
 	var msg = "Welcome back to your hometown![p]" + \
 					"Your conquests give you "+ str(gain_gold) + " golds.[p]" + \
 					"Ready to fight again!"
+	
+	SoundEffect.play("notification_ok")
 	
 	$BlurContainer/WrapperWindow.load_window("message")
 	$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Welcome home!", msg, false)

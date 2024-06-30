@@ -35,12 +35,18 @@ func _on_card_in_draw_card_button_pressed(card):
 	var type = rets[0]
 	_is_new_type = rets[1]
 	
+	SoundEffect.play("card_draw")
+	
 	card.card_flip(type)
 
 func _on_card_in_draw_card_flipped():
 	if (_is_new_type):
 		$MessageLabel.text = "[b]You find part of your memory!"
+		
+		SoundEffect.play("lucky_draw")
 	else:
 		$MessageLabel.text = "[b]Sorry, you are not lucky enough this time."
+		
+		SoundEffect.play("unlucky_draw")
 	
 	$OKButton.disabled = false
