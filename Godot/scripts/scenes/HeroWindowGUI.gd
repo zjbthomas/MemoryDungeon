@@ -12,6 +12,10 @@ func _process(delta):
 
 func _on_area_mouse_entered(ix):
 	$AnimatedSprite2D.play(ix)
+	
+	SoundEffect.play("hero_hover")
 
 func _on_area_pressed(ix):
+	SoundEffect.play("notification_ok")
+	
 	hero_selected.emit(ix)

@@ -15,6 +15,7 @@ const _STREAM_TYPE = {
 	"card_draw": "res://musics//card_draw.mp3",
 	"lucky_draw": "res://musics//lucky_draw.mp3",
 	"unlucky_draw": "res://musics//unlucky_draw.mp3",
+	"hero_hover": "res://musics//hero_hover.mp3",
 }
 
 var is_muted = false

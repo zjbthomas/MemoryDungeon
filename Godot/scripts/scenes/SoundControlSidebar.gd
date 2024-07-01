@@ -26,7 +26,7 @@ func _on_mouse_exited():
 	$SoundControlPanel/MarginContainer.visible = false
 	
 	var tween = get_tree().create_tween()
-	tween.tween_property($SoundControlPanel, "custom_minimum_size:x", 0, 0.1)
+	tween.tween_property($SoundControlPanel, "custom_minimum_size:x", 0, 0.05)
 
 func _on_bgm_button_pressed():
 	BGM.switch()
