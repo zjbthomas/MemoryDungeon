@@ -17,6 +17,8 @@ const _STREAM_TYPE = {
 	"unlucky_draw": "res://musics//unlucky_draw.mp3",
 }
 
+var is_muted = false
+
 var _streams = {}
 	
 # Called when the node enters the scene tree for the first time.
@@ -32,5 +34,12 @@ func load_streams():
 		_streams[key] = load(_STREAM_TYPE[key])
 	
 func play(name):
-	$SoundEffectPlayer.stream = _streams.get(name)
-	$SoundEffectPlayer.play()
+	if (!is_muted):
+		$SoundEffectPlayer.stream = _streams.get(name)
+		$SoundEffectPlayer.play()
+		
+func switch():
+	if (!is_muted):
+		$SoundEffectPlayer.stop()
+		
+	is_muted = !is_muted
