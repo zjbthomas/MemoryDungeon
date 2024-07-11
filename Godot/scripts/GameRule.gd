@@ -893,7 +893,7 @@ func perform_ai_action():
 					
 					if (ai_memory[n] and 
 						rows[tr].get_card_state(tc) != CardRule.CARD_STATE.NE and 
-						rows[tr].get_card_type(tc) != possible_type):
+						rows[tr].get_card_type(tc) == possible_type):
 							perform_click(tr, tc)
 							break
 							
