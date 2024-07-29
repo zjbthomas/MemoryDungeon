@@ -3,6 +3,8 @@ extends HBoxContainer
 @onready var bgm_staus_label = $SoundControlPanel/MarginContainer/VBoxContainer/BGMPanel/VBoxContainer/BGMStatusLabel
 @onready var fx_staus_label = $SoundControlPanel/MarginContainer/VBoxContainer/FXPanel/VBoxContainer/FXStatusLabel
 
+var _is_in_animation = false
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	$SoundControlPanel/MarginContainer.visible = false
@@ -17,16 +19,27 @@ func _process(delta):
 	pass
 
 func _on_mouse_entered():
-	var tween = get_tree().create_tween()
-	tween.tween_property($SoundControlPanel, "custom_minimum_size:x", 60, 0.1) # TODO: magic number: 60
+	if (not _is_in_animation):
+		_is_in_animation = true
 	
-	tween.tween_callback(func(): $SoundControlPanel/MarginContainer.visible = true)
+		var tween = get_tree().create_tween()
+		tween.tween_property($SoundControlPanel, "custom_minimum_size:x", 60, 0.1) # TODO: magic number: 60
+		
+		tween.tween_callback(func():
+			$SoundControlPanel/MarginContainer.visible = true
+			_is_in_animation = false
+		)
 
 func _on_mouse_exited():
-	$SoundControlPanel/MarginContainer.visible = false
-	
-	var tween = get_tree().create_tween()
-	tween.tween_property($SoundControlPanel, "custom_minimum_size:x", 0, 0.05)
+	if (not _is_in_animation):
+		_is_in_animation = true
+		
+		$SoundControlPanel/MarginContainer.visible = false
+		
+		var tween = get_tree().create_tween()
+		tween.tween_property($SoundControlPanel, "custom_minimum_size:x", 0, 0.05)
+		
+		_is_in_animation = false
 
 func _on_bgm_button_pressed():
 	BGM.switch()

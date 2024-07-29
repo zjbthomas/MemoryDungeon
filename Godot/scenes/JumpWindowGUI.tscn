@@ -51,6 +51,7 @@ value = 2.0
 alignment = 1
 
 [node name="KSpinBox" type="SpinBox" parent="."]
+layout_mode = 0
 offset_left = 387.0
 offset_top = 193.0
 offset_right = 441.0
@@ -62,6 +63,7 @@ value = 2.0
 alignment = 1
 
 [node name="RowSpinBox" type="SpinBox" parent="."]
+layout_mode = 0
 offset_left = 387.0
 offset_top = 292.0
 offset_right = 441.0
@@ -73,6 +75,7 @@ value = 1.0
 alignment = 1
 
 [node name="RSpinBox" type="SpinBox" parent="."]
+layout_mode = 0
 offset_left = 387.0
 offset_top = 391.0
 offset_right = 441.0

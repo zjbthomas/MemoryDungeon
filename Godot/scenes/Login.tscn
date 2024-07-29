@@ -57,16 +57,6 @@ layout_mode = 1
 
 [node name="SoundControlSidebar" parent="." instance=ExtResource("6_odfok")]
 layout_mode = 1
-anchors_preset = 6
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
 offset_left = -94.0
-offset_top = -72.0
-offset_right = 0.0
-offset_bottom = 72.0
-grow_horizontal = 0
-grow_vertical = 2
 
 [connection signal="pressed" from="LoginButton" to="." method="_on_login_button_pressed"]
