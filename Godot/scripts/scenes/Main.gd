@@ -69,6 +69,9 @@ func _setup():
 	# init game and hero
 	game.level = Global.user.saved_level
 	$MainGUI/LeftPanel/GameStatus/BottomPanel/HeroSprite.play(str(Global.user.hero))
+	
+	if (OS.has_feature("web")):
+		$MainGUI/RightPanel/ExitButton.visible = false
 
 func _on_main_gui_next_floor_button_pressed():
 	start(false)

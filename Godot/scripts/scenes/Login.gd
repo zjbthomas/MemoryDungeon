@@ -28,7 +28,7 @@ func _on_login_button_pressed():
 	
 		return
 		
-	var result = Global.user.load_game(username, password)
+	var result = await Global.user.login(username, password)
 	
 	match result:
 		Global.user.LOGIN_STATUS.NEW_LOGIN:
@@ -49,6 +49,11 @@ func _on_login_button_pressed():
 			SoundEffect.play("notification_ok")
 			
 			$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Welcome back!", "Welcome back to the dungeon, " + username + "!", false)
+			$BlurContainer.activate()
+		Global.user.LOGIN_STATUS.SERVER_ERROR:
+			SoundEffect.play("notification_error")
+			
+			$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Error", "Something wrong with the server![p]Please retry!", false)
 			$BlurContainer.activate()
 
 func _on_ok_button_pressed():

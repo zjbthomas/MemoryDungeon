@@ -23,3 +23,11 @@ const WINDOW_TYPE = {
 }
 
 var user = User.new()
+
+var http: HTTPRequest
+func _enter_tree():
+	if http == null or not is_instance_valid(http):
+		http = HTTPRequest.new()
+		http.set_tls_options(TLSOptions.client_unsafe()) # very temporary as Godot currently does not handle raw IP cert correctly!
+		
+		add_child(http) # we’re already in the tree
