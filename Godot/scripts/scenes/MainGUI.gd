@@ -53,5 +53,9 @@ func _on_ai_button_pressed():
 	ai_button_pressed.emit()
 
 func _on_exit_button_pressed():
-	get_tree().quit()
-
+	if (!OS.has_feature("web")):
+		get_tree().quit()
+	else:
+		if Engine.has_singleton("JavaScriptBridge"):
+			var js = Engine.get_singleton("JavaScriptBridge")
+			js.eval("location.reload();")
