@@ -66,7 +66,8 @@ func login(username, password_attempt):
 
 	var payload = {
 		"username": username,
-		"password": password
+		"password": password,
+		"name": "memorydungeon"
 	}
 	var res = await _post("%s/api/login" % API_BASE, payload)
 
@@ -76,11 +77,17 @@ func login(username, password_attempt):
 		return LOGIN_STATUS.WRONG_PASSWORD
 
 	if res.status == "registered":
-		_init_new_user()
-		return LOGIN_STATUS.NEW_LOGIN
+		var valid = await _init_new_user()
+		if (not valid):
+			return LOGIN_STATUS.SERVER_ERROR
+		else:
+			return LOGIN_STATUS.NEW_LOGIN
 	elif res.status == "ok":
-		if not await load_game():
-			_init_new_user()
+		var valid_load = await load_game()
+		if not valid_load:
+			var valid_save = await _init_new_user()
+			if (not valid_save):
+				return LOGIN_STATUS.SERVER_ERROR
 		return LOGIN_STATUS.SUCCESSFUL_LOGIN
 
 	return LOGIN_STATUS.SERVER_ERROR
@@ -96,7 +103,9 @@ func save_game():
 		"save": save_dict
 	}
 
-	await _post("%s/%s/save" % [API_BASE, NAMESPACE], payload)
+	var res = await _post("%s/%s/save" % [API_BASE, NAMESPACE], payload)
+	
+	return not (res is Dictionary and res.has("error"))
 
 func load_game():
 	if username == "" or password == "":
@@ -149,7 +158,9 @@ func _init_new_user():
 	for pos in range(NEW_USER_SP):
 		set_owned_sp(pos, true)
 		
-	await save_game()
+	var res = await save_game()
+	
+	return res
 
 func cal_last_k(n_level_k):
 	var n_owned_k = 0
