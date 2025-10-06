@@ -2,6 +2,8 @@ extends Node
 
 class_name User
 
+signal token_expired
+
 enum LOGIN_STATUS {SERVER_ERROR, NEW_LOGIN, WRONG_PASSWORD, SUCCESSFUL_LOGIN}
 
 const NEW_USER_K = 5 # initial number of normal kinds
@@ -9,6 +11,7 @@ const NEW_USER_SP = 6 # initial number of special kinds
 
 var username = ""
 var password = ""
+var token = ""
 
 var best_level = 0
 var saved_level = 0
@@ -32,13 +35,18 @@ func _init():
 	owned_sp.resize(Global.MAXSP)
 	owned_sp.fill(false)
 
+func reset():
+	username = ""
+	password = ""
+	token = ""
+
 # functions for connecting to Redis
 const _IS_DEBUG = false
 var API_BASE = ("http://127.0.0.1" if _IS_DEBUG else "https://175.178.11.87")
 var NAMESPACE = "memorydungeon"
 
 func _post(url, body):
-	var headers = ["Content-Type: application/json"]
+	var headers = PackedStringArray(["Authorization: Bearer %s" % token, "Content-Type: application/json"])
 	var json = JSON.stringify(body)
 	var err = Global.http.request(url, headers, HTTPClient.METHOD_POST, json)
 	if err != OK: return {"error":"request_failed"}
@@ -46,7 +54,9 @@ func _post(url, body):
 	return _parse_http_result(res)
 
 func _get(url):
-	var err = Global.http.request(url, [], HTTPClient.METHOD_GET) 
+	var headers := PackedStringArray([ "Authorization: Bearer %s" % token ])
+	
+	var err = Global.http.request(url, headers, HTTPClient.METHOD_GET) 
 	if err != OK: return {"error":"request_failed"}
 	var res = await Global.http.request_completed
 	return _parse_http_result(res)
@@ -75,6 +85,11 @@ func login(username, password_attempt):
 		if (res.error == 'request_failed'):
 			return LOGIN_STATUS.SERVER_ERROR
 		return LOGIN_STATUS.WRONG_PASSWORD
+
+	if res is Dictionary and not res.has("token"):
+		return LOGIN_STATUS.WRONG_PASSWORD
+	else:
+		self.token = res.token
 
 	if res.status == "registered":
 		var valid = await _init_new_user()
@@ -105,7 +120,15 @@ func save_game():
 
 	var res = await _post("%s/%s/save" % [API_BASE, NAMESPACE], payload)
 	
-	return not (res is Dictionary and res.has("error"))
+	var valid = not (res is Dictionary and res.has("error"))
+	
+	if (not valid):
+		# reset login data
+		reset()
+	
+		token_expired.emit()
+	
+	return valid
 
 func load_game():
 	if username == "" or password == "":

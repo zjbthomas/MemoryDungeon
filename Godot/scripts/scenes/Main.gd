@@ -70,6 +70,9 @@ func _setup():
 	game.level = Global.user.saved_level
 	$MainGUI/LeftPanel/GameStatus/BottomPanel/HeroSprite.play(str(Global.user.hero))
 
+	# connect signal from User
+	Global.user.token_expired.connect(_on_token_expired)
+
 func _on_main_gui_next_floor_button_pressed():
 	start(false)
 
@@ -846,3 +849,18 @@ func _on_ai_timer_timeout():
 	if (start_ai_timer):
 		$AITimer.wait_time = AI_ACTION_TIME # TODO: this timer is reused for two different purposes; shall we use two timers?
 		$AITimer.start()
+
+func _on_token_expired():
+	var msg = "You are trapped in in another Dungeon![p]" + \
+				"For your safety, I will send you back to the entrance!";
+			
+	SoundEffect.play("notification_error")
+	
+	$BlurContainer/WrapperWindow.load_window("message")
+	$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Error", msg, false)
+	$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(_on_token_expired_ok_button_pressed)
+	$BlurContainer.activate()
+	
+func _on_token_expired_ok_button_pressed():
+	$BlurContainer.complete()
+	get_tree().change_scene_to_file("res://scenes/Login.tscn")
