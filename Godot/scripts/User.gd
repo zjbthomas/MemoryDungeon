@@ -34,7 +34,8 @@ func _init():
 
 # functions for connecting to Redis
 const _IS_DEBUG = false
-var API_BASE = ("http://localhost" if _IS_DEBUG else "https://175.178.11.87") + "/memorydungeon" # no trailing slash
+var API_BASE = ("http://127.0.0.1" if _IS_DEBUG else "https://175.178.11.87")
+var NAMESPACE = "memorydungeon"
 
 func _post(url, body):
 	var headers = ["Content-Type: application/json"]
@@ -67,7 +68,7 @@ func login(username, password_attempt):
 		"username": username,
 		"password": password
 	}
-	var res = await _post("%s/login" % API_BASE, payload)
+	var res = await _post("%s/api/login" % API_BASE, payload)
 
 	if res is Dictionary and res.has("error"):
 		if (res.error == 'request_failed'):
@@ -78,9 +79,7 @@ func login(username, password_attempt):
 		_init_new_user()
 		return LOGIN_STATUS.NEW_LOGIN
 	elif res.status == "ok":
-		if res.has("save") and res.save != null:
-			_load(res.save)
-		else:
+		if not await load_game():
 			_init_new_user()
 		return LOGIN_STATUS.SUCCESSFUL_LOGIN
 
@@ -97,7 +96,7 @@ func save_game():
 		"save": save_dict
 	}
 
-	await _post("%s/save" % API_BASE, payload)
+	await _post("%s/%s/save" % [API_BASE, NAMESPACE], payload)
 
 func load_game():
 	if username == "" or password == "":
@@ -106,7 +105,7 @@ func load_game():
 		username.uri_encode(),
 		password.uri_encode()
 	]
-	var res = await _get("%s/load%s" % [API_BASE, q])
+	var res = await _get("%s/%s/load%s" % [API_BASE, NAMESPACE, q])
 	if res is Dictionary and res.has("save") and res.save != null:
 		_load(res.save)
 		return true

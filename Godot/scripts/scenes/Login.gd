@@ -27,7 +27,11 @@ func _on_login_button_pressed():
 		$BlurContainer.activate()
 	
 		return
-		
+	
+	$UsernameLineEdit.editable = false
+	$PasswordLineEdit.editable = false
+	$LoginButton.visible = false
+	
 	var result = await Global.user.login(username, password)
 	
 	match result:
@@ -55,6 +59,10 @@ func _on_login_button_pressed():
 			
 			$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Error", "Something wrong with the server![p]Please retry!", false)
 			$BlurContainer.activate()
+
+	$UsernameLineEdit.editable = true
+	$PasswordLineEdit.editable = true
+	$LoginButton.visible = true
 
 func _on_ok_button_pressed():
 	$BlurContainer.complete()
