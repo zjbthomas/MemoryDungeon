@@ -5,7 +5,7 @@ extends Node
 var game = GameRule.new()
 
 const LONG_SETTLE_TIME = 0.4
-const SHORT_SETTLE_TIME = 0.3
+const SHORT_SETTLE_TIME = 0.4
 const REINFORCE_TIME = 2.0 
 const CHAOS_TIME = 3.0
 const GOLD_TIME = 1.0
