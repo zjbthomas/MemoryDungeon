@@ -6,13 +6,13 @@ var game = GameRule.new()
 
 const LONG_SETTLE_TIME = 0.4
 const SHORT_SETTLE_TIME = 0.3
-const REINFORCE_TIME = 1.2 
-const CHAOS_TIME = 2
-const GOLD_TIME = 0.6
+const REINFORCE_TIME = 2.0 
+const CHAOS_TIME = 3.0
+const GOLD_TIME = 1.0
 const MAP_TIME = 1
-const LONG_HEAL_TIME = 0.6
+const LONG_HEAL_TIME = 1.0
 const SHORT_HEAL_TIME = 0.05
-const TREASURE_TIME = 0.6
+const TREASURE_TIME = 1.0
 
 const AI_ACTION_TIME = 1
 const AI_SETTLE_TIME = 0.3
@@ -393,6 +393,7 @@ func _on_board_card_button_pressed(ir, ic):
 					
 					SoundEffect.play("card_flip")
 					
+					# AMTimer will not stop for normal settlement
 					$SettleTimer.start()
 				CardRule.SP_TYPE.REINFORCE:
 					# for HUNTER
@@ -406,6 +407,8 @@ func _on_board_card_button_pressed(ir, ic):
 					SoundEffect.play("break")
 					
 					$SettleTimer.wait_time = REINFORCE_TIME
+					
+					$AMTimer.stop()
 					$SettleTimer.start()
 				CardRule.SP_TYPE.CHAOS:
 					# for HUNTER
@@ -419,12 +422,16 @@ func _on_board_card_button_pressed(ir, ic):
 					SoundEffect.play("chaos")
 					
 					$SettleTimer.wait_time = CHAOS_TIME
+					
+					$AMTimer.stop()
 					$SettleTimer.start()
 				CardRule.SP_TYPE.GOLD:
 					$MainGUI/RightPanel/GameFunctions/ShopFunction/GoldLabel.text = str(Global.user.gold)
 					update_function_controls(true) # update as gold changed
 					
 					$SettleTimer.wait_time = GOLD_TIME
+					
+					$AMTimer.stop()
 					$SettleTimer.start()
 					
 					update_one_card(ir, ic)
@@ -432,6 +439,8 @@ func _on_board_card_button_pressed(ir, ic):
 					SoundEffect.play("positive_sp_cards")
 				CardRule.SP_TYPE.MAP:
 					$SettleTimer.wait_time = MAP_TIME
+					
+					$AMTimer.stop()
 					$SettleTimer.start()
 					
 					# TODO: the cards to recover are dynamically found; update_all_cards() is safe, but not efficient
@@ -450,6 +459,7 @@ func _on_board_card_button_pressed(ir, ic):
 					
 					SoundEffect.play("positive_sp_cards")
 					
+					$AMTimer.stop()
 					$SettleTimer.start()
 				CardRule.SP_TYPE.TREASURE:
 					# for HUNTER
@@ -463,6 +473,7 @@ func _on_board_card_button_pressed(ir, ic):
 					
 					SoundEffect.play("positive_sp_cards")
 					
+					$AMTimer.stop()
 					$SettleTimer.start()
 			
 			update_hp_bar() # TODO: it is better to make it run before SettleTimer.start()
@@ -549,6 +560,9 @@ func _on_settle_timer_timeout():
 			$BlurContainer.activate()
 		else:
 			_settle_check_floor_type()
+	else:
+		if ($AMTimer.is_stopped()):
+			$AMTimer.start()
 
 func _on_found_treasure_ok_button_clicked():
 	$BlurContainer.complete()
