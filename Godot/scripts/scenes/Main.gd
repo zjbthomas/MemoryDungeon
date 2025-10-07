@@ -853,7 +853,7 @@ func _on_ai_timer_timeout():
 			SoundEffect.play("lose")
 			
 			$BlurContainer/WrapperWindow.load_window("message")
-			$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Win", msg, false)
+			$BlurContainer/WrapperWindow.get_loaded_window().setup_ui("Loss", msg, false)
 			$BlurContainer/WrapperWindow.get_loaded_window().ok_button_pressed.connect(func(): $BlurContainer.complete())
 			$BlurContainer.activate()
 			
