@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://bwkj88vqd58iu" path="res://images/screens/button_ok.png" id="2_appd1"]
 [ext_resource type="PackedScene" uid="uid://dm643kdvu8ct7" path="res://scenes/Main.tscn" id="3_g5p1k"]
 [ext_resource type="PackedScene" uid="uid://8vw6uk1ffr4l" path="res://scenes/BlurContainer.tscn" id="5_fne2j"]
-[ext_resource type="PackedScene" uid="uid://d0dyytb7nri5t" path="res://scenes/SoundControlSidebar.tscn" id="6_odfok"]
+[ext_resource type="PackedScene" uid="uid://bkmnbbccd02oq" path="res://scenes/SoundControlSidebar.tscn" id="6_odfok"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_eujh7"]
 
